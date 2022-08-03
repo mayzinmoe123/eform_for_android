@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Pages/Money.dart';
-import 'package:flutter_application_1/Pages/Promise.dart';
-import 'package:flutter_application_1/Pages/RulesAndRegulation.dart';
+// import 'package:flutter_application_1/Pages/ApplicationFormNRC.dart';
+// import 'package:flutter_application_1/Pages/Money.dart';
+// import 'package:flutter_application_1/Pages/Promise.dart';
+// import 'package:flutter_application_1/Pages/RulesAndRegulation.dart';
 // import 'package:flutter_application_1/Pages/MeterApplyChoice.dart';
 
 //Pages
+// import 'dart:html';
 import './Pages/Login.dart';
 import './Pages/DivisionChoice.dart';
 import './Pages/MeterApplyChoice.dart';
 import './Pages/RulesAndRegulation.dart';
 import './Pages/Promise.dart';
 import './Pages/Money.dart';
+import './Pages/ApplicationForm.dart';
+import './Pages/ApplicationFormNRC.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +34,9 @@ class MyApp extends StatelessWidget {
         '/meterApply': (context) => MeterApplyChoice(),
         '/Rules': (context) => RulesAndRegulations(),
         '/Promise': (context) => Promise(),
-        '/': (context) => Money(),
+        '/Money': (context) => Money(),
+        '/ApplicationForm': (context) => ApplicationForm(),
+        '/': (context) => ApplicationFormNRC(),
       },
     );
   }
