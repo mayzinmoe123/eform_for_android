@@ -51,16 +51,35 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                       onPressed: () {
                         _openFileExplorer();
                       },
-                      child: Text("File Upload"),
+                      child: Text("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း) ***"),
                     ),
                     (file?.path == null)
                         ? Container()
                         : Image.file(
                             File(file!.path.toString()),
-                            width: 100,
-                            height: 100,
+                            width: 300,
+                            height: 200,
+                          ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _openFileExplorer();
+                      },
+                      child: Text("မှတ်ပုံတင်နောက်ဖက် (မူရင်း) ***"),
+                    ),
+                    (file?.path == null)
+                        ? Container()
+                        : Image.file(
+                            File(file!.path.toString()),
+                            width: 300,
+                            height: 200,
                           )
                   ],
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

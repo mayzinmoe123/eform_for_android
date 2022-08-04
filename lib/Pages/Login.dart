@@ -1,9 +1,13 @@
+import 'dart:html';
+
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_application_1/Pages/Register.dart';
 // import 'package:flutter_application_1/Pages/DivisionChoice.dart';
 
 import './DivisionChoice.dart';
+import './Register.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -53,8 +57,7 @@ class _LoginState extends State<Login> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: ((context) => DivisionChoice())));
+                Navigator.pushReplacementNamed(context, '/divisionChoice');
               },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
@@ -62,7 +65,22 @@ class _LoginState extends State<Login> {
                 "Login",
                 style: TextStyle(fontSize: 15),
               ),
-            )
+            ),
+            SafeArea(
+              child: SizedBox(
+                height: 50,
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => Register()));
+              },
+              child: Text(
+                "အကောင့်သစ်ဖွင့်ရန်",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
           ],
         ),
       ),

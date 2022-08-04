@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 //Pages
 // import 'dart:html';
 import './Pages/Login.dart';
+import './Pages/Register.dart';
 import './Pages/DivisionChoice.dart';
 import './Pages/MeterApplyChoice.dart';
 import './Pages/RulesAndRegulation.dart';
@@ -29,14 +30,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/login': (context) => Login(),
+        '/': (context) => Login(),
+        '/register': (context) => Register(),
         '/divisionChoice': (context) => DivisionChoice(),
         '/meterApply': (context) => MeterApplyChoice(),
         '/Rules': (context) => RulesAndRegulations(),
         '/Promise': (context) => Promise(),
         '/Money': (context) => Money(),
         '/ApplicationForm': (context) => ApplicationForm(),
-        '/': (context) => ApplicationFormNRC(),
+        '/ApplicationFormNRC': (context) => ApplicationFormNRC(),
       },
     );
   }

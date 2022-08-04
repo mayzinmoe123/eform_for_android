@@ -6,7 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 // import 'package:flutter_application_1/Pages/Promise.dart';
 // import 'package:flutter_application_1/Pages/MeterApplyChoice.dart';
 
-import './Login.dart';
+// import './Login.dart';
 import './MeterApplyChoice.dart';
 import './Promise.dart';
 
@@ -75,8 +75,11 @@ class _RulesAndRegulationsState extends State<RulesAndRegulations> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Promise()));
+                      if (checkedValue == true) {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Promise()));
+                      }
+                      ;
                     },
                     style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                     child: Text(
@@ -84,7 +87,10 @@ class _RulesAndRegulationsState extends State<RulesAndRegulations> {
                       style: TextStyle(fontSize: 12),
                     )),
               ],
-            )
+            ),
+            SizedBox(
+              height: 30,
+            ),
           ],
         ),
       ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+// import 'package:flutter_application_1/Pages/ApplicationForm.dart';
 
 import './Login.dart';
+import './ApplicationForm.dart';
 
 class Promise extends StatefulWidget {
   const Promise({Key? key}) : super(key: key);
@@ -59,8 +61,11 @@ class _PromiseState extends State<Promise> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Login()));
+                      if (checkedValue == true) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ApplicationForm()));
+                      }
+                      ;
                     },
                     style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                     child: Text(
