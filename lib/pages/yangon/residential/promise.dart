@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter_application_1/Pages/ApplicationForm.dart';
-
-import './Login.dart';
-import './ApplicationForm.dart';
+import 'package:flutter_application_1/pages/yangon/residential/application_form.dart';
 
 class Promise extends StatefulWidget {
   const Promise({Key? key}) : super(key: key);

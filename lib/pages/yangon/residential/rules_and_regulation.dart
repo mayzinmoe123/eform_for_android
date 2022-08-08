@@ -1,14 +1,7 @@
 // import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter_application_1/Pages/Promise.dart';
-// import 'package:flutter_application_1/Pages/MeterApplyChoice.dart';
-
-// import './Login.dart';
-import './MeterApplyChoice.dart';
-import './Promise.dart';
+import 'package:flutter_application_1/pages/yangon/residential/promise.dart';
 
 class RulesAndRegulations extends StatefulWidget {
   const RulesAndRegulations({Key? key}) : super(key: key);

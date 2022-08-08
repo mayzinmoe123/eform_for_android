@@ -1,32 +1,27 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_application_1/pages/yangon/residential/application_form_household.dart';
 
-// import 'package:open_file/open_file.dart';
-
-class ApplicationFormHousehold extends StatefulWidget {
-  const ApplicationFormHousehold({Key? key}) : super(key: key);
+class ApplicationFormNRC extends StatefulWidget {
+  const ApplicationFormNRC({Key? key}) : super(key: key);
 
   @override
-  State<ApplicationFormHousehold> createState() =>
-      _ApplicationFormHouseholdState();
+  State<ApplicationFormNRC> createState() => _ApplicationFormNRCState();
 }
 
-class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
-  // PlatformFile? file;
-  var imageFiles = [];
-  var imageFiles2 = [];
-
+class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
+  PlatformFile? file;
+  PlatformFile? file2;
   FilePickerResult? result;
+
   @override
   Widget build(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)"),
+        title: Text("လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)"),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -38,7 +33,7 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                   height: 15,
                 ),
                 Text(
-                  "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
+                  "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
                   style: TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.bold,
@@ -47,7 +42,7 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 10,
                 ),
                 Text(
                   "***ကြယ်အမှတ်အသားပါသော ကွက်လပ်များကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
@@ -63,11 +58,17 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        _openFileExplorer(mSize);
+                        _openFileExplorer();
                       },
-                      child: Text("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း) ***"),
+                      child: Text("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း) ***"),
                     ),
-                    // _getImage(mSize),
+                    (file?.path == null)
+                        ? Container()
+                        : Image.file(
+                            File(file!.path.toString()),
+                            width: mSize.width,
+                            height: 200,
+                          ),
                     SizedBox(
                       height: 20,
                     ),
@@ -75,9 +76,15 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                       onPressed: () {
                         _openFileExplorer2();
                       },
-                      child: Text("အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း) ***"),
+                      child: Text("မှတ်ပုံတင်နောက်ဖက် (မူရင်း) ***"),
                     ),
-                    _getImage2(mSize),
+                    (file2?.path == null)
+                        ? Container()
+                        : Image.file(
+                            File(file2!.path.toString()),
+                            width: mSize.width,
+                            height: 200,
+                          )
                   ],
                 ),
                 SizedBox(
@@ -112,6 +119,9 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                         )),
                   ],
                 ),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),
@@ -134,100 +144,37 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
     );
   }
 
-  Widget _getImage(mSize, aa) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          // childAspectRatio: 1.5,
-          mainAxisSpacing: 10,
-          // crossAxisSpacing: 10,
-          children: aa
-              .map((file) => Image.file(
-                    file,
-                    width: 100,
-                    height: 100,
-                  ))
-              .toList(),
-        ),
-      ),
+  void _openFileExplorer() async {
+    result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
     );
-  }
+    if (result == null) return;
 
-  Widget _getImage2(
-    mSize,
-  ) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          // childAspectRatio: 1.5,
-          mainAxisSpacing: 10,
-          // crossAxisCount: 2,
-          children: imageFiles2
-              .map((file) => Image.file(
-                    file,
-                    width: 100,
-                    height: 100,
-                  ))
-              .toList(),
-        ),
-      ),
-    );
-  }
-  // void _openFileExplorer() async {
-  //   file2 = files.toString();
-  //   result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
-  //   );
-  //   if (result == null) return;
+    // Do something with the file
 
-  //   // Do something with the file
+    file = result!.files.first;
+    print(file);
 
-  //   file = result!.files.first;
-  //   print(file);
-
-  //   // viewfile(file);
-  //   setState(() {});
-  // }
-
-  void _openFileExplorer(mSize) async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-
-    if (result != null) {
-      List<File> files = result.paths.map((path) => File(path!)).toList();
-      setState(() {
-        imageFiles = files;
-        // _getImage(mSize, imageFiles);
-        // print(_fileText);
-      });
-    } else {
-      // User canceled the picker
-    }
+    // viewfile(file);
+    setState(() {});
   }
 
   void _openFileExplorer2() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
+    result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
+    );
+    if (result == null) return;
 
-    if (result != null) {
-      List<File> files = result.paths.map((path) => File(path!)).toList();
-      setState(() {
-        imageFiles2 = files;
+    // Do something with the file
 
-        // print(_fileText);
-      });
-    } else {
-      // User canceled the picker
-    }
+    file2 = result!.files.first;
+    // var filename = file;
+    // print("${file}");
+
+    // viewfile(file);
+    setState(() {});
   }
 
   // void viewfile(PlatformFile file) {

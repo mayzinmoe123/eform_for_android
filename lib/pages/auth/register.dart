@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
-import './DivisionChoice.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);

@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter_application_1/Pages/RulesAndRegulation.dart';
-// import 'package:flutter_application_1/Pages/Login.dart';
-
-import './Login.dart';
-import './RulesAndRegulation.dart';
-import './MeterApplyChoice.dart';
+import 'package:flutter_application_1/pages/yangon/residential/meter_apply_choice.dart';
 
 class DivisionChoice extends StatefulWidget {
   const DivisionChoice({Key? key}) : super(key: key);

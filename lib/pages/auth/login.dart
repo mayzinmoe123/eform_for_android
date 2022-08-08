@@ -1,13 +1,5 @@
-// import 'dart:html';
-
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_application_1/Pages/Register.dart';
-// import 'package:flutter_application_1/Pages/DivisionChoice.dart';
-
-import './DivisionChoice.dart';
-import './Register.dart';
+import 'package:flutter_application_1/pages/auth/register.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

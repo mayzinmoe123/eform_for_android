@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter_application_1/Pages/RulesAndRegulation.dart';
-
-import './DivisionChoice.dart';
-import './Login.dart';
-import './RulesAndRegulation.dart';
+import 'package:flutter_application_1/pages/auth/login.dart';
+import 'package:flutter_application_1/pages/yangon/residential/division_choice.dart';
+import 'package:flutter_application_1/pages/yangon/residential/rules_and_regulation.dart';
 
 class MeterApplyChoice extends StatefulWidget {
   const MeterApplyChoice({Key? key}) : super(key: key);

@@ -1,35 +1,30 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
-// import 'dart:html';
-
 import 'package:file_picker/file_picker.dart';
-// import 'package:open_file/open_file.dart';
+import 'package:flutter/material.dart';
+
 // import 'package:open_file/open_file.dart';
 
-import 'ApplicationFormHousehold.dart';
-
-class ApplicationFormNRC extends StatefulWidget {
-  const ApplicationFormNRC({Key? key}) : super(key: key);
+class ApplicationFormHousehold extends StatefulWidget {
+  const ApplicationFormHousehold({Key? key}) : super(key: key);
 
   @override
-  State<ApplicationFormNRC> createState() => _ApplicationFormNRCState();
+  State<ApplicationFormHousehold> createState() =>
+      _ApplicationFormHouseholdState();
 }
 
-class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
-  PlatformFile? file;
-  PlatformFile? file2;
-  FilePickerResult? result;
+class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
+  // PlatformFile? file;
+  var imageFiles = [];
+  var imageFiles2 = [];
 
+  FilePickerResult? result;
   @override
   Widget build(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)"),
+        title: Text("လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)"),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -41,7 +36,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                   height: 15,
                 ),
                 Text(
-                  "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
+                  "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
                   style: TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.bold,
@@ -50,7 +45,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
                 Text(
                   "***ကြယ်အမှတ်အသားပါသော ကွက်လပ်များကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
@@ -66,17 +61,11 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        _openFileExplorer();
+                        _openFileExplorer(mSize);
                       },
-                      child: Text("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း) ***"),
+                      child: Text("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း) ***"),
                     ),
-                    (file?.path == null)
-                        ? Container()
-                        : Image.file(
-                            File(file!.path.toString()),
-                            width: mSize.width,
-                            height: 200,
-                          ),
+                    // _getImage(mSize),
                     SizedBox(
                       height: 20,
                     ),
@@ -84,15 +73,9 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                       onPressed: () {
                         _openFileExplorer2();
                       },
-                      child: Text("မှတ်ပုံတင်နောက်ဖက် (မူရင်း) ***"),
+                      child: Text("အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း) ***"),
                     ),
-                    (file2?.path == null)
-                        ? Container()
-                        : Image.file(
-                            File(file2!.path.toString()),
-                            width: mSize.width,
-                            height: 200,
-                          )
+                    _getImage2(mSize),
                   ],
                 ),
                 SizedBox(
@@ -127,9 +110,6 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                         )),
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
               ],
             ),
           ),
@@ -152,37 +132,100 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
     );
   }
 
-  void _openFileExplorer() async {
-    result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
+  Widget _getImage(mSize, aa) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.count(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          // childAspectRatio: 1.5,
+          mainAxisSpacing: 10,
+          // crossAxisSpacing: 10,
+          children: aa
+              .map((file) => Image.file(
+                    file,
+                    width: 100,
+                    height: 100,
+                  ))
+              .toList(),
+        ),
+      ),
     );
-    if (result == null) return;
+  }
 
-    // Do something with the file
+  Widget _getImage2(
+    mSize,
+  ) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.count(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          // childAspectRatio: 1.5,
+          mainAxisSpacing: 10,
+          // crossAxisCount: 2,
+          children: imageFiles2
+              .map((file) => Image.file(
+                    file,
+                    width: 100,
+                    height: 100,
+                  ))
+              .toList(),
+        ),
+      ),
+    );
+  }
+  // void _openFileExplorer() async {
+  //   file2 = files.toString();
+  //   result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
+  //   );
+  //   if (result == null) return;
 
-    file = result!.files.first;
-    print(file);
+  //   // Do something with the file
 
-    // viewfile(file);
-    setState(() {});
+  //   file = result!.files.first;
+  //   print(file);
+
+  //   // viewfile(file);
+  //   setState(() {});
+  // }
+
+  void _openFileExplorer(mSize) async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      setState(() {
+        imageFiles = files;
+        // _getImage(mSize, imageFiles);
+        // print(_fileText);
+      });
+    } else {
+      // User canceled the picker
+    }
   }
 
   void _openFileExplorer2() async {
-    result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
-    );
-    if (result == null) return;
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
-    // Do something with the file
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      setState(() {
+        imageFiles2 = files;
 
-    file2 = result!.files.first;
-    // var filename = file;
-    // print("${file}");
-
-    // viewfile(file);
-    setState(() {});
+        // print(_fileText);
+      });
+    } else {
+      // User canceled the picker
+    }
   }
 
   // void viewfile(PlatformFile file) {

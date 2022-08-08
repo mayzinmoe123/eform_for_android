@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_application_1/Pages/ApplicationFormNRC.dart';
-// import 'package:flutter_application_1/Pages/Money.dart';
-// import 'package:flutter_application_1/Pages/Promise.dart';
-// import 'package:flutter_application_1/Pages/RulesAndRegulation.dart';
-// import 'package:flutter_application_1/Pages/MeterApplyChoice.dart';
-
-//Pages
-// import 'dart:html';
-import './Pages/Login.dart';
-import './Pages/Register.dart';
-import './Pages/DivisionChoice.dart';
-import './Pages/MeterApplyChoice.dart';
-import './Pages/RulesAndRegulation.dart';
-import './Pages/Promise.dart';
-import './Pages/Money.dart';
-import './Pages/ApplicationForm.dart';
-import './Pages/ApplicationFormNRC.dart';
+import 'package:flutter_application_1/pages/auth/login.dart';
+import 'package:flutter_application_1/pages/auth/register.dart';
+import 'package:flutter_application_1/pages/yangon/residential/application_form.dart';
+import 'package:flutter_application_1/pages/yangon/residential/application_form_n_r_c.dart';
+import 'package:flutter_application_1/pages/yangon/residential/division_choice.dart';
+import 'package:flutter_application_1/pages/yangon/residential/meter_apply_choice.dart';
+import 'package:flutter_application_1/pages/yangon/residential/money.dart';
+import 'package:flutter_application_1/pages/yangon/residential/promise.dart';
+import 'package:flutter_application_1/pages/yangon/residential/rules_and_regulation.dart';
 
 void main() {
   runApp(const MyApp());

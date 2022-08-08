@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-// import 'package:flutter_application_1/Pages/ApplicationFormNRC.dart';
-
-import './ApplicationFormNRC.dart';
+import 'package:flutter_application_1/pages/yangon/residential/application_form_n_r_c.dart';
 
 class ApplicationForm extends StatefulWidget {
   const ApplicationForm({Key? key}) : super(key: key);
