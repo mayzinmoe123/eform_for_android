@@ -32,8 +32,8 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var apiPath = prefs.getString('api_path');
     setState(() {
-      String apiPath = "http://localhost/eform/public/";
-      // String apiPath = "http://192.168.99.183/eform/public/";
+      // String apiPath = "http://localhost/eform/public/";
+      String apiPath = "http://192.168.99.183/eform/public/";
       prefs.setString('api_path', apiPath);
     });
   }
