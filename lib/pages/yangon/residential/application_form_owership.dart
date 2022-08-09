@@ -1,27 +1,32 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential/application_form_household.dart';
+import 'package:flutter/material.dart';
 
-class ApplicationFormNRC extends StatefulWidget {
-  const ApplicationFormNRC({Key? key}) : super(key: key);
+import 'application_form_farm_land.dart';
+import 'application_form_recommend.dart';
+
+// import 'package:open_file/open_file.dart';
+
+class ApplicationFormOwnership extends StatefulWidget {
+  const ApplicationFormOwnership({Key? key}) : super(key: key);
 
   @override
-  State<ApplicationFormNRC> createState() => _ApplicationFormNRCState();
+  State<ApplicationFormOwnership> createState() =>
+      _ApplicationFormOwnershipState();
 }
 
-class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
-  PlatformFile? file;
-  PlatformFile? file2;
-  FilePickerResult? result;
+class _ApplicationFormOwnershipState extends State<ApplicationFormOwnership> {
+  // PlatformFile? file;
+  var imageFiles = [];
 
+  FilePickerResult? result;
   @override
   Widget build(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",style: TextStyle(fontFamily: "Burmese"),),
+        title: Text("လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",style: TextStyle(fontFamily: "Burmese"),),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -33,23 +38,24 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                   height: 15,
                 ),
                 Text(
-                  "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
+                  "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
                   style: TextStyle(
                     fontSize: 23,
-                    fontFamily: "Burmese",
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
+                    fontFamily: "Burmese",
                   ),
                   textAlign: TextAlign.center,
                 ),
+                Text("(အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)",style: TextStyle(fontFamily: "Burmese",fontSize: 10)),
                 SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
                 Text(
                   "***ကြယ်အမှတ်အသားပါသော ကွက်လပ်များကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
                   style: TextStyle(
+                    fontFamily: "Burmese",
                     color: Colors.red,
-                    fontFamily: "Burmese"
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -62,36 +68,18 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                       onPressed: () {
                         _openFileExplorer();
                       },
-                      child: Text("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese"),),
-                    ),
-                    (file?.path == null)
-                        ? Container()
-                        : Image.file(
-                            File(file!.path.toString()),
-                            width: mSize.width,
-                            height: 200,
-                          ),
+                      child: Text("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese"),),
+                    ),  
+                    Text("ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။",style: TextStyle(fontFamily: "Burmese",color: Colors.red,fontSize: 10)),
+                    _getImage(),
                     SizedBox(
                       height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _openFileExplorer2();
-                      },
-                      child: Text("မှတ်ပုံတင်နောက်ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese"),),
-                    ),
-                    (file2?.path == null)
-                        ? Container()
-                        : Image.file(
-                            File(file2!.path.toString()),
-                            width: mSize.width,
-                            height: 200,
-                          )
+                    ), 
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -102,7 +90,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 7)),
                         child:
-                            Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+                            Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15,fontFamily: "Burmese"),)),
                     SizedBox(
                       width: 10,
                     ),
@@ -113,16 +101,13 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  ApplicationFormHousehold()));
+                                  ApplicationFormRecommend()));
                         },
                         child: Text(
                           "ဖြည့်သွင်းမည်",
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 15,fontFamily: "Burmese"),
                         )),
                   ],
-                ),
-                SizedBox(
-                  height: 20,
                 ),
               ],
             ),
@@ -146,40 +131,46 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
     );
   }
 
+  Widget _getImage() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: GridView.count(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 3,
+            // childAspectRatio: 1.5,
+            mainAxisSpacing: 10,
+            // crossAxisSpacing: 10,
+            children: imageFiles
+                .map((file) => Image.file(
+                      file,
+                      width: 100,
+                      height: 100,
+                    ))
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+ 
   void _openFileExplorer() async {
-    result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png',  'jpeg'],
-    );
-    if (result == null) return;
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
-    // Do something with the file
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      setState(() {
+        imageFiles = files;
+        // _getImage(mSize, imageFiles);
+        // print(_fileText);
 
-    file = result!.files.first;
-    print(file);
-
-    // viewfile(file);
-    setState(() {});
+        // print(imageFiles);
+      });
+    } else {
+      // User canceled the picker
+    }
   }
-
-  void _openFileExplorer2() async {
-    result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'jpeg'],
-    );
-    if (result == null) return;
-
-    // Do something with the file
-
-    file2 = result!.files.first;
-    // var filename = file;
-    // print("${file}");
-
-    // viewfile(file);
-    setState(() {});
-  }
-
-  // void viewfile(PlatformFile file) {
-  //   OpenFile.open(file.path);
-  // }
 }

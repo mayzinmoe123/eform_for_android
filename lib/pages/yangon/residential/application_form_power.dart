@@ -2,31 +2,28 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
-import 'application_form_recommend.dart';
+import 'application_form_farm_land.dart';
 
-// import 'package:open_file/open_file.dart';
-
-class ApplicationFormHousehold extends StatefulWidget {
-  const ApplicationFormHousehold({Key? key}) : super(key: key);
+class ApplicationFormPower extends StatefulWidget {
+  const ApplicationFormPower({Key? key}) : super(key: key);
 
   @override
-  State<ApplicationFormHousehold> createState() =>
-      _ApplicationFormHouseholdState();
+  State<ApplicationFormPower> createState() => _ApplicationFormPowerState();
 }
 
-class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
-  // PlatformFile? file;
-  var imageFiles = [];
-  var imageFiles2 = [];
+class _ApplicationFormPowerState extends State<ApplicationFormPower> {
+   var imageFiles = [];
 
-  FilePickerResult? result;
+  // FilePickerResult? result;
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",style: TextStyle(fontFamily: "Burmese"),),
+        title: Text("လျှောက်ထားသူ၏ အဆောက်အဦးဓါတ်ပုံ",style: TextStyle(fontFamily: "Burmese"),),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -38,12 +35,12 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                   height: 15,
                 ),
                 Text(
-                  "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
+                  "အဆောက်အဦးဓါတ်ပုံ ",
                   style: TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
-                    fontFamily: "Burmese"
+                    fontFamily: "Burmese",
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -67,20 +64,13 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                       onPressed: () {
                         _openFileExplorer();
                       },
-                      child: Text("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese")),
-                    ),
+                      child: Text("အဆောက်အဦးဓါတ်ပုံ  ***",style: TextStyle(fontFamily: "Burmese"),),
+                    ),  
+                    Text("ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။",style: TextStyle(fontFamily: "Burmese",color: Colors.red,fontSize: 10)),
                     _getImage(),
                     SizedBox(
                       height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _openFileExplorer2();
-                      },
-                      child: Text("အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese")),
-                    ),
-                    _getImage2(),
-                    
+                    ), 
                   ],
                 ),
                 // SizedBox(
@@ -107,7 +97,7 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  ApplicationFormRecommend()));
+                                  ApplicationFormFarmLand()));
                         },
                         child: Text(
                           "ဖြည့်သွင်းမည်",
@@ -161,29 +151,6 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
       ),
     );
   }
-
-  Widget _getImage2() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 3,
-          // childAspectRatio: 1.5,
-          mainAxisSpacing: 10,
-          // crossAxisCount: 2,
-          children: imageFiles2
-              .map((file) => Image.file(
-                    file,
-                    width: 100,
-                    height: 100,
-                  ))
-              .toList(),
-        ),
-      ),
-    );
-  }
  
   void _openFileExplorer() async {
     FilePickerResult? result =
@@ -202,24 +169,4 @@ class _ApplicationFormHouseholdState extends State<ApplicationFormHousehold> {
       // User canceled the picker
     }
   }
-
-  void _openFileExplorer2() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-
-    if (result != null) {
-      List<File> files = result.paths.map((path) => File(path!)).toList();
-      setState(() {
-        imageFiles2 = files;
-
-        // print(imageFiles2);
-      });
-    } else {
-      // User canceled the picker
-    }
-  }
-
-  // void viewfile(PlatformFile file) {
-  //   OpenFile.open(file.path);
-  // }
 }

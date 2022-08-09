@@ -1,27 +1,31 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential/application_form_household.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
-class ApplicationFormNRC extends StatefulWidget {
-  const ApplicationFormNRC({Key? key}) : super(key: key);
+import 'application_form_household.dart';
+import 'application_form_owership.dart';
+
+class ApplicationFormRecommend extends StatefulWidget {
+  const ApplicationFormRecommend({Key? key}) : super(key: key);
 
   @override
-  State<ApplicationFormNRC> createState() => _ApplicationFormNRCState();
+  State<ApplicationFormRecommend> createState() =>
+      _ApplicationFormRecommendState();
 }
 
-class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
+class _ApplicationFormRecommendState extends State<ApplicationFormRecommend> {
   PlatformFile? file;
   PlatformFile? file2;
   FilePickerResult? result;
-
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",style: TextStyle(fontFamily: "Burmese"),),
+        title: Text("လျှောက်ထားသူ၏ ထောက်ခံစာဓါတ်ပုံ(မူရင်း)",style: TextStyle(fontFamily: "Burmese"),),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -33,12 +37,12 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                   height: 15,
                 ),
                 Text(
-                  "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
+                  "နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)",
                   style: TextStyle(
                     fontSize: 23,
-                    fontFamily: "Burmese",
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
+                    fontFamily: "Burmese"
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -62,7 +66,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                       onPressed: () {
                         _openFileExplorer();
                       },
-                      child: Text("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese"),),
+                      child: Text("နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း) ***"),
                     ),
                     (file?.path == null)
                         ? Container()
@@ -78,7 +82,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                       onPressed: () {
                         _openFileExplorer2();
                       },
-                      child: Text("မှတ်ပုံတင်နောက်ဖက် (မူရင်း) ***",style: TextStyle(fontFamily: "Burmese"),),
+                      child: Text("ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း) ***"),
                     ),
                     (file2?.path == null)
                         ? Container()
@@ -102,7 +106,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 7)),
                         child:
-                            Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+                            Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 13,fontFamily: "Burmese"))),
                     SizedBox(
                       width: 10,
                     ),
@@ -113,11 +117,11 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  ApplicationFormHousehold()));
+                                  ApplicationFormOwnership()));
                         },
                         child: Text(
                           "ဖြည့်သွင်းမည်",
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 13),
                         )),
                   ],
                 ),
@@ -149,7 +153,7 @@ class _ApplicationFormNRCState extends State<ApplicationFormNRC> {
   void _openFileExplorer() async {
     result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'png',  'jpeg'],
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
     );
     if (result == null) return;
 
