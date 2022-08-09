@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/auth/login.dart';
-import 'package:flutter_application_1/pages/yangon/residential/division_choice.dart';
+import 'package:flutter_application_1/pages/division_choice.dart';
 import 'package:flutter_application_1/pages/yangon/residential/rules_and_regulation.dart';
 
 class MeterApplyChoice extends StatefulWidget {
@@ -15,13 +15,22 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("မီတာလျှောက်ထားခြင်း"),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 18.0,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          "မီတာလျှောက်ထားခြင်း",
+          style: TextStyle(fontSize: 15.0),
+        ),
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 10,
-          ),
           _getMeterlist("အိမ်သုံးမီတာ လျှောက်ထားခြင်း", Icons.home,
               RulesAndRegulations()),
           _getMeterlist("အိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်း",
@@ -40,18 +49,25 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
     );
   }
 
-  Widget _getMeterlist(name, icon, page) {
+  Widget _getMeterlist(String name, IconData icon, page) {
     return Card(
-        child: ListTile(
-      title: Text(name, style: TextStyle(fontFamily: "Burmese")),
-      leading: Icon(icon),
-      trailing: InkWell(
+        child: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ListTile(
+        title: Text(name, style: TextStyle(fontSize: 14.0)),
+        leading: Icon(
+          icon,
+          size: 14.0,
+        ),
+        trailing: InkWell(
           onTap: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: ((context) => page)));
           },
-          child: Icon(Icons.arrow_right_alt_outlined)),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          child: Icon(Icons.double_arrow, size: 14.0),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      ),
     ));
   }
 }
