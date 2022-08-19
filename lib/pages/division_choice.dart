@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/utils/account_setting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,6 +16,7 @@ class DivisionChoice extends StatefulWidget {
 class _DivisionChoiceState extends State<DivisionChoice> {
   int selectedBottom = 0;
   bool isLoading = true;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -49,35 +51,47 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: applicationBar(),
+      key: scaffoldKey,
+      appBar: applicationBar(context),
       body: isLoading ? loading() : body(context),
       bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.dataset), label: 'လျှောက်လွှာပုံစံများ'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.sort), label: 'လုပ်ငန်းစဉ်အားလုံး'),
-          ],
-          currentIndex: selectedBottom,
-          onTap: (value) {
-            setState(() {
-              selectedBottom = value;
-            });
-          }),
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.dataset), label: 'လျှောက်လွှာပုံစံများ'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.sort), label: 'လုပ်ငန်းစဉ်အားလုံး'),
+        ],
+        currentIndex: selectedBottom,
+        onTap: (value) {
+          setState(() {
+            selectedBottom = value;
+          });
+        },
+      ),
+      endDrawer: AccountSetting('may', 'email'),
     );
   }
 
-  AppBar applicationBar() {
+  AppBar applicationBar(
+    BuildContext context,
+  ) {
     return AppBar(
-      centerTitle: true,
-      automaticallyImplyLeading: false,
-      title: const Text(
-        "မီတာလျှောက်လွှာပုံစံများ",
-        style: TextStyle(
-          fontSize: 18.0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "မီတာလျှောက်လွှာပုံစံများ",
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
         ),
-      ),
-    );
+        actions: [
+          IconButton(
+              icon: Icon(Icons.manage_accounts),
+              onPressed: () {
+                print('open end drawer');
+                scaffoldKey.currentState?.openEndDrawer();
+              }),
+        ]);
   }
 
   Widget loading() {

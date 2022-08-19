@@ -240,6 +240,9 @@ class _LoginState extends State<Login> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setString('token', data['token']);
+      prefs.setString('user_id', data['user_id']);
+      prefs.setString('user_name', data['user_name']);
+      prefs.setString('user_email', data['user_email']);
     });
     goToNextPage();
   }
