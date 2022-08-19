@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/auth/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
@@ -14,7 +14,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool isLoading = false;
-  SharedPreferences? prefs;
 
   final _loginFormKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
@@ -23,28 +22,28 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    getPrefs();
-  }
-
-  getPrefs() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      prefs = sharedPreferences;
-    });
-    var token = prefs!.getString('token');
-    if (token != null) {
-      goToNextPage();
-    }
   }
 
   Widget title() {
     return Center(
-      child: Text(
-        "E-Form အကောင့်ဝင်ရန်",
-        style: TextStyle(
-          fontSize: 18.0,
-          color: Colors.blue,
-        ),
+      child: Column(
+        children: [
+          Text(
+            "လျှပ်စစ်စွမ်းအားဝန်ကြီးဌာန",
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.yellow[800],
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            "E-Form သုံးစွဲသူအကောင့်ဝင်ရန်",
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Colors.blue,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -61,11 +60,12 @@ class _LoginState extends State<Login> {
     return TextFormField(
       controller: emailController,
       decoration: InputDecoration(
+        isDense: true,
         prefix: const Icon(
           Icons.person,
           size: 14.0,
         ),
-        labelText: "အီးမေးလ်လိပ်စာ",
+        label: Text("အီးမေးလ်လိပ်စာ"),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
       ),
       style: const TextStyle(
@@ -98,6 +98,7 @@ class _LoginState extends State<Login> {
       enableSuggestions: false,
       autocorrect: false,
       decoration: InputDecoration(
+        isDense: true,
         prefix: Icon(
           Icons.lock,
           size: 14.0,
@@ -127,6 +128,7 @@ class _LoginState extends State<Login> {
 
   ElevatedButton loginButton(BuildContext context) {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(shape: StadiumBorder()),
       onPressed: () {
         if (_loginFormKey.currentState!.validate()) {
           setState(() {
@@ -135,8 +137,6 @@ class _LoginState extends State<Login> {
           login(context, emailController.text, passwordController.text);
         }
       },
-      style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10)),
       child: const Text(
         'အကောင့်ဝင်မည်',
         style: TextStyle(
@@ -147,50 +147,56 @@ class _LoginState extends State<Login> {
     );
   }
 
-  InkWell registerButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const Register()));
+  ElevatedButton registerButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          shape: StadiumBorder(), primary: Colors.orange),
+      onPressed: () {
+        if (_loginFormKey.currentState!.validate()) {
+          startLoading();
+          login(context, emailController.text, passwordController.text);
+        }
       },
       child: const Text(
-        "အကောင့်မရှိပါက အကောင့်သစ်ဖွင့်ရန်",
+        'အကောင့်သစ်ဖွင့်မည်',
         style: TextStyle(
-          color: Colors.blue,
           fontSize: 14.0,
+          fontFamily: 'Pyidaungsu',
         ),
       ),
     );
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(height: 10),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
   Widget body() {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Form(
-          key: _loginFormKey,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 100),
-            child: Column(
-              children: [
-                logo(),
-                title(),
-                const SizedBox(height: 20),
-                username(),
-                const SizedBox(height: 20),
-                password(),
-                const SizedBox(height: 20),
-                loginButton(context),
-                const SizedBox(height: 20),
-                registerButton(),
-              ],
-            ),
-          ),
+    return Center(
+      child: Form(
+        key: _loginFormKey,
+        child: ListView(
+          padding: const EdgeInsets.all(20.0),
+          shrinkWrap: true,
+          children: [
+            logo(),
+            const SizedBox(height: 10),
+            title(),
+            const SizedBox(height: 20),
+            username(),
+            const SizedBox(height: 20),
+            password(),
+            const SizedBox(height: 20),
+            loginButton(context),
+            registerButton(context),
+          ],
         ),
       ),
     );
@@ -198,42 +204,42 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading ? loading() : body();
+    return Scaffold(
+      body: isLoading ? loading() : body(),
+    );
   }
 
   login(BuildContext context, String email, String password) async {
-    var apiPath = await prefs!.getString('api_path');
-    if (apiPath != null) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var apiPath = prefs.getString("api_path");
+    try {
       var url = Uri.parse('${apiPath}api/login');
-      // print('${apiPath}api/member_login');
-      try {
-        var response = await http.post(url, body: {
-          'email': email,
-          'password': password,
-        });
-        Map data = jsonDecode(response.body);
-        if (data['success']) {
-          loginSuccess(data);
-        } else {
-          stopLoading();
-          showAlertDialog(
-              'Login Invalid!', data['message'].toString(), context);
-        }
-      } catch (e) {
+      var response = await http.post(url, body: {
+        'email': email,
+        'password': password,
+      });
+      Map data = jsonDecode(response.body);
+      if (data['success'] == true) {
         stopLoading();
-        showAlertDialog('Connection Failed!',
-            'Please check your internect connection', context);
-        print(e);
+        loginSuccess(data);
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
       }
-    } else {
+    } on SocketException catch (e) {
+      print('http error $e');
       stopLoading();
-      showAlertDialog('Login Invalid!', 'login Path is invalid', context);
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
     }
   }
 
-  void loginSuccess(data) {
+  void loginSuccess(data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      prefs!.setString('token', data['token']);
+      prefs.setString('token', data['token']);
     });
     goToNextPage();
   }
@@ -244,7 +250,13 @@ class _LoginState extends State<Login> {
 
   void stopLoading() {
     setState(() {
-      this.isLoading = false;
+      isLoading = false;
+    });
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
     });
   }
 
@@ -260,10 +272,26 @@ class _LoginState extends State<Login> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
+  }
+
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/yangon/meter_apply_choice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,47 +13,101 @@ class DivisionChoice extends StatefulWidget {
 }
 
 class _DivisionChoiceState extends State<DivisionChoice> {
-  SharedPreferences? prefs;
+  int selectedBottom = 0;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    getPrefs();
+    checkToken();
   }
 
-  void getPrefs() async {
-    SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs = sharedPrefs;
-    });
-    var token = prefs!.getString('token');
-    checkToken(token);
-  }
-
-  void checkToken(token) async {
-    var apiPath = prefs!.getString('api_path');
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
     var url = Uri.parse('${apiPath}api/check_token');
     try {
       var response = await http.post(url, body: {'token': token});
       Map data = jsonDecode(response.body);
-      if (!data['success']) {
-        logout();
+      if (data['success'] == true) {
+        stopLoading();
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
       }
-    } catch (e) {
+    } on SocketException catch (e) {
+      print('http error $e');
+      stopLoading();
       showAlertDialog(
-          'Connection Failed!', 'Check your internet connection', context);
-      print('check token error $e');
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: applicationBar(),
+      body: isLoading ? loading() : body(context),
+      bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.dataset), label: 'လျှောက်လွှာပုံစံများ'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.sort), label: 'လုပ်ငန်းစဉ်အားလုံး'),
+          ],
+          currentIndex: selectedBottom,
+          onTap: (value) {
+            setState(() {
+              selectedBottom = value;
+            });
+          }),
+    );
   }
 
   AppBar applicationBar() {
     return AppBar(
+      centerTitle: true,
       automaticallyImplyLeading: false,
       title: const Text(
         "မီတာလျှောက်လွှာပုံစံများ",
         style: TextStyle(
-          fontSize: 15.0,
+          fontSize: 18.0,
         ),
+      ),
+    );
+  }
+
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      child: Column(
+        children: [
+          const SizedBox(height: 10.0),
+          divisionLink("ရန်ကုန်တိုင်းဒေသကြီးတွင် မီတာလျှောက်ထားခြင်း", () {
+            Navigator.pushNamed(context, '/yangon/meter');
+          }),
+          const SizedBox(height: 10.0),
+          divisionLink("မန္တလေးတိုင်းဒေသကြီးတွင် မီတာလျှောက်ထားခြင်း", () {}),
+          const SizedBox(height: 10.0),
+          divisionLink(
+              "အခြားတိုင်းဒေသကြီး/ပြည်နယ်များတွင် မီတာလျှောက်ထားခြင်း", () {}),
+        ],
       ),
     );
   }
@@ -65,57 +119,28 @@ class _DivisionChoiceState extends State<DivisionChoice> {
       child: ListTile(
         title: Text(
           title,
-          style: const TextStyle(fontSize: 14.0),
+          style: const TextStyle(fontSize: 16.0),
         ),
         leading: const Icon(Icons.map),
         trailing: InkWell(
           onTap: _onTapfun,
-          child: const Icon(Icons.arrow_circle_right),
+          child: const Icon(Icons.arrow_circle_right, color: Colors.blue),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
     ));
   }
 
-  Widget body(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(),
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-        child: Column(
-          children: [
-            const SizedBox(height: 10.0),
-            divisionLink("ရန်ကုန်တိုင်းဒေသကြီးတွင် \n မီတာလျှောက်ထားခြင်း", () {
-              Navigator.pushNamed(context, '/meter_apply');
-            }),
-            const SizedBox(height: 10.0),
-            divisionLink(
-                "မန္တလေးတိုင်းဒေသကြီးတွင် \n မီတာလျှောက်ထားခြင်း", () {}),
-            const SizedBox(height: 10.0),
-            divisionLink(
-                "အခြားတိုင်းဒေသကြီး/ပြည်နယ်များတွင် \n မီတာလျှောက်ထားခြင်း",
-                () {}),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return body(context);
-  }
-
-  void logout() async {
-    final pref = await SharedPreferences.getInstance();
-    pref.clear();
-
+  void stopLoading() {
     setState(() {
-      pref.clear();
-      pref.commit();
+      isLoading = false;
     });
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
@@ -130,10 +155,26 @@ class _DivisionChoiceState extends State<DivisionChoice> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
+  }
+
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
   }
 }

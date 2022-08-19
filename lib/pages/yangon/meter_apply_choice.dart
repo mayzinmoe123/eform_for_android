@@ -1,7 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/auth/login.dart';
-import 'package:flutter_application_1/pages/division_choice.dart';
-import 'package:flutter_application_1/pages/yangon/residential/rules_and_regulation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class MeterApplyChoice extends StatefulWidget {
   const MeterApplyChoice({Key? key}) : super(key: key);
@@ -11,63 +12,174 @@ class MeterApplyChoice extends StatefulWidget {
 }
 
 class _MeterApplyChoiceState extends State<MeterApplyChoice> {
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    checkToken();
+  }
+
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    try {
+      var response = await http.post(url, body: {'token': token});
+      Map data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        stopLoading();
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      print('http error $e');
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            size: 18.0,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          "မီတာလျှောက်ထားခြင်း",
-          style: TextStyle(fontSize: 15.0),
-        ),
+      appBar: applicatonBar(context),
+      body: isLoading ? loading() : body(context),
+    );
+  }
+
+  AppBar applicatonBar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: Text(
+        "မီတာလျှောက်ထားခြင်း",
+        style: TextStyle(fontSize: 18.0),
       ),
-      body: Column(
-        children: [
-          _getMeterlist("အိမ်သုံးမီတာ လျှောက်ထားခြင်း", Icons.home,
-              RulesAndRegulations()),
-          _getMeterlist("အိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်း",
-              Icons.electric_meter, DivisionChoice()),
-          _getMeterlist("စက်မှုသုံးပါဝါမီတာ လျှောက်ထားခြင်း",
-              Icons.construction, Login()),
-          _getMeterlist("ကန်ထရိုက်တိုက် မီတာလျှောက်ထားခြင်း",
-              Icons.business_center, Login()),
-          _getMeterlist("အိမ်သုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
-              Icons.flash_on_outlined, Login()),
-          _getMeterlist("လုပ်ငန်းသုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
-              Icons.flash_on_outlined, Login()),
-          _getMeterlist("ကျေးရွာမီးလင်းရေ", Icons.lightbulb_circle, Login()),
-        ],
+      actions: [
+        IconButton(
+          onPressed: () {
+            goToHomePage(context);
+          },
+          icon: Icon(Icons.home),
+        )
+      ],
+    );
+  }
+
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 3),
+        child: Column(
+          children: [
+            _getMeterlist("အိမ်သုံးမီတာ လျှောက်ထားခြင်း", Icons.home,
+                '/yangon/residential/r01_rules'),
+            _getMeterlist("အိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်း",
+                Icons.electric_meter, '/yangon/residential/r01_rules'),
+            _getMeterlist("စက်မှုသုံးပါဝါမီတာ လျှောက်ထားခြင်း",
+                Icons.construction, '/yangon/residential/r01_rules'),
+            _getMeterlist("ကန်ထရိုက်တိုက် မီတာလျှောက်ထားခြင်း",
+                Icons.business_center, '/yangon/residential/r01_rules'),
+            _getMeterlist("အိမ်သုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
+                Icons.flash_on_outlined, '/yangon/residential/r01_rules'),
+            _getMeterlist("လုပ်ငန်းသုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
+                Icons.flash_on_outlined, '/yangon/residential/r01_rules'),
+            _getMeterlist("ကျေးရွာမီးလင်းရေး", Icons.lightbulb_circle,
+                '/yangon/residential/r01_rules'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _getMeterlist(String name, IconData icon, page) {
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ListTile(
+  Widget _getMeterlist(String name, IconData icon, String navName) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
+      child: Card(
+          child: ListTile(
         title: Text(name, style: TextStyle(fontSize: 14.0)),
         leading: Icon(
           icon,
-          size: 14.0,
+          size: 15.0,
         ),
-        trailing: InkWell(
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: ((context) => page)));
-          },
-          child: Icon(Icons.double_arrow, size: 14.0),
+        trailing: Icon(
+          Icons.double_arrow,
+          size: 14.0,
+          color: Colors.blue,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      ),
-    ));
+        onTap: () {
+          Navigator.pushNamed(context, navName);
+        },
+      )),
+    );
+  }
+
+  void stopLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void showAlertDialog(String title, String content, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
+              )
+            ],
+          );
+        });
+  }
+
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void goToHomePage(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/division_choice', (route) => false);
   }
 }
