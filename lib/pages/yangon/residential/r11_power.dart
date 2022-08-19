@@ -103,8 +103,6 @@ class _R11PowerState extends State<R11Power> {
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
-              SizedBox(height: 10),
-              continueButton(),
             ],
           ),
         ),
@@ -320,21 +318,6 @@ class _R11PowerState extends State<R11Power> {
               style: TextStyle(fontSize: 15),
             )),
       ],
-    );
-  }
-
-  Widget continueButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          primary: Colors.orange),
-      onPressed: () {
-        goToNextPage();
-      },
-      child: Text(
-        "ဆက်လက်လုပ်ဆောင်မည်",
-        style: TextStyle(fontSize: 15),
-      ),
     );
   }
 

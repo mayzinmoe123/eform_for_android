@@ -102,8 +102,6 @@ class _R10BuildingState extends State<R10Building> {
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
-              SizedBox(height: 10),
-              continueButton(),
             ],
           ),
         ),
@@ -318,21 +316,6 @@ class _R10BuildingState extends State<R10Building> {
               style: TextStyle(fontSize: 15),
             )),
       ],
-    );
-  }
-
-  Widget continueButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          primary: Colors.orange),
-      onPressed: () {
-        goToNextPage();
-      },
-      child: Text(
-        "ဆက်လက်လုပ်ဆောင်မည်",
-        style: TextStyle(fontSize: 15),
-      ),
     );
   }
 
