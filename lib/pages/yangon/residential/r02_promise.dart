@@ -13,7 +13,8 @@ class R02Promise extends StatefulWidget {
 
 class _R02PromiseState extends State<R02Promise> {
   var checkedValue = false;
-  bool isLoading = true;
+  // bool isLoading = true;
+  bool isLoading = false;
   List<String> rules = [
     "လျှောက်ထားသူသည် ယခုအိမ်သုံးမီတာ လျှောက်ထားခြင်းအတွက် မည်သူကိုမျှ လာဘ်ငွေ၊ တံစိုးလက်ဆောင် တစ်စုံတစ်ရာ ပေးရခြင်းမရှိပါ။",
     "သတ်မှတ်ကြေးငွေများကို တစ်လုံးတစ်ခဲတည်း ပေးသွင်းသွားမည်ဖြစ်ပြီး ဓာတ်အားခများကိုလည်း လစဉ်ပုံမှန်ပေးချေသွားပါမည်။",
@@ -23,32 +24,32 @@ class _R02PromiseState extends State<R02Promise> {
   @override
   void initState() {
     super.initState();
-    checkToken();
+    // checkToken();
   }
 
-  void checkToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token');
-    var apiPath = prefs.getString('api_path');
-    var url = Uri.parse('${apiPath}api/check_token');
-    try {
-      var response = await http.post(url, body: {'token': token});
-      Map data = jsonDecode(response.body);
-      if (data['success']) {
-        stopLoading();
-      } else {
-        stopLoading();
-        showAlertDialog(data['title'], data['message'], context);
-      }
-    } on SocketException catch (e) {
-      stopLoading();
-      showAlertDialog(
-          'Connection timeout!',
-          'Error occured while Communication with Server. Check your internet connection',
-          context);
-      print('check token error $e');
-    }
-  }
+  // void checkToken() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var token = prefs.getString('token');
+  //   var apiPath = prefs.getString('api_path');
+  //   var url = Uri.parse('${apiPath}api/check_token');
+  //   try {
+  //     var response = await http.post(url, body: {'token': token});
+  //     Map data = jsonDecode(response.body);
+  //     if (data['success']) {
+  //       stopLoading();
+  //     } else {
+  //       stopLoading();
+  //       showAlertDialog(data['title'], data['message'], context);
+  //     }
+  //   } on SocketException catch (e) {
+  //     stopLoading();
+  //     showAlertDialog(
+  //         'Connection timeout!',
+  //         'Error occured while Communication with Server. Check your internet connection',
+  //         context);
+  //     print('check token error $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
