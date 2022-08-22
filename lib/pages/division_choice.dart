@@ -18,6 +18,9 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   bool isLoading = true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
+  String? userName;
+  String? userEmail;
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +32,12 @@ class _DivisionChoiceState extends State<DivisionChoice> {
     var token = prefs.getString('token');
     var apiPath = prefs.getString('api_path');
     var url = Uri.parse('${apiPath}api/check_token');
+
+    setState(() {
+      userName = prefs.getString('userName');
+      userEmail = prefs.getString('userEmail');
+    });
+
     try {
       var response = await http.post(url, body: {'token': token});
       Map data = jsonDecode(response.body);
@@ -68,7 +77,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           });
         },
       ),
-      endDrawer: AccountSetting('may', 'email'),
+      endDrawer: AccountSetting(),
     );
   }
 
