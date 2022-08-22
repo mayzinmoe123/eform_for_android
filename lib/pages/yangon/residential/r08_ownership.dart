@@ -195,8 +195,8 @@ class _R08OwnershipState extends State<R08Ownership> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;

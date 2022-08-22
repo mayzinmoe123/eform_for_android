@@ -197,8 +197,8 @@ class _R09FarmlandState extends State<R09Farmland> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;

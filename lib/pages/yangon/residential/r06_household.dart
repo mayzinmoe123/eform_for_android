@@ -199,8 +199,8 @@ class _R06HouseHoldState extends State<R06HouseHold> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -209,8 +209,8 @@ class _R06HouseHoldState extends State<R06HouseHold> {
   }
 
   void backExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         backFiles = files;
