@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         '/yangon/residential/r09_farmland': (context) => R09Farmland(),
         '/yangon/residential/r10_building': (context) => R10Building(),
         '/yangon/residential/r11_power': (context) => R11Power(),
-        '/yangon/residential/overview': (context) => Overview()
+        '/yangon/residential/overview': (context) => Overview(),
       },
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );
