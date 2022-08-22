@@ -20,7 +20,7 @@ class _R11PowerState extends State<R11Power> {
   bool frontFilesError = false;
 
   final subTitle = const Text(
-    "လအသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)",
+    "အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
