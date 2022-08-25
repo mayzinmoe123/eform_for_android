@@ -13,8 +13,7 @@ class RpForm02Promise extends StatefulWidget {
 
 class _RpForm02PromiseState extends State<RpForm02Promise> {
   var checkedValue = false;
-  // bool isLoading = true;
-  bool isLoading = false;
+  bool isLoading = true;
   List<String> rules = [
     "လျှောက်ထားသူသည် ယခုအိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်းအတွက် မည်သူကိုမျှ လာဘ်ငွေ၊ တံစိုးလက်ဆောင် တစ်စုံတစ်ရာ ပေးရခြင်းမရှိပါ။",
     "သတ်မှတ်ကြေးငွေများကို တစ်လုံးတစ်ခဲတည်း ပေးသွင်းသွားမည်ဖြစ်ပြီး ဓာတ်အားခများကိုလည်း လစဉ်ပုံမှန်ပေးချေသွားပါမည်။",
@@ -25,38 +24,56 @@ class _RpForm02PromiseState extends State<RpForm02Promise> {
   @override
   void initState() {
     super.initState();
-    // checkToken();
+    checkToken();
   }
 
-  // void checkToken() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var token = prefs.getString('token');
-  //   var apiPath = prefs.getString('api_path');
-  //   var url = Uri.parse('${apiPath}api/check_token');
-  //   try {
-  //     var response = await http.post(url, body: {'token': token});
-  //     Map data = jsonDecode(response.body);
-  //     if (data['success']) {
-  //       stopLoading();
-  //     } else {
-  //       stopLoading();
-  //       showAlertDialog(data['title'], data['message'], context);
-  //     }
-  //   } on SocketException catch (e) {
-  //     stopLoading();
-  //     showAlertDialog(
-  //         'Connection timeout!',
-  //         'Error occured while Communication with Server. Check your internet connection',
-  //         context);
-  //     print('check token error $e');
-  //   }
-  // }
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    try {
+      var response = await http.post(url, body: {'token': token});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToBack() {
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(context),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(context),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -152,7 +169,9 @@ class _RpForm02PromiseState extends State<RpForm02Promise> {
 
   Widget cancelButton() {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          goToBack();
+        },
         style: ElevatedButton.styleFrom(
             shape: StadiumBorder(), primary: Colors.grey[600]),
         child: Text(

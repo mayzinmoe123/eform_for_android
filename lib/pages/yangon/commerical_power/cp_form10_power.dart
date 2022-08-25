@@ -20,7 +20,7 @@ class _CpForm10PowerState extends State<CpForm10Power> {
   bool frontFilesError = false;
 
   final subTitle = const Text(
-    "လအသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)",
+    "အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -43,9 +43,15 @@ class _CpForm10PowerState extends State<CpForm10Power> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -189,8 +195,8 @@ class _CpForm10PowerState extends State<CpForm10Power> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +346,7 @@ class _CpForm10PowerState extends State<CpForm10Power> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/power");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -435,7 +441,7 @@ class _CpForm10PowerState extends State<CpForm10Power> {
 
   void goToNextPage() async {
     final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_power/cp_form11_current_meter',
+        context, '/yangon/commerical_power/cp_form11_meter',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

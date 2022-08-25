@@ -46,9 +46,15 @@ class _CForm07RecommendState extends State<CForm07Recommend> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -236,13 +242,15 @@ class _CForm07RecommendState extends State<CForm07Recommend> {
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: 20),
-        isReq ? requiredText(label) : optionalText(label),
-        SizedBox(height: 20),
-        imagePreview(file),
-        imageClear(imageClearFun)
-      ]),
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
     );
   }
 
@@ -331,7 +339,7 @@ class _CForm07RecommendState extends State<CForm07Recommend> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/recommanded");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -418,8 +426,7 @@ class _CForm07RecommendState extends State<CForm07Recommend> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form08_ownership',
+    final result = await Navigator.pushNamed(context, 'ygn_c_form08_ownership',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

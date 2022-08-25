@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form10_y_c_d_c.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -44,9 +43,15 @@ class _TForm09LicenseState extends State<TForm09License> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -187,8 +192,8 @@ class _TForm09LicenseState extends State<TForm09License> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -322,16 +327,18 @@ class _TForm09LicenseState extends State<TForm09License> {
                 style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
                 onPressed: () {
-                  if (frontFiles.length > 0) {
-                    startLoading();
-                    saveFile();
-                  } else {
-                    setState(() {
-                      frontFiles.length <= 0
-                          ? frontFilesError = true
-                          : frontFilesError = false;
-                    });
-                  }
+                  startLoading();
+                  saveFile();
+                  // if (frontFiles.length > 0) {
+                  //   startLoading();
+                  //   saveFile();
+                  // } else {
+                  //   setState(() {
+                  //     frontFiles.length <= 0
+                  //         ? frontFilesError = true
+                  //         : frontFilesError = false;
+                  //   });
+                  // }
                 },
                 child: Text(
                   "ဖြည့်သွင်းမည်",
@@ -347,8 +354,7 @@ class _TForm09LicenseState extends State<TForm09License> {
                 padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
                 primary: Colors.orangeAccent),
             onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => TForm10YCDC()));
+              goToNextPage();
             },
             child: Text(
               "ဆက်လက်လုပ်ဆောင်မည်",
@@ -377,7 +383,7 @@ class _TForm09LicenseState extends State<TForm09License> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/license");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -471,8 +477,7 @@ class _TForm09LicenseState extends State<TForm09License> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/transformer/t_form10_power',
+    final result = await Navigator.pushNamed(context, 'ygn_t_form10_dc',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

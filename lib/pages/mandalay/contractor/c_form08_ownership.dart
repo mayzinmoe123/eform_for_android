@@ -3,25 +3,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form10_y_c_d_c.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class CtForm09License extends StatefulWidget {
-  const CtForm09License({Key? key}) : super(key: key);
+class CForm08Ownership extends StatefulWidget {
+  const CForm08Ownership({Key? key}) : super(key: key);
 
   @override
-  State<CtForm09License> createState() => _CtForm09LicenseState();
+  State<CForm08Ownership> createState() => _CForm08OwnershipState();
 }
 
-class _CtForm09LicenseState extends State<CtForm09License> {
+class _CForm08OwnershipState extends State<CForm08Ownership> {
   int? formId;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
   final subTitle = const Text(
-    "လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)",
+    "လျှောက်ထားသူ၏ ပိုင်ဆိုင်မှုအထောက်အထားဓါတ်ပုံ(မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -31,7 +30,7 @@ class _CtForm09LicenseState extends State<CtForm09License> {
   );
 
   final noti = const Text(
-    "အနီရောင် ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -43,7 +42,7 @@ class _CtForm09LicenseState extends State<CtForm09License> {
     setState(() {
       formId = data['form_id'];
     });
-    print('form_id is $formId');
+    print('info form_id is $formId');
     return Scaffold(
       appBar: applicationBar(),
       body: isLoading ? loading() : body(context),
@@ -53,7 +52,8 @@ class _CtForm09LicenseState extends State<CtForm09License> {
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("လုပ်ငန်းလိုင်စင်", style: TextStyle(fontSize: 18.0)),
+      title: const Text("ပိုင်ဆိုင်မှုအထောက်အထား",
+          style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -97,10 +97,13 @@ class _CtForm09LicenseState extends State<CtForm09License> {
             children: [
               SizedBox(height: 15),
               subTitle,
+              SizedBox(height: 10),
+              noti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -145,10 +148,16 @@ class _CtForm09LicenseState extends State<CtForm09License> {
 
   Widget front() {
     return (frontFiles.length <= 0)
-        ? multipleUploadWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', false,
-            frontFilesError, frontExplorer)
-        : imagePreviewWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', false,
-            frontFiles, frontClear);
+        ? multipleUploadWidget(
+            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
+            true,
+            frontFilesError,
+            frontExplorer)
+        : imagePreviewWidget(
+            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
+            true,
+            frontFiles,
+            frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -161,7 +170,6 @@ class _CtForm09LicenseState extends State<CtForm09License> {
         height: 320,
         color: Colors.grey[200],
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isRequired
@@ -282,77 +290,38 @@ class _CtForm09LicenseState extends State<CtForm09License> {
   }
 
   Widget actionButton() {
-    var mSize = MediaQuery.of(context).size;
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: mSize.width,
-          height: 50,
-          decoration: BoxDecoration(color: Colors.redAccent),
-          child: Center(
-            child: Text(
-              "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "Pyidaungsu",
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
+        ElevatedButton(
+            onPressed: () {
+              goToBack();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.black12,
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+            child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
         SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  goToBack();
-                },
-                style: ElevatedButton.styleFrom(
-                    primary: Colors.black12,
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
-                child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
-            SizedBox(
-              width: 10,
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
-                onPressed: () {
-                  if (frontFiles.length > 0) {
-                    startLoading();
-                    saveFile();
-                  } else {
-                    setState(() {
-                      frontFiles.length <= 0
-                          ? frontFilesError = true
-                          : frontFilesError = false;
-                    });
-                  }
-                },
-                child: Text(
-                  "ဖြည့်သွင်းမည်",
-                  style: TextStyle(fontSize: 15),
-                )),
-          ],
-        ),
-        SizedBox(
-          height: 15,
+          width: 10,
         ),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
-                primary: Colors.orangeAccent),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => TForm10YCDC()));
+              if (frontFiles.length > 0) {
+                startLoading();
+                saveFile();
+              } else {
+                setState(() {
+                  frontFiles.length <= 0
+                      ? frontFilesError = true
+                      : frontFilesError = false;
+                });
+              }
             },
             child: Text(
-              "ဆက်လက်လုပ်ဆောင်မည်",
-              style: TextStyle(fontSize: 15, fontFamily: "Pyidaungsu"),
+              "ဖြည့်သွင်းမည်",
+              style: TextStyle(fontSize: 15),
             )),
       ],
     );
@@ -373,11 +342,10 @@ class _CtForm09LicenseState extends State<CtForm09License> {
   }
 
   void saveFile() async {
-    print('saving file');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/yangon/residential_ownership");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -472,7 +440,7 @@ class _CtForm09LicenseState extends State<CtForm09License> {
 
   void goToNextPage() async {
     final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_transformer/ct_form10_y_c_d_c',
+        context, '/mandalay/contractor/c_form09_allow_mdy',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

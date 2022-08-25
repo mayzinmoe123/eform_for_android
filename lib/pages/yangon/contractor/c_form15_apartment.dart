@@ -43,17 +43,23 @@ class _CForm15ApartmentState extends State<CForm15Apartment> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("တိုက်ပုံစံဓါတ်ပုံ(BQ)",
-          style: TextStyle(fontSize: 18.0)),
+      title:
+          const Text("တိုက်ပုံစံဓါတ်ပုံ(BQ)", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -189,8 +195,8 @@ class _CForm15ApartmentState extends State<CForm15Apartment> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +346,7 @@ class _CForm15ApartmentState extends State<CForm15Apartment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/bq");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -369,6 +375,8 @@ class _CForm15ApartmentState extends State<CForm15Apartment> {
         goToNextPage();
       } else {
         stopLoading();
+        // print('token is $token');
+        // print(responseMap);
         showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
     } on SocketException catch (e) {
@@ -435,7 +443,7 @@ class _CForm15ApartmentState extends State<CForm15Apartment> {
 
   void goToNextPage() async {
     final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form16_building_drawing',
+        context, 'ygn_c_form16_building_drawing',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

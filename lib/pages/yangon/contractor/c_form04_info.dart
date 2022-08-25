@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,13 +46,7 @@ class _CForm04InfoState extends State<CForm04Info> {
   TextEditingController nameController = TextEditingController();
   TextEditingController nrcController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController positionController = TextEditingController();
-  TextEditingController departmentController = TextEditingController();
-  TextEditingController otherController = TextEditingController();
-  TextEditingController salaryController = TextEditingController();
-  TextEditingController buildingTypeController = TextEditingController();
   TextEditingController homeNoController = TextEditingController();
-  TextEditingController apartmentController = TextEditingController();
   TextEditingController laneController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController quarterController = TextEditingController();
@@ -109,9 +105,15 @@ class _CForm04InfoState extends State<CForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(formId),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(formId),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -141,8 +143,15 @@ class _CForm04InfoState extends State<CForm04Info> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -162,24 +171,7 @@ class _CForm04InfoState extends State<CForm04Info> {
                   "ဥပမာ - ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
               _getFormRequired("ဆက်သွယ်ရမည့်ဖုန်း နံပါတ်", phoneController,
                   "အင်္ဂလိပ်စာဖြင့်သာ (ဥပမာ - 09123456 (သို့) 09123456789)"),
-              // jobField(),
-              // jobError
-              //     ? errorText('အလုပ်အကိုင်ရွေးချယ်ရန်လိုအပ်ပါသည်')
-              //     : SizedBox(),
-              // _selectedjob != 'other'
-              //     ? _getFormRequired("ရာထူး", positionController)
-              //     : SizedBox(),
-              // _selectedjob != 'other'
-              //     ? _getFormRequired("ဌာန/ကုမ္ပဏီ*", departmentController)
-              //     : SizedBox(),
-              // _selectedjob == 'other'
-              //     ? _getFormRequired("အခြား", otherController)
-              //     : SizedBox(),
-              // _getFormOptional("ပျမ်းမျှလစာ", salaryController),
-              // _getFormRequired("အဆောက်အဦးပုံစံ၊ အကျယ်အဝန်း၊ အိမ်အမျိုးအစား",
-              //     buildingTypeController),
               _getFormRequired("အိမ်/တိုက်အမှတ်", homeNoController),
-              // _getFormOptional("တိုက်ခန်းအမှတ်", apartmentController),
               _getFormRequired("လမ်းအမည်", streetController),
               _getFormOptional("လမ်းသွယ်အမည်", laneController),
               _getFormRequired("ရပ်ကွက်အမည်", quarterController),
@@ -375,17 +367,6 @@ class _CForm04InfoState extends State<CForm04Info> {
 
   bool checkDropDowns() {
     bool check = true;
-    // checking jobDropDown
-    if (_selectedjob == null || _selectedjob == '') {
-      setState(() {
-        jobError = true;
-      });
-      check = false;
-    } else {
-      setState(() {
-        jobError = false;
-      });
-    }
     // checking townshipdropdown
     if (townshipId == null || townshipId == '') {
       setState(() {
@@ -417,6 +398,8 @@ class _CForm04InfoState extends State<CForm04Info> {
             if (checkDropDowns() & _infoFormKey.currentState!.validate()) {
               startLoading();
               saveInfo();
+            } else {
+              print('validate error');
             }
           },
           child: Text("ဖြည့်သွင်းမည်"),
@@ -429,23 +412,15 @@ class _CForm04InfoState extends State<CForm04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_applicant_info");
+    var url = Uri.parse("${apiPath}api/applicant_info_contractor");
     try {
       var response = await http.post(url, body: {
         'token': token,
         'form_id': formId.toString(),
         'fullname': nameController.text,
         'nrc': nrcController.text,
-        'jobType': _selectedjob,
-        'other': otherController.text,
-        'otherSalary': salaryController.text,
-        'pos': positionController.text,
-        'salary': salaryController.text,
-        'dep': departmentController.text,
         'applied_phone': phoneController.text,
-        'applied_building_type': buildingTypeController.text,
         'applied_home_no': homeNoController.text,
-        'applied_building': apartmentController.text,
         'applied_street': streetController.text,
         'applied_lane': laneController.text,
         'applied_quarter': quarterController.text,
@@ -458,18 +433,25 @@ class _CForm04InfoState extends State<CForm04Info> {
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 
       Map data = jsonDecode(response.body);
-      print('http resonse $data');
-      setState(() {
-        formId = data['form']['id'];
-      });
       if (data['success']) {
+        stopLoading();
+        setState(() {
+          formId = data['form']['id'];
+        });
+        refreshToken(data['token']);
         goToNextPage();
       } else {
         stopLoading();
+        print(data);
+        // showAlertDialog(data['title'], data['message'], context);
       }
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
-      print('http post error $e');
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
     }
   }
 
@@ -492,7 +474,7 @@ class _CForm04InfoState extends State<CForm04Info> {
         style: TextStyle(fontFamily: "Pyidaungsu"),
       ),
       action: SnackBarAction(
-        label: "Dismiss",
+        label: "ပိတ်မည်",
         onPressed: () {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
@@ -512,16 +494,38 @@ class _CForm04InfoState extends State<CForm04Info> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form05_n_r_c',
+    final result = await Navigator.pushNamed(context, 'ygn_c_form05_n_r_c',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

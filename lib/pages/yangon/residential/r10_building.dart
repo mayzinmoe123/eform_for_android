@@ -43,9 +43,15 @@ class _R10BuildingState extends State<R10Building> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -147,8 +153,8 @@ class _R10BuildingState extends State<R10Building> {
   Widget front() {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
-            'အဆောက်အဦးဓါတ်ပုံ', false, frontFilesError, frontExplorer)
-        : imagePreviewWidget('အဆောက်အဦးဓါတ်ပုံ', false, frontFiles, frontClear);
+            'အဆောက်အဦး', false, frontFilesError, frontExplorer)
+        : imagePreviewWidget('အဆောက်အဦး', false, frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -338,7 +344,7 @@ class _R10BuildingState extends State<R10Building> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_building");
+    var url = Uri.parse("${apiPath}api/building");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

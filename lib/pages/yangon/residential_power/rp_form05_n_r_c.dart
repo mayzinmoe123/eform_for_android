@@ -46,9 +46,15 @@ class _RpForm05NRCState extends State<RpForm05NRC> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -333,7 +339,7 @@ class _RpForm05NRCState extends State<RpForm05NRC> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_nrc");
+    var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -343,10 +349,6 @@ class _RpForm05NRCState extends State<RpForm05NRC> {
       var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
       request.files.add(pic2);
       var response = await request.send();
-
-      // if (response.statusCode == 200) {
-      // stopLoading();
-      // print('Uploaded Success!');
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
@@ -361,10 +363,6 @@ class _RpForm05NRCState extends State<RpForm05NRC> {
         stopLoading();
         showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
-      // } else {
-      //   stopLoading();
-      //   showAlertDialog(responseMap['title'], responseMap['message'], context);
-      // }
     } on SocketException catch (e) {
       stopLoading();
       showAlertDialog('Connection timeout!',

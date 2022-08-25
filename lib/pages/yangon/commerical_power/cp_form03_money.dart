@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form04_info.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,48 +16,102 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("ကောက်ခံမည့်နှုန်းများ"),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 17),
-          child: Column(
-            children: [
-              Table(
-                border: TableBorder.all(
-                  color: Colors.black,
-                ),
-                children: [
-                  _getTableHeader(
-                      "အကြောင်းအရာများ", "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)","ကောက်ခံရမည့်နှုန်းထား (ကျပ်)","ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
-                        _getTableHeader(
-                      "အကြောင်းအရာများ", "၁၀ ကီလိုဝပ်","၂၀ ကီလိုဝပ်","၃၀ ကီလိုဝပ်"),
-                  getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "၈၀၀,၀၀၀","၁,၀၀၀,၀၀၀","၁,၂၀၀,၀၀၀"),
-                  getTableBodyDetail("အာမခံစဘော်ငွေ", "၈၂,၅၀၀","၁၅၇,၅၀၀","၂၃၂,၅၀၀"),
-                  getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "၈,၀၀၀","၈,၀၀၀","၈,၀၀၀"),
-                  getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၂၀,၀၀၀", "၂၀,၀၀၀", "၂၀,၀၀၀"),
-                  getTableBodyDetail("composit box", "၃၄,၀၀၀", "၃၄,၀၀၀", "၃၄,၀၀၀"),
-                  getTableBodyDetail("စုစုပေါင်း", "၉၄၄,၅၀၀","၁,၂၁၉,၅၀၀","၁,၄၉၄,၅၀၀"),
-                  _getChooseBtn(),
-                  // TableRow(children: [
-                  //   ElevatedButton(onPressed: () {}, child: Text("ရွေးချယ်မည်")),
-                  // ])
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              
-            ],
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+    );
+  }
+
+  AppBar applicationBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Text("ကောက်ခံမည့်နှုန်းများ", style: TextStyle(fontSize: 18.0)),
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          goToBack();
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            goToHomePage(context);
+          },
+          icon: Icon(
+            Icons.home,
+            size: 18.0,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 17),
+        child: Column(
+          children: [
+            Table(
+              border: TableBorder.all(
+                color: Colors.black,
+              ),
+              children: [
+                _getTableHeader(
+                    "အကြောင်းအရာများ",
+                    "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+                    "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+                    "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
+                _getTableHeader("အကြောင်းအရာများ", "၁၀ ကီလိုဝပ်", "၂၀ ကီလိုဝပ်",
+                    "၃၀ ကီလိုဝပ်"),
+                getTableBodyDetail(
+                    "မီတာသတ်မှတ်ကြေး", "၈၀၀,၀၀၀", "၁,၀၀၀,၀၀၀", "၁,၂၀၀,၀၀၀"),
+                getTableBodyDetail(
+                    "အာမခံစဘော်ငွေ", "၈၂,၅၀၀", "၁၅၇,၅၀၀", "၂၃၂,၅၀၀"),
+                getTableBodyDetail(
+                    "လိုင်းကြိုး (ဆက်သွယ်ခ)", "၈,၀၀၀", "၈,၀၀၀", "၈,၀၀၀"),
+                getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၂၀,၀၀၀",
+                    "၂၀,၀၀၀", "၂၀,၀၀၀"),
+                getTableBodyDetail(
+                    "composit box", "၃၄,၀၀၀", "၃၄,၀၀၀", "၃၄,၀၀၀"),
+                getTableBodyDetail(
+                    "စုစုပေါင်း", "၉၄၄,၅၀၀", "၁,၂၁၉,၅၀၀", "၁,၄၉၄,၅၀၀"),
+                _getChooseBtn(),
+                // TableRow(children: [
+                //   ElevatedButton(onPressed: () {}, child: Text("ရွေးချယ်မည်")),
+                // ])
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  TableRow _getTableHeader(d1, d2,d3,d4) {
+  TableRow _getTableHeader(d1, d2, d3, d4) {
     return TableRow(children: [
       _getTableHeaderDetail(d1),
       _getTableHeaderDetail(d2),
@@ -74,7 +126,8 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
       child: Center(
           child: Text(
         data,
-        style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
       )),
     );
   }
@@ -91,7 +144,7 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
     );
   }
 
-  TableRow getTableBodyDetail(d1, d2,d3,d4) {
+  TableRow getTableBodyDetail(d1, d2, d3, d4) {
     return TableRow(children: [
       _getTableBody(d1),
       _getTableBody(d2),
@@ -99,42 +152,46 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
       _getTableBody(d4),
     ]);
   }
-  TableRow _getChooseBtn(){
-    return TableRow(
-     children: [
-        Text(""),
-        _makeChooseBtn(),
-        _makeChooseBtn(),
-        _makeChooseBtn(),
-             
-     ]
-    );
+
+  TableRow _getChooseBtn() {
+    return TableRow(children: [
+      Text(""),
+      _makeChooseBtn(1),
+      _makeChooseBtn(2),
+      _makeChooseBtn(3),
+    ]);
   }
-  Widget _makeChooseBtn(){
+
+  Widget _makeChooseBtn(int type) {
     return Container(
       margin: EdgeInsets.all(14),
       child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => CpForm04Info()));
-                },
-                // style: OutlinedBorder(),
-                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),),
-                child: Text("ရွေးချယ်မည်",style: TextStyle(fontSize: 8),),
-              ),
+        onPressed: () {
+          meterTypeSave(type);
+        },
+        // style: OutlinedBorder(),
+        style: ElevatedButton.styleFrom(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        ),
+        child: Icon(Icons.check, color: Colors.white, size: 20),
+      ),
     );
   }
 
-   void meterTypeSave() async {
+  void meterTypeSave(int type) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String apiPath = pref.getString("api_path").toString();
     String token = pref.getString("token").toString();
     try {
       print("old token is $token");
-      var url = Uri.parse("${apiPath}api/yangon/residential_meter_type");
+      var url = Uri.parse("${apiPath}api/meter_type");
       var response = await http.post(url, body: {
         'token': token,
-        'form_id': formId != null ? formId.toString() : ''
+        'form_id': formId != null ? formId.toString() : '',
+        'apply_type': '3', // commercial power meter
+        'apply_division': '1', // yangon
+        'apply_sub_type': type.toString(),
       });
       Map data = jsonDecode(response.body);
       print('meter saving result $data');
@@ -232,5 +289,4 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
     Navigator.pushNamedAndRemoveUntil(
         context, '/division_choice', (route) => false);
   }
-
 }

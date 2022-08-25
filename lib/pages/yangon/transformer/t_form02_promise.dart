@@ -13,8 +13,7 @@ class TForm02Promise extends StatefulWidget {
 
 class _TForm02PromiseState extends State<TForm02Promise> {
   var checkedValue = false;
-  // bool isLoading = true;
-  bool isLoading = false;
+  bool isLoading = true;
   List<String> rules = [
     "လျှောက်ထားသူသည် ယခုထရန်စဖေါ်မာ လျှောက်ထားခြင်းအတွက် မည်သူကိုမျှ လာဘ်ငွေ၊ တံစိုးလက်ဆောင် တစ်စုံတစ်ရာ ပေးရခြင်းမရှိပါ။",
     "ထရန်စဖေါ်မာတည်ဆောက်ခွင့် ရရှိပါက သက်မှတ်ထားသော စံချိန်စံညွှန်းများနှင့်အညီ တည်ဆောက်သွားပါမည်။",
@@ -30,38 +29,52 @@ class _TForm02PromiseState extends State<TForm02Promise> {
   @override
   void initState() {
     super.initState();
-    // checkToken();
+    checkToken();
   }
 
-  // void checkToken() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var token = prefs.getString('token');
-  //   var apiPath = prefs.getString('api_path');
-  //   var url = Uri.parse('${apiPath}api/check_token');
-  //   try {
-  //     var response = await http.post(url, body: {'token': token});
-  //     Map data = jsonDecode(response.body);
-  //     if (data['success']) {
-  //       stopLoading();
-  //     } else {
-  //       stopLoading();
-  //       showAlertDialog(data['title'], data['message'], context);
-  //     }
-  //   } on SocketException catch (e) {
-  //     stopLoading();
-  //     showAlertDialog(
-  //         'Connection timeout!',
-  //         'Error occured while Communication with Server. Check your internet connection',
-  //         context);
-  //     print('check token error $e');
-  //   }
-  // }
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    try {
+      var response = await http.post(url, body: {'token': token});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(context),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(context),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -155,9 +168,15 @@ class _TForm02PromiseState extends State<TForm02Promise> {
     );
   }
 
+  void goToBack() {
+    Navigator.of(context).pop();
+  }
+
   Widget cancelButton() {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          goToBack();
+        },
         style: ElevatedButton.styleFrom(
             shape: StadiumBorder(), primary: Colors.grey[600]),
         child: Text(
@@ -248,7 +267,7 @@ class _TForm02PromiseState extends State<TForm02Promise> {
   }
 
   void goToNextPage(BuildContext context) {
-    Navigator.pushNamed(context, '/yangon/transformer/t_form03_money');
+    Navigator.pushNamed(context, 'ygn_t_form03_money_type');
   }
 
   void goToHomePage(BuildContext context) {

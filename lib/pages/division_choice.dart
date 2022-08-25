@@ -43,6 +43,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
       Map data = jsonDecode(response.body);
       if (data['success'] == true) {
         stopLoading();
+        refreshToken(data['token']);
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -55,6 +56,13 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
     }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
   }
 
   @override

@@ -43,17 +43,22 @@ class _CForm17LocationState extends State<CForm17Location> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("တည်နေရာပြမြေပုံ",
-          style: TextStyle(fontSize: 18.0)),
+      title: const Text("တည်နေရာပြမြေပုံ", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -149,8 +154,7 @@ class _CForm17LocationState extends State<CForm17Location> {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
             'တည်နေရာပြမြေပုံ', true, frontFilesError, frontExplorer)
-        : imagePreviewWidget(
-            'တည်နေရာပြမြေပုံ', true, frontFiles, frontClear);
+        : imagePreviewWidget('တည်နေရာပြမြေပုံ', true, frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -189,8 +193,8 @@ class _CForm17LocationState extends State<CForm17Location> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +344,7 @@ class _CForm17LocationState extends State<CForm17Location> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/map");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -434,8 +438,7 @@ class _CForm17LocationState extends State<CForm17Location> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form18_sign',
+    final result = await Navigator.pushNamed(context, 'ygn_c_form18_sign',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

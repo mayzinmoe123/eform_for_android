@@ -43,9 +43,15 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -147,8 +153,8 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
   Widget front() {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
-            'အဆောက်အဦးဓါတ်ပုံ', false, frontFilesError, frontExplorer)
-        : imagePreviewWidget('အဆောက်အဦးဓါတ်ပုံ', false, frontFiles, frontClear);
+            'အဆောက်အဦးဓါတ်ပုံ', true, frontFilesError, frontExplorer)
+        : imagePreviewWidget('အဆောက်အဦးဓါတ်ပုံ', true, frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -187,8 +193,8 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;

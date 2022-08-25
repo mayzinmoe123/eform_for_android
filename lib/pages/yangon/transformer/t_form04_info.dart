@@ -11,7 +11,7 @@ class TForm04Info extends StatefulWidget {
 }
 
 class _TForm04InfoState extends State<TForm04Info> {
-  var religiousCheckedValue = false;
+  bool religiousCheckedValue = false;
   int? formId;
   bool isLoading = true;
 
@@ -110,13 +110,25 @@ class _TForm04InfoState extends State<TForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(formId),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+      child: WillPopScope(
+        child: Scaffold(
+          appBar: applicationBar(),
+          body: isLoading ? loading() : body(context),
+        ),
+        onWillPop: () async {
+          goToBack();
+          return true;
+        },
+      ),
     );
   }
 
-  AppBar applicationBar(formId) {
+  AppBar applicationBar() {
     return AppBar(
       title: Text("ကိုယ်တိုင်ရေးလျှောက်လွှာပုံစံ",
           style: TextStyle(fontSize: 18.0)),
@@ -142,8 +154,15 @@ class _TForm04InfoState extends State<TForm04Info> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -161,26 +180,32 @@ class _TForm04InfoState extends State<TForm04Info> {
               _getReligiousCheckBox("ဘာသာ/သာသနာအတွက်ဖြစ်ပါက အမှန်ခြစ်ပါ"),
               SizedBox(height: 13),
               _getFormRequired("နာမည်အပြည့်အစုံ", nameController),
-              Container(margin: EdgeInsets.only(top: 8),child: Text("မှတ်ပုံတင်အမှတ်(ဘာသာ/သာသနာအတွက် ဖြစ်ပါက သာသနာရေးကဒ်အမှတ်)")),
+              Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: Text(
+                      "မှတ်ပုံတင်အမှတ်(ဘာသာ/သာသနာအတွက် ဖြစ်ပါက သာသနာရေးကဒ်အမှတ်)")),
               _getFormRequired("မှတ်ပုံတင်အမှတ်", nrcController,
                   "ဥပမာ - ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
               _getFormRequired("ဆက်သွယ်ရမည့်ဖုန်း နံပါတ်", phoneController,
                   "အင်္ဂလိပ်စာဖြင့်သာ (ဥပမာ - 09123456 (သို့) 09123456789)"),
-              jobField(),
-              jobError
+              if (!religiousCheckedValue) jobField(),
+              jobError && !religiousCheckedValue
                   ? errorText('အလုပ်အကိုင်ရွေးချယ်ရန်လိုအပ်ပါသည်')
-                  : SizedBox(),
-              _selectedjob != 'other'
+                  : SizedBox(height: 0),
+              _selectedjob != 'other' && !religiousCheckedValue
                   ? _getFormRequired("ရာထူး", positionController)
                   : SizedBox(),
-              _selectedjob != 'other'
+              _selectedjob != 'other' && !religiousCheckedValue
                   ? _getFormRequired("ဌာန/ကုမ္ပဏီ*", departmentController)
                   : SizedBox(),
-              _selectedjob == 'other'
+              _selectedjob == 'other' && !religiousCheckedValue
                   ? _getFormRequired("အခြား", otherController)
                   : SizedBox(),
               _getFormOptional("ပျမ်းမျှလစာ", salaryController),
-              Container(margin: EdgeInsets.all(8),child: Text("အဆောက်အဦးပုံစံ၊ အကျယ်အဝန်း၊ အိမ်အမျိုးအစား (ဘာသာ/သာသနာအတွက် ဖြစ်ပါက နေရာ(သို့)ကျောင်းတိုက်အမည်")),
+              Container(
+                  margin: EdgeInsets.all(8),
+                  child: Text(
+                      "အဆောက်အဦးပုံစံ၊ အကျယ်အဝန်း၊ အိမ်အမျိုးအစား (ဘာသာ/သာသနာအတွက် ဖြစ်ပါက နေရာ(သို့)ကျောင်းတိုက်အမည်")),
               _getFormRequired("အဆောက်အဦးပုံစံ၊ အကျယ်အဝန်း၊ အိမ်အမျိုးအစား",
                   buildingTypeController),
               _getFormRequired("အိမ်/တိုက်အမှတ်", homeNoController),
@@ -192,7 +217,9 @@ class _TForm04InfoState extends State<TForm04Info> {
               townshipDropdown(),
               townshipError
                   ? errorText('မြို့နယ်ရွေးချယ်ရန်လိုအပ်ပါသည်')
-                  : SizedBox(),
+                  : SizedBox(
+                      height: 0,
+                    ),
               _getFormRequiredReadonly("ခရိုင်", districtController, context,
                   'ခရိုင်ကို ကိုယ်တိုင်ဖြည့်သွင်းရန်မလိုပါ။ "မြို့နယ်"ရွေးချယ်ပြီးပါက ဖြည့်သွင်းပြီးဖြစ်သွားပါလိမ့်မည်။'),
               _getFormRequiredReadonly(
@@ -210,7 +237,6 @@ class _TForm04InfoState extends State<TForm04Info> {
     );
   }
 
-
   Widget errorText(String text) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 6),
@@ -224,7 +250,7 @@ class _TForm04InfoState extends State<TForm04Info> {
     );
   }
 
-   Widget _getReligiousCheckBox(name) {
+  Widget _getReligiousCheckBox(name) {
     return CheckboxListTile(
       title: Text(
         name,
@@ -278,9 +304,7 @@ class _TForm04InfoState extends State<TForm04Info> {
           label,
           style: TextStyle(fontSize: 14.0),
         ),
-        SizedBox(
-          width: 10,
-        ),
+        SizedBox(width: 10),
         Text(
           '*',
           style: TextStyle(
@@ -341,7 +365,7 @@ class _TForm04InfoState extends State<TForm04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
-          hint: requiredText("အလုပ်အကိုင်"),
+          hint: Text("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: Text("အလုပ်အကိုင်(ဘာသာ/သာသနာအတွက် ဖြစ်ပါက ဖြည့်ရန်မလိုပါ)"),
             isDense: true,
@@ -398,15 +422,17 @@ class _TForm04InfoState extends State<TForm04Info> {
   bool checkDropDowns() {
     bool check = true;
     // checking jobDropDown
-    if (_selectedjob == null || _selectedjob == '') {
-      setState(() {
-        jobError = true;
-      });
-      check = false;
-    } else {
-      setState(() {
-        jobError = false;
-      });
+    if (!religiousCheckedValue) {
+      if (_selectedjob == null || _selectedjob == '') {
+        setState(() {
+          jobError = true;
+        });
+        check = false;
+      } else {
+        setState(() {
+          jobError = false;
+        });
+      }
     }
     // checking townshipdropdown
     if (townshipId == null || townshipId == '') {
@@ -451,31 +477,34 @@ class _TForm04InfoState extends State<TForm04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_applicant_info");
+    var url = Uri.parse("${apiPath}api/applicant_info_transformer");
     try {
-      var response = await http.post(url, body: {
+      Map bodyData = {
         'token': token,
         'form_id': formId.toString(),
-        'fullname': nameController.text,
-        'nrc': nrcController.text,
-        'jobType': _selectedjob,
-        'other': otherController.text,
-        'otherSalary': salaryController.text,
-        'pos': positionController.text,
-        'salary': salaryController.text,
-        'dep': departmentController.text,
-        'applied_phone': phoneController.text,
-        'applied_building_type': buildingTypeController.text,
-        'applied_home_no': homeNoController.text,
-        'applied_building': apartmentController.text,
-        'applied_street': streetController.text,
-        'applied_lane': laneController.text,
-        'applied_quarter': quarterController.text,
-        'applied_town': townController.text,
+        'religion': religiousCheckedValue ? 'yes' : 'no',
+        'fullname': nameController.text.toString(),
+        'nrc': nrcController.text.toString(),
+        'jobType': _selectedjob ?? '',
+        'other': otherController.text.toString(),
+        'otherSalary': salaryController.text.toString(),
+        'pos': positionController.text.toString(),
+        'salary': salaryController.text.toString(),
+        'dep': departmentController.text.toString(),
+        'applied_phone': phoneController.text.toString(),
+        'applied_building_type': buildingTypeController.text.toString(),
+        'applied_home_no': homeNoController.text.toString(),
+        'applied_building': apartmentController.text.toString(),
+        'applied_street': streetController.text.toString(),
+        'applied_lane': laneController.text.toString(),
+        'applied_quarter': quarterController.text.toString(),
+        'applied_town': townController.text.toString(),
         'township_id': townshipId.toString(),
         'district_id': districtId.toString(),
         'div_state_id': divisionId.toString()
-      });
+      };
+      // print('bodyData is $bodyData');
+      var response = await http.post(url, body: bodyData);
 
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 
@@ -484,6 +513,7 @@ class _TForm04InfoState extends State<TForm04Info> {
       setState(() {
         formId = data['form']['id'];
       });
+      refreshToken(data['token']);
       if (data['success']) {
         goToNextPage();
       } else {
@@ -493,6 +523,13 @@ class _TForm04InfoState extends State<TForm04Info> {
       stopLoading();
       print('http post error $e');
     }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
   }
 
   void stopLoading() {
@@ -534,16 +571,31 @@ class _TForm04InfoState extends State<TForm04Info> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/transformer/t_form05_n_r_c',
+    final result = await Navigator.pushNamed(context, 'ygn_t_form05_n_r_c',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

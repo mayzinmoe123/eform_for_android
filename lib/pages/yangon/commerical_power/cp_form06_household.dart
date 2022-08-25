@@ -45,9 +45,15 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -78,8 +84,15 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -181,8 +194,8 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -191,8 +204,8 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
   }
 
   void backExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         backFiles = files;
@@ -312,7 +325,6 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
             onPressed: () {
               if (frontFiles.length > 0 && backFiles.length > 0) {
                 startLoading();
-                goToNextPage(formId);
                 saveFile();
               } else {
                 setState(() {
@@ -351,7 +363,7 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_form10");
+    var url = Uri.parse("${apiPath}api/form10");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -375,40 +387,24 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
 
       var response = await request.send();
 
-      if (response.statusCode == 200) {
+      //Get the response from the server
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      var responseMap = jsonDecode(responseString);
+
+      if (responseMap['success'] == true) {
         stopLoading();
-        print('Uploaded Success in household!');
-
-        //Get the response from the server
-        var responseData = await response.stream.toBytes();
-        var responseString = String.fromCharCodes(responseData);
-        var responseMap = jsonDecode(responseString);
-
-        print('http resonse $responseMap');
-
-        if (responseMap['success'] == true) {
-          stopLoading();
-          var form = responseMap['form'];
-          goToNextPage(form["id"]);
-        } else {
-          stopLoading();
-          showAlertDialog(
-              'Upload Failed',
-              'some error occours in upload files. Please try later or connect to developer team',
-              context);
-        }
+        refreshToken(responseMap['token']);
+        goToNextPage();
       } else {
         stopLoading();
-        print('token $token');
-        showAlertDialog('Connection Failed',
-            'Please check you internet connection', context);
+        showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
-    } catch (e) {
-      print('http post error $e');
-      print('token $token');
+    } on SocketException catch (e) {
       stopLoading();
-      showAlertDialog('Connection Failed',
-          'Please check you internet connection http post error $e', context);
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
+      print('connection error $e');
     }
   }
 
@@ -436,17 +432,40 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
-  void goToNextPage(formIdValue) async {
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToNextPage() async {
     final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form07_recommend',
-        arguments: {'form_id': formIdValue});
+        arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });

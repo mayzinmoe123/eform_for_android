@@ -29,6 +29,7 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
       Map data = jsonDecode(response.body);
       if (data['success'] == true) {
         stopLoading();
+        refreshToken(data['token']);
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -41,6 +42,13 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
     }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
   }
 
   @override
@@ -90,18 +98,20 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
           children: [
             _getMeterlist("အိမ်သုံးမီတာ လျှောက်ထားခြင်း", Icons.home,
                 '/yangon/residential/r01_rules'),
-            _getMeterlist("အိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်း",
-                Icons.electric_meter, '/yangon/residential/r01_rules'),
+            _getMeterlist(
+                "အိမ်သုံးပါဝါမီတာ လျှောက်ထားခြင်း",
+                Icons.electric_meter,
+                '/yangon/residential_power/rp_form01_rules'),
             _getMeterlist("စက်မှုသုံးပါဝါမီတာ လျှောက်ထားခြင်း",
-                Icons.construction, '/yangon/residential/r01_rules'),
+                Icons.construction, '/yangon/commerical_power/cp_form01_rules'),
             _getMeterlist("ကန်ထရိုက်တိုက် မီတာလျှောက်ထားခြင်း",
-                Icons.business_center, '/yangon/residential/r01_rules'),
+                Icons.business_center, 'ygn_c_form01_rules'),
             _getMeterlist("အိမ်သုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
-                Icons.flash_on_outlined, '/yangon/residential/r01_rules'),
+                Icons.flash_on_outlined, 'ygn_t_form01_rules'),
             _getMeterlist("လုပ်ငန်းသုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
-                Icons.flash_on_outlined, '/yangon/residential/r01_rules'),
-            _getMeterlist("ကျေးရွာမီးလင်းရေး", Icons.lightbulb_circle,
-                '/yangon/residential/r01_rules'),
+                Icons.flash_on_outlined, 'ygn_ct_form01_rules'),
+            // _getMeterlist("ကျေးရွာမီးလင်းရေး", Icons.lightbulb_circle,
+            //     '/yangon/residential/r01_rules'),
           ],
         ),
       ),

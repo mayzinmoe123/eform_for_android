@@ -3,8 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form12_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form11_farm_land.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,7 +19,6 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
-  
 
   final subTitle = const Text(
     "လက်ရှိတပ်ဆင်ထားသော မီတာချလံဓါတ်ပုံ (မူရင်း)",
@@ -34,23 +31,28 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "လက်ရှိတပ်ဆင်ထားသောမီတာမရှိပါက ဆက်လက်လုပ်ဆောင်မည်ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
 
   @override
   Widget build(BuildContext context) {
-   
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -153,13 +155,11 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
 
   Widget front() {
     return (frontFile == null)
-        ? uploadWidget('လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ', true,
+        ? uploadWidget('လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ', false,
             frontFileError, frontExplorer)
-        : previewWidget('လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ', true,
+        : previewWidget('လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ', false,
             frontFile!, frontClear);
   }
-
- 
 
   Widget uploadWidget(String label, bool isRequired, bool errorState,
       VoidCallback openExployer) {
@@ -202,8 +202,6 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
       });
     }
   }
-
-
 
   dynamic _openFileExplorer() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -259,28 +257,29 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
     });
   }
 
-
   Widget actionButton(BuildContext context) {
-     var mSize = MediaQuery.of(context).size;
+    var mSize = MediaQuery.of(context).size;
     return Column(
       children: [
-         Container(
-                  width: mSize.width,
-                  height: 50,
-                  decoration: BoxDecoration(color: Colors.redAccent),
-                   child: Center(
-                     child: Text(
-                      "လက်ရှိတပ်ဆင်ထားသောမီတာမရှိပါက ဆက်လက်လုပ်ဆောင်မည်ကိုနှိပ်ပါ။",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: "Pyidaungsu",
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                ),
-                   ),
-                 ),
-                 SizedBox(height: 20,),
+        // Container(
+        //   width: mSize.width,
+        //   height: 50,
+        //   decoration: BoxDecoration(color: Colors.redAccent),
+        //   child: Center(
+        //     child: Text(
+        //       "လက်ရှိတပ်ဆင်ထားသောမီတာမရှိပါက ဆက်လက်လုပ်ဆောင်မည်ကိုနှိပ်ပါ။",
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontFamily: "Pyidaungsu",
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //       textAlign: TextAlign.center,
+        //     ),
+        //   ),
+        // ),
+        SizedBox(
+          height: 20,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -299,38 +298,39 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
                 style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
                 onPressed: () {
-                  if (frontFile != null) {
-                    startLoading();
-                    saveFile(context);
-                  } else {
-                    setState(() {
-                      frontFile == null ? frontFileError = true : true;
-                      
-                    });
-                  }
+                  startLoading();
+                  saveFile(context);
+                  // if (frontFile != null) {
+                  //   startLoading();
+                  //   saveFile(context);
+                  // } else {
+                  //   setState(() {
+                  //     frontFile == null ? frontFileError = true : true;
+                  //   });
+                  // }
                 },
                 child: Text(
                   "ဖြည့်သွင်းမည်",
                   style: TextStyle(fontSize: 15),
                 )),
-          ], 
+          ],
         ),
-        SizedBox(height: 15,),
-         ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 7),primary: Colors.orangeAccent),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  CpForm12FarmLand()));
-                        },
-                        child: Text(
-                          "ဆက်လက်လုပ်ဆောင်မည်",
-                          style: TextStyle(fontSize: 15,fontFamily: "Pyidaungsu"),
-                        )),
+        SizedBox(
+          height: 15,
+        ),
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+                primary: Colors.orangeAccent),
+            onPressed: () {
+              goToNextPage();
+            },
+            child: Text(
+              "ဆက်လက်လုပ်ဆောင်မည်",
+              style: TextStyle(fontSize: 15, fontFamily: "Pyidaungsu"),
+            )),
       ],
-    ); 
+    );
   }
 
   Widget _getForm(name, [hintTxt]) {
@@ -351,13 +351,15 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/bill");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
-      var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
-      request.files.add(pic1);
+      if (frontFile != null) {
+        var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
+        request.files.add(pic1);
+      }
       var response = await request.send();
 
       //Get the response from the server

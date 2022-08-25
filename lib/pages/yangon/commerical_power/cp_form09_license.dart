@@ -43,17 +43,22 @@ class _CpForm09LicenseState extends State<CpForm09License> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("လုပ်ငန်းလိုင်စင်",
-          style: TextStyle(fontSize: 18.0)),
+      title: const Text("လုပ်ငန်းလိုင်စင်", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -147,10 +152,10 @@ class _CpForm09LicenseState extends State<CpForm09License> {
 
   Widget front() {
     return (frontFiles.length <= 0)
-        ? multipleUploadWidget(
-            'လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', true, frontFilesError, frontExplorer)
-        : imagePreviewWidget(
-            'လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', true, frontFiles, frontClear);
+        ? multipleUploadWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', true,
+            frontFilesError, frontExplorer)
+        : imagePreviewWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', true,
+            frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -189,8 +194,8 @@ class _CpForm09LicenseState extends State<CpForm09License> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +345,7 @@ class _CpForm09LicenseState extends State<CpForm09License> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/license");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

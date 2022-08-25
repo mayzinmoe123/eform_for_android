@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form06_household.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -47,9 +46,15 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -79,8 +84,15 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -282,8 +294,7 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
             onPressed: () {
               if (frontFile != null && backFile != null) {
                 startLoading();
-                goToNextPage(formId);
-                // saveFile(context);
+                saveFile(context);
               } else {
                 setState(() {
                   frontFile == null ? frontFileError = true : true;
@@ -317,7 +328,7 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_nrc");
+    var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -338,23 +349,24 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
         var responseMap = jsonDecode(responseString);
 
         if (responseMap['success'] == true) {
-          var form = responseMap['form'];
-          goToNextPage(form["id"]);
+          stopLoading();
+          refreshToken(responseMap['token']);
+          goToNextPage();
         } else {
+          stopLoading();
           showAlertDialog(
-              'Upload Failed',
-              'some error occours in upload files. Please try later or connect to developer team',
-              context);
+              responseMap['title'], responseMap['message'], context);
         }
       } else {
         stopLoading();
         showAlertDialog('Connection Failed',
             'Please check you internet connection', context);
       }
-    } catch (e) {
-      print('http post error $e');
-      showAlertDialog('Connection Failed',
-          'Please check you internet connection http post error $e', context);
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
+      print('connection error $e');
     }
   }
 
@@ -382,17 +394,40 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
-  void goToNextPage(formIdValue) async {
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToNextPage() async {
     final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form06_household',
-        arguments: {'form_id': formIdValue});
+        arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });

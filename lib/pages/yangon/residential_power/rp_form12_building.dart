@@ -43,9 +43,15 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -187,8 +193,8 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -338,7 +344,10 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_building");
+    var url = Uri.parse("${apiPath}api/building");
+    print('url is $url');
+    print('form id is $formId');
+    print('token is $token');
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

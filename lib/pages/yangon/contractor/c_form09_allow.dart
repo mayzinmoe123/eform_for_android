@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form11_farm_land.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +19,6 @@ class _CForm09AllowState extends State<CForm09Allow> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
-  
 
   final subTitle = const Text(
     "ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)",
@@ -40,23 +38,29 @@ class _CForm09AllowState extends State<CForm09Allow> {
 
   @override
   Widget build(BuildContext context) {
-   
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("ဆောက်လုပ်ခွင့်အထောက်အထား", style: TextStyle(fontSize: 18.0)),
+      title: const Text("ဆောက်လုပ်ခွင့်အထောက်အထား",
+          style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -158,8 +162,6 @@ class _CForm09AllowState extends State<CForm09Allow> {
             frontFile!, frontClear);
   }
 
- 
-
   Widget uploadWidget(String label, bool isRequired, bool errorState,
       VoidCallback openExployer) {
     return GestureDetector(
@@ -202,8 +204,6 @@ class _CForm09AllowState extends State<CForm09Allow> {
     }
   }
 
-
-
   dynamic _openFileExplorer() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -224,13 +224,15 @@ class _CForm09AllowState extends State<CForm09Allow> {
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: 20),
-        isReq ? requiredText(label) : optionalText(label),
-        SizedBox(height: 20),
-        imagePreview(file),
-        imageClear(imageClearFun)
-      ]),
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
     );
   }
 
@@ -258,7 +260,6 @@ class _CForm09AllowState extends State<CForm09Allow> {
     });
   }
 
-
   Widget actionButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -284,7 +285,6 @@ class _CForm09AllowState extends State<CForm09Allow> {
               } else {
                 setState(() {
                   frontFile == null ? frontFileError = true : true;
-                  
                 });
               }
             },
@@ -292,8 +292,8 @@ class _CForm09AllowState extends State<CForm09Allow> {
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
-      ], 
-    ); 
+      ],
+    );
   }
 
   Widget _getForm(name, [hintTxt]) {
@@ -314,7 +314,7 @@ class _CForm09AllowState extends State<CForm09Allow> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/building_permit");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -399,8 +399,7 @@ class _CForm09AllowState extends State<CForm09Allow> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form10_live',
+    final result = await Navigator.pushNamed(context, 'ygn_c_form10_live',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

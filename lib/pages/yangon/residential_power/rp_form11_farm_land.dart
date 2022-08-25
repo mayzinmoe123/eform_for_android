@@ -43,9 +43,15 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -197,8 +203,8 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -310,16 +316,18 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFiles.length > 0) {
-                startLoading();
-                saveFile();
-              } else {
-                setState(() {
-                  frontFiles.length <= 0
-                      ? frontFilesError = true
-                      : frontFilesError = false;
-                });
-              }
+              startLoading();
+              saveFile();
+              // if (frontFiles.length > 0) {
+              //   startLoading();
+              //   saveFile();
+              // } else {
+              //   setState(() {
+              //     frontFiles.length <= 0
+              //         ? frontFilesError = true
+              //         : frontFilesError = false;
+              //   });
+              // }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
@@ -363,7 +371,7 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_farmland");
+    var url = Uri.parse("${apiPath}api/farmland");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

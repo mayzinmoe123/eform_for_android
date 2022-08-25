@@ -43,17 +43,22 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("အဆောက်အဦး Drawing",
-          style: TextStyle(fontSize: 18.0)),
+      title: const Text("အဆောက်အဦး Drawing", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -189,8 +194,8 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +345,7 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/drawing");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -434,8 +439,7 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form17_location',
+    final result = await Navigator.pushNamed(context, 'ygn_c_form17_location',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

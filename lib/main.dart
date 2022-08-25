@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_transformer/ct_form01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_transformer/ct_form02_promise.dart';
-import 'package:flutter_application_1/pages/yangon/residential/Overview.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r06_household.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r07_recommend.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r08_ownership.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r09_farmland.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r10_building.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r11_power.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Authentication
@@ -17,131 +9,8 @@ import 'package:flutter_application_1/pages/auth/register.dart';
 // division choice
 import 'package:flutter_application_1/pages/division_choice.dart';
 
-// Yangon
-import 'package:flutter_application_1/pages/yangon/meter_apply_choice.dart';
-// Yangon > Residential
-import 'package:flutter_application_1/pages/yangon/residential/r01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r02_promise.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r03_money.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r04_info.dart';
-import 'package:flutter_application_1/pages/yangon/residential/r05_nrc.dart';
-
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form01_rules_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form02_promise_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form03_money_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form04_info_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form05_n_r_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form06_household_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form07_recommend_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form09_license_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form10_y_c_d_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/commerical_power/cp_form11_gov_allow_mdy%20copy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form01_rules_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form02_promise_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form03_meter_type_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form04_info_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form05_n_r_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form06_household_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form07_recommend_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form09_allow_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form10_live_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form11_y_c_d_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form12_meter_bill_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form01_rules_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form02_promise_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form03_money_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form04_info_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form05_n_r_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form06_household_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form07_recommend_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential/r_form08_ownership_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form01_rules_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form02_promise_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form03_money_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form04_info_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form05_n_r_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form06_household_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form07_recommend_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/residential_power/rp_form08_ownership_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form01_rules_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form02_promise_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form03_money_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form04_info_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form05_n_r_c_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form06_household_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form07_recommend_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form08_ownership_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form09_license_mdy.dart';
-import 'package:flutter_application_1/pages/mandalay/transformer/t_form10_y_c_d_c_mdy.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form02_promise.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form03_money.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form04_info.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form05_n_r_c.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form06_household.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form07_recommend.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form08_ownership.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form09_license.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form10_power.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form11_current_meter.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form12_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form13_building.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form02_promise.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form03_meter_type.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form04_info.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form05_n_r_c.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form06_household.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form07_recommend.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form08_ownership.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form09_allow.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form10_live.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form11_y_c_d_c.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form12_meter_bill.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form13_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form14_building.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form15_apartment.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form16_building_drawing.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form17_location.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form_18_sign.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form02_promise.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form03_money.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form04_info.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form05_n_r_c.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form06_household.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form07_recommend.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form08_ownership.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form09_power.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form10_current_meter.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form11_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form12_building.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form01_rules.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form03_money.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form04_info.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form05_n_r_c.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form06_household.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form07_recommend.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form08_ownership.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form09_license.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form10_y_c_d_c.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form11_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form12_zone.dart';
-import 'package:flutter_application_1/pages/yangon/transformer/t_form13_power.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'pages/yangon/commerical_transformer/ct_form03_money.dart';
-import 'pages/yangon/commerical_transformer/ct_form04_info.dart';
-import 'pages/yangon/commerical_transformer/ct_form05_n_r_c.dart';
-import 'pages/yangon/commerical_transformer/ct_form06_household.dart';
-import 'pages/yangon/commerical_transformer/ct_form07_recommend.dart';
-import 'pages/yangon/commerical_transformer/ct_form08_ownership.dart';
-import 'pages/yangon/commerical_transformer/ct_form09_license.dart';
-import 'pages/yangon/commerical_transformer/ct_form10_y_c_d_c.dart';
-import 'pages/yangon/commerical_transformer/ct_form11_farm_land.dart';
-import 'pages/yangon/commerical_transformer/ct_form12_zone.dart';
-import 'pages/yangon/commerical_transformer/ct_form13_power.dart';
-import 'pages/yangon/transformer/t_form02_promise.dart';
+import 'yangon.dart' as Yangon;
+import 'mandalay.dart' as Mandalay;
 
 void main() {
   runApp(const MyApp());
@@ -180,253 +49,228 @@ class _MyAppState extends State<MyApp> {
         '/division_choice': (context) => DivisionChoice(),
 
         // Yangon
-        '/yangon/meter': (context) => MeterApplyChoice(),
+        '/yangon/meter': (context) => Yangon.MeterApplyChoice(),
         // Residential
-        '/yangon/residential/r01_rules': (context) => R01Rules(),
-        '/yangon/residential/r02_promise': (context) => R02Promise(),
-        // '/': (context) => R03Money(),
-        '/yangon/residential/r03_money': (context) => R03Money(),
-        '/yangon/residential/r04_info': (context) => R04Info(),
-        '/yangon/residential/r05_nrc': (context) => R05Nrc(),
-        '/yangon/residential/r06_household': (context) => R06HouseHold(),
-        '/yangon/residential/r07_recommend': (context) => R07Recommend(),
-        '/yangon/residential/r08_ownership': (context) => R08Ownership(),
-        '/yangon/residential/r09_farmland': (context) => R09Farmland(),
-        '/yangon/residential/r10_building': (context) => R10Building(),
-        '/yangon/residential/r11_power': (context) => R11Power(),
-        '/yangon/residential/overview': (context) => Overview(),
+        '/yangon/residential/r01_rules': (context) => Yangon.R01Rules(),
+        '/yangon/residential/r02_promise': (context) => Yangon.R02Promise(),
+        '/yangon/residential/r03_money': (context) => Yangon.R03Money(),
+        '/yangon/residential/r04_info': (context) => Yangon.R04Info(),
+        '/yangon/residential/r05_nrc': (context) => Yangon.R05Nrc(),
+        '/yangon/residential/r06_household': (context) => Yangon.R06HouseHold(),
+        '/yangon/residential/r07_recommend': (context) => Yangon.R07Recommend(),
+        '/yangon/residential/r08_ownership': (context) => Yangon.R08Ownership(),
+        '/yangon/residential/r09_farmland': (context) => Yangon.R09Farmland(),
+        '/yangon/residential/r10_building': (context) => Yangon.R10Building(),
+        '/yangon/residential/r11_power': (context) => Yangon.R11Power(),
+        '/yangon/residential/overview': (context) => Yangon.ROverview(),
 
-        ///Yangon Power Residential
-        // '/yangon/residential_power/Form01_rules' : (context) => Form01Rules(),
+        // Residential Power
         '/yangon/residential_power/rp_form01_rules': (context) =>
-            RpForm01Rules(),
+            Yangon.RpForm01Rules(),
         '/yangon/residential_power/rp_form02_promise': (context) =>
-            RpForm02Promise(),
+            Yangon.RpForm02Promise(),
         '/yangon/residential_power/rp_form03_money': (context) =>
-            RpForm03Money(),
-        '/yangon/residential_power/rp_form04_info': (context) => RpForm04Info(),
-        '/yangon/residential_power/rp_form05_n_r_c': (context) => RpForm05NRC(),
-        // '/': (context) => RpForm08Ownership(),
+            Yangon.RpForm03Money(),
+        '/yangon/residential_power/rp_form04_info': (context) =>
+            Yangon.RpForm04Info(),
+        '/yangon/residential_power/rp_form05_n_r_c': (context) =>
+            Yangon.RpForm05NRC(),
         '/yangon/residential_power/rp_form06_household': (context) =>
-            RpForm06Household(),
+            Yangon.RpForm06Household(),
         '/yangon/residential_power/rp_form07_recommend': (context) =>
-            RpForm07Recommend(),
+            Yangon.RpForm07Recommend(),
         '/yangon/residential_power/rp_form08_ownership': (context) =>
-            RpForm08Ownership(),
+            Yangon.RpForm08Ownership(),
         '/yangon/residential_power/rp_form09_power': (context) =>
-            RpForm09Power(),
+            Yangon.RpForm09Power(),
         '/yangon/residential_power/rp_form10_meter': (context) =>
-            RpForm10CurrentMeter(),
+            Yangon.RpForm10CurrentMeter(),
         '/yangon/residential_power/rp_form11_farm_land': (context) =>
-            RpForm11FarmLand(),
+            Yangon.RpForm11FarmLand(),
         '/yangon/residential_power/rp_form12_building': (context) =>
-            RpForm12Building(),
+            Yangon.RpForm12Building(),
+        '/yangon/residential_power/overview': (context) => Yangon.RpOverview(),
 
-        //Yangon COmmerical
-        '/yangon/commerical_power/rp_form01_rules': (context) =>
-            CpForm01Rules(),
-        '/yangon/commerical_power/rp_form02_promise': (context) =>
-            CpForm02Promise(),
-        '/yangon/commerical_power/rp_form03_money': (context) =>
-            CpForm03Money(),
-        '/yangon/commerical_power/rp_form04_info': (context) => CpForm04Info(),
-        '/yangon/commerical_power/rp_form05_n_r_c': (context) => CpForm05NRC(),
-        '/yangon/commerical_power/rp_form06_household': (context) =>
-            CpForm06Household(),
-        '/yangon/commerical_power/rp_form07_recommend': (context) =>
-            CpForm07Recommend(),
-        '/yangon/commerical_power/rp_form08_ownership': (context) =>
-            CpForm08Ownership(),
-        '/yangon/commerical_power/rp_form09_license': (context) =>
-            CpForm09License(),
-        '/yangon/commerical_power/rp_form10_power': (context) =>
-            CpForm10Power(),
-        '/yangon/commerical_power/rp_form11_meter': (context) =>
-            CpForm11CurrenMeter(),
-        '/yangon/commerical_power/rp_form12_farm_land': (context) =>
-            CpForm12FarmLand(),
-        '/yangon/commerical_power/rp_form13_building': (context) =>
-            CpForm13Building(),
+        // Yangon Commerical Power
+        '/yangon/commerical_power/cp_form01_rules': (context) =>
+            Yangon.CpForm01Rules(),
+        '/yangon/commerical_power/cp_form02_promise': (context) =>
+            Yangon.CpForm02Promise(),
+        '/yangon/commerical_power/cp_form03_money': (context) =>
+            Yangon.CpForm03Money(),
+        '/yangon/commerical_power/cp_form04_info': (context) =>
+            Yangon.CpForm04Info(),
+        '/yangon/commerical_power/cp_form05_n_r_c': (context) =>
+            Yangon.CpForm05NRC(),
+        '/yangon/commerical_power/cp_form06_household': (context) =>
+            Yangon.CpForm06Household(),
+        '/yangon/commerical_power/cp_form07_recommend': (context) =>
+            Yangon.CpForm07Recommend(),
+        '/yangon/commerical_power/cp_form08_ownership': (context) =>
+            Yangon.CpForm08Ownership(),
+        '/yangon/commerical_power/cp_form09_license': (context) =>
+            Yangon.CpForm09License(),
+        '/yangon/commerical_power/cp_form10_power': (context) =>
+            Yangon.CpForm10Power(),
+        '/yangon/commerical_power/cp_form11_meter': (context) =>
+            Yangon.CpForm11CurrenMeter(),
+        '/yangon/commerical_power/cp_form12_farm_land': (context) =>
+            Yangon.CpForm12FarmLand(),
+        '/yangon/commerical_power/cp_form13_building': (context) =>
+            Yangon.CpForm13Building(),
+        '/yangon/commerical_power/overview': (context) => Yangon.CpOverview(),
 
-        //Yangon Contractor
-        '/yangon/contractor/c_form01_rules': (context) => CForm01Rules(),
-        '/yangon/contractor/c_form02_promise': (context) => CForm02Promise(),
-        '/yangon/contractor/c_form03_money_type': (context) =>
-            CForm03MeterType(),
-        '/yangon/contractor/c_form04_info': (context) => CForm04Info(),
-        '/yangon/contractor/c_form05_n_r_c': (context) => CForm05NRC(),
-        '/yangon/contractor/c_form06_household': (context) =>
-            CForm06Household(),
-        '/yangon/contractor/c_form07_recommend': (context) =>
-            CForm07Recommend(),
-        '/yangon/contractor/c_form08_ownership': (context) =>
-            CForm08Ownership(),
-        '/yangon/contractor/c_form09_allow': (context) => CForm09Allow(),
-        '/yangon/contractor/c_form10_live': (context) => CForm10Live(),
-        '/yangon/contractor/c_form11_y_c_d_c': (context) => CForm11YCDC(),
-        '/yangon/contractor/c_form12_meter_bill': (context) =>
-            CForm12MeterBill(),
-        '/yangon/contractor/c_form13_farm_land': (context) => CForm13FarmLand(),
-        '/yangon/contractor/c_form14_building_photo': (context) =>
-            CForm14Building(),
-        '/yangon/contractor/c_form15_apartment_photo': (context) =>
-            CForm15Apartment(),
-        '/yangon/contractor/c_form16_building_drawing': (context) =>
-            CForm16BuildingDrawing(),
-        '/yangon/contractor/c_form17_location': (context) => CForm17Location(),
-        '/yangon/contractor/c_form18_sign': (context) => CForm18Sign(),
+        // Yangon Contractor
+        'ygn_c_form01_rules': (context) => Yangon.CForm01Rules(),
+        'ygn_c_form02_promise': (context) => Yangon.CForm02Promise(),
+        'ygn_c_form03_money_type': (context) => Yangon.CForm03MeterType(),
+        'ygn_c_form04_info': (context) => Yangon.CForm04Info(),
+        'ygn_c_form05_n_r_c': (context) => Yangon.CForm05NRC(),
+        'ygn_c_form06_household': (context) => Yangon.CForm06Household(),
+        'ygn_c_form07_recommend': (context) => Yangon.CForm07Recommend(),
+        'ygn_c_form08_ownership': (context) => Yangon.CForm08Ownership(),
+        'ygn_c_form09_allow': (context) => Yangon.CForm09Allow(),
+        'ygn_c_form10_live': (context) => Yangon.CForm10Live(),
+        'ygn_c_form11_y_c_d_c': (context) => Yangon.CForm11YCDC(),
+        'yng_c_form12_meter_bill': (context) => Yangon.CForm12MeterBill(),
+        'ygn_c_form13_farm_land': (context) => Yangon.CForm13FarmLand(),
+        'ygn_c_form14_building_photo': (context) => Yangon.CForm14Building(),
+        'ygn_c_form15_apartment_photo': (context) => Yangon.CForm15Apartment(),
+        'ygn_c_form16_building_drawing': (context) =>
+            Yangon.CForm16BuildingDrawing(),
+        'ygn_c_form17_location': (context) => Yangon.CForm17Location(),
+        'ygn_c_form18_sign': (context) => Yangon.CForm18Sign(),
+        'ygn_c_overview': (context) => Yangon.COverview(),
 
-        //Yangon Transformer
-        '/yangon/transformer/t_form01_rules': (context) => TForm01Rules(),
-        '/yangon/transformer/t_form02_promise': (context) => TForm02Promise(),
-        '/yangon/transformer/t_form03_money_type': (context) => TForm03Money(),
-        '/yangon/transformer/t_form04_info': (context) => TForm04Info(),
-        '/yangon/transformer/t_form05_n_r_c': (context) => TForm05NRC(),
-        '/yangon/transformer/t_form06_household': (context) =>
-            TForm06Household(),
-        '/yangon/transformer/t_form07_recommend': (context) =>
-            TForm07Recommend(),
-        '/yangon/transformer/t_form08_ownership': (context) =>
-            TForm08Ownership(),
-        '/yangon/transformer/t_form09_allow': (context) => TForm09License(),
-        '/yangon/transformer/t_form10_live': (context) => TForm10YCDC(),
-        '/yangon/transformer/t_form11_y_c_d_c': (context) => TForm11FarmLand(),
-        '/yangon/transformer/t_form12_meter_bill': (context) => TForm12Zone(),
-        '/yangon/transformer/t_form13_farm_land': (context) => TForm13Power(),
-
-        //Yangon Transformer Commerical
-        '/yangon/commerical_transformer/ct_form01_rules': (context) =>
-            CtForm01Rules(),
-        '/yangon/commerical_transformer/ct_form02_promise': (context) =>
-            CtForm02Promise(),
-        '/yangon/commerical_transformer/ct_form03_money_type': (context) =>
-            CtForm03Money(),
-        '/yangon/commerical_transformer/ct_form04_info': (context) =>
-            CtForm04Info(),
-        '/yangon/commerical_transformer/ct_form05_n_r_c': (context) =>
-            CtForm05NRC(),
-        '/yangon/commerical_transformer/ct_form06_household': (context) =>
-            CtForm06Household(),
-        '/yangon/commerical_transformer/ct_form07_recommend': (context) =>
-            CtForm07Recommend(),
-        '/yangon/commerical_transformer/ct_form08_ownership': (context) =>
-            CtForm08Ownership(),
-        '/yangon/commerical_transformer/ct_form09_allow': (context) =>
-            CtForm09License(),
-        '/yangon/commerical_transformer/ct_form10_live': (context) =>
-            CtForm10YCDC(),
-        '/yangon/commerical_transformer/ct_form11_y_c_d_c': (context) =>
-            CtForm11FarmLand(),
-        '/yangon/commerical_transformer/ct_form12_meter_bill': (context) =>
-            CtForm12Zone(),
-        '/yangon/commerical_transformer/ct_form13_farm_land': (context) =>
-            CtForm13Power(),
+        // Yangon Transformer (Residential)
+        'ygn_t_form01_rules': (context) => Yangon.TForm01Rules(),
+        'ygn_t_form02_promise': (context) => Yangon.TForm02Promise(),
+        'ygn_t_form03_money_type': (context) => Yangon.TForm03Money(),
+        //Yangon Transformer (Commerical)
+        'ygn_ct_form01_rules': (context) => Yangon.CtForm01Rules(),
+        'ygn_ct_form02_promise': (context) => Yangon.CtForm02Promise(),
+        'ygn_ct_form03_money_type': (context) => Yangon.CtForm03Money(),
+        // Yangon Transformer (Residential + Commercial)
+        'ygn_t_form04_info': (context) => Yangon.TForm04Info(),
+        'ygn_t_form05_n_r_c': (context) => Yangon.TForm05NRC(),
+        'ygn_t_form06_household': (context) => Yangon.TForm06Household(),
+        'ygn_t_form07_recommend': (context) => Yangon.TForm07Recommend(),
+        'ygn_t_form08_ownership': (context) => Yangon.TForm08Ownership(),
+        'ygn_t_form09_lincense': (context) => Yangon.TForm09License(),
+        'ygn_t_form10_dc': (context) => Yangon.TForm10YCDC(),
+        'ygn_t_form11_farmland': (context) => Yangon.TForm11FarmLand(),
+        'ygn_t_form12_zone': (context) => Yangon.TForm12Zone(),
+        'ygn_t_form13_power': (context) => Yangon.TForm13Power(),
+        'ygn_c_overview': (context) => Yangon.TOverview(),
 
         //Mandalay
-
         //Residential
         '/mandalay/residential/r_form01_rules_mdy': (context) =>
-            RForm01RulesMdy(),
+            Mandalay.RForm01RulesMdy(),
         '/mandalay/residential/r_form02_promise_mdy': (context) =>
-            RForm02PromiseMdy(),
+            Mandalay.RForm02PromiseMdy(),
         '/mandalay/residential/r_form03_money_mdy': (context) =>
-            RForm03MoneyMdy(),
+            Mandalay.RForm03MoneyMdy(),
         '/mandalay/residential/r_form04_info_mdy': (context) =>
-            RForm04InfoMdy(),
+            Mandalay.RForm04InfoMdy(),
         '/mandalay/residential/r_form05_n_r_c_mdy': (context) =>
-            RForm05NRCMdy(),
+            Mandalay.RForm05NRCMdy(),
         '/mandalay/residential/r_form06_household_mdy': (context) =>
-            RForm06HouseholdMdy(),
+            Mandalay.RForm06HouseholdMdy(),
         '/mandalay/residential/r_form07_recommend_mdy': (context) =>
-            RForm07RecommendMdy(),
+            Mandalay.RForm07RecommendMdy(),
         '/mandalay/residential/r_form08_ownership_mdy': (context) =>
-            RForm08OwnershipMdy(),
+            Mandalay.RForm08OwnershipMdy(),
 
         //Residential   Power
         '/mandalay/residential_power/rp_form01_rules_mdy': (context) =>
-            RpForm01RulesMdy(),
+            Mandalay.RpForm01RulesMdy(),
         '/mandalay/residential_power/rp_form02_promise_mdy': (context) =>
-            RpForm02PromiseMdy(),
+            Mandalay.RpForm02PromiseMdy(),
         '/mandalay/residential_power/rp_form03_money_mdy': (context) =>
-            RpForm03MoneyMdy(),
+            Mandalay.RpForm03MoneyMdy(),
         '/mandalay/residential_power/rp_form04_info_mdy': (context) =>
-            RpForm04InfoMdy(),
+            Mandalay.RpForm04InfoMdy(),
         '/mandalay/residential_power/rp_form05_n_r_c_mdy': (context) =>
-            RpForm05NRCMdy(),
+            Mandalay.RpForm05NRCMdy(),
         '/mandalay/residential_power/rp_form06_household_mdy': (context) =>
-            RpForm06HouseholdMdy(),
+            Mandalay.RpForm06HouseholdMdy(),
         '/mandalay/residential_power/rp_form07_recommend_mdy': (context) =>
-            RpForm07RecommendMdy(),
+            Mandalay.RpForm07RecommendMdy(),
         '/mandalay/residential_power/rp_form08_ownership_mdy': (context) =>
-            RpForm08OwnershipMdy(),
+            Mandalay.RpForm08OwnershipMdy(),
 
         //Residential Commerical Transformer
         '/mandalay/commerical_power/cp_form01_rules_mdy': (context) =>
-            CpForm01RulesMdy(),
+            Mandalay.CpForm01RulesMdy(),
         '/mandalay/commerical_power/cp_form02_promise_mdy': (context) =>
-            CpForm02PromiseMdy(),
+            Mandalay.CpForm02PromiseMdy(),
         '/mandalay/commerical_power/cp_form03_money_mdy': (context) =>
-            CpForm03MoneyMdy(),
+            Mandalay.CpForm03MoneyMdy(),
         '/mandalay/commerical_power/cp_form04_info_mdy': (context) =>
-            CpForm04InfoMdy(),
+            Mandalay.CpForm04InfoMdy(),
         '/mandalay/commerical_power/cp_form05_n_r_c_mdy': (context) =>
-            CpForm05NRCMdy(),
+            Mandalay.CpForm05NRCMdy(),
         '/mandalay/commerical_power/cp_form06_household_mdy': (context) =>
-            CpForm06HouseholdMdy(),
+            Mandalay.CpForm06HouseholdMdy(),
         '/mandalay/commerical_power/cp_form07_recommend_mdy': (context) =>
-            CpForm07RecommendMdy(),
+            Mandalay.CpForm07RecommendMdy(),
         '/mandalay/commerical_power/cp_form08_ownership_mdy': (context) =>
-            CpForm08Ownership(),
+            Mandalay.CpForm08OwnershipMdy(),
         '/mandalay/commerical_power/cp_form09_license_mdy': (context) =>
-            CpForm09LicenseMdy(),
+            Mandalay.CpForm09LicenseMdy(),
         '/mandalay/commerical_power/cp_form10_y_c_d_c_mdy': (context) =>
-            CpForm10YCDCMdy(),
+            Mandalay.CpForm10YCDCMdy(),
         '/mandalay/commerical_power/cp_form11_gov_allow_mdy': (context) =>
-            CpForm11GovAllowMdy(),
+            Mandalay.CpForm11GovAllowMdy(),
 
         // Mandalay Contractor
         '/mandalay/contractor/c_form01_rules_mdy': (context) =>
-            CForm01RulesMdy(),
+            Mandalay.CForm01RulesMdy(),
         '/mandalay/contractor/c_form02_promise_mdy': (context) =>
-            CForm02PromiseMdy(),
+            Mandalay.CForm02PromiseMdy(),
         '/mandalay/contractor/c_form03_money_type_mdy': (context) =>
-            CForm03MeterTypeMdy(),
-        '/mandalay/contractor/c_form04_info_mdy': (context) => CForm04InfoMdy(),
-        '/mandalay/contractor/c_form05_n_r_c_mdy': (context) => CForm05NRCMdy(),
+            Mandalay.CForm03MeterTypeMdy(),
+        '/mandalay/contractor/c_form04_info_mdy': (context) =>
+            Mandalay.CForm04InfoMdy(),
+        '/mandalay/contractor/c_form05_n_r_c_mdy': (context) =>
+            Mandalay.CForm05NRCMdy(),
         '/mandalay/contractor/c_form06_household_mdy': (context) =>
-            CForm06HouseholdMdy(),
+            Mandalay.CForm06HouseholdMdy(),
         '/mandalay/contractor/c_form07_recommend_mdy': (context) =>
-            CForm07RecommendMdy(),
+            Mandalay.CForm07RecommendMdy(),
         '/mandalay/contractor/c_form08_ownership_mdy': (context) =>
-            CForm08Ownership(),
+            Mandalay.CForm08Ownership(),
         '/mandalay/contractor/c_form09_allow_mdy': (context) =>
-            CForm09AllowMdy(),
-        '/mandalay/contractor/c_form10_live_mdy': (context) => CForm10LiveMdy(),
+            Mandalay.CForm09AllowMdy(),
+        '/mandalay/contractor/c_form10_live_mdy': (context) =>
+            Mandalay.CForm10LiveMdy(),
         '/mandalay/contractor/c_form11_y_c_d_c_mdy': (context) =>
-            CForm11YCDCMdy(),
+            Mandalay.CForm11YCDCMdy(),
         '/mandalay/contractor/c_form12_meter_bill_mdy': (context) =>
-            CForm12MeterBillMdy(),
+            Mandalay.CForm12MeterBillMdy(),
 
         //Mandalay transformer
         '/mandalay/transformer/t_form01_rules_mdy': (context) =>
-            TForm01RulesMdy(),
+            Mandalay.TForm01RulesMdy(),
         '/mandalay/transformer/t_form02_promise_mdy': (context) =>
-            TForm02PromiseMdy(),
+            Mandalay.TForm02PromiseMdy(),
         '/mandalay/transformer/t_form03_money_type_mdy': (context) =>
-            TForm03MoneyMdy(),
+            Mandalay.TForm03MoneyMdy(),
         '/mandalay/transformer/t_form04_info_mdy': (context) =>
-            TForm04InfoMdy(),
+            Mandalay.TForm04InfoMdy(),
         '/mandalay/transformer/t_form05_n_r_c_mdy': (context) =>
-            TForm05NRCMdy(),
+            Mandalay.TForm05NRCMdy(),
         '/mandalay/transformer/t_form06_household_mdy': (context) =>
-            TForm06HouseholdMdy(),
+            Mandalay.TForm06HouseholdMdy(),
         '/mandalay/transformer/t_form07_recommend_mdy': (context) =>
-            TForm07RecommendMdy(),
+            Mandalay.TForm07RecommendMdy(),
         '/mandalay/transformer/t_form08_ownership_mdy': (context) =>
-            TForm08OwnershipMdy(),
+            Mandalay.TForm08OwnershipMdy(),
         '/mandalay/transformer/t_form09_allow_mdy': (context) =>
-            TForm09LicenseMdy(),
-        '/mandalay/transformer/t_form10_live_mdy': (context) => TForm10YCDCMdy()
+            Mandalay.TForm09LicenseMdy(),
+        '/mandalay/transformer/t_form10_live_mdy': (context) =>
+            Mandalay.TForm10YCDCMdy()
       },
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );

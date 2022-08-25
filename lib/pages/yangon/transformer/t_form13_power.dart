@@ -43,9 +43,15 @@ class _TForm13PowerState extends State<TForm13Power> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -189,8 +195,8 @@ class _TForm13PowerState extends State<TForm13Power> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -434,8 +440,7 @@ class _TForm13PowerState extends State<TForm13Power> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/transformer/overview',
+    final result = await Navigator.pushNamed(context, 'ygn_c_overview',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

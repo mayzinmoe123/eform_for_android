@@ -18,9 +18,15 @@ class _R03MoneyState extends State<R03Money> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -201,10 +207,13 @@ class _R03MoneyState extends State<R03Money> {
     String token = pref.getString("token").toString();
     try {
       print("old token is $token");
-      var url = Uri.parse("${apiPath}api/yangon/residential_meter_type");
+      var url = Uri.parse("${apiPath}api/meter_type");
       var response = await http.post(url, body: {
         'token': token,
-        'form_id': formId != null ? formId.toString() : ''
+        'form_id': formId != null ? formId.toString() : '',
+        'apply_type': '1', // residential meter
+        'apply_division': '1', // yangon
+        'apply_sub_type': '3',
       });
       Map data = jsonDecode(response.body);
       print('meter saving result $data');
@@ -214,7 +223,6 @@ class _R03MoneyState extends State<R03Money> {
           formId = data['form']['id'];
         });
         refreshToken(data['token']);
-        print("new token is ${data['token']}");
         goToNextPage();
       } else {
         stopLoading();

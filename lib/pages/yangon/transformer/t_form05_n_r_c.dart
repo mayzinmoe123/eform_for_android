@@ -23,7 +23,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
   FilePickerResult? result;
 
   final subTitle = const Text(
-    "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
+    "လျှောက်ထားသူ၏ မှတ်ပုံတင်/သာသနာရေးကတ် (မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -46,16 +46,23 @@ class _TForm05NRCState extends State<TForm05NRC> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("မှတ်ပုံတင်ဓါတ်ပုံ", style: TextStyle(fontSize: 18.0)),
+      title: const Text("မှတ်ပုံတင်/သာသနာရေးကတ်ဓါတ်ပုံ",
+          style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -333,7 +340,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_nrc");
+    var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -428,8 +435,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/transformer/t_form06_household',
+    final result = await Navigator.pushNamed(context, 'ygn_t_form06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

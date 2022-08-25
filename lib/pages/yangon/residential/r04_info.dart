@@ -110,9 +110,15 @@ class _R04InfoState extends State<R04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(formId),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(formId),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -437,9 +443,9 @@ class _R04InfoState extends State<R04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_applicant_info");
+    var url = Uri.parse("${apiPath}api/applicant_info");
     try {
-      var response = await http.post(url, body: {
+      var bodyData = {
         'token': token,
         'form_id': formId.toString(),
         'fullname': nameController.text,
@@ -461,7 +467,10 @@ class _R04InfoState extends State<R04Info> {
         'township_id': townshipId.toString(),
         'district_id': districtId.toString(),
         'div_state_id': divisionId.toString()
-      });
+      };
+      var response = await http.post(url, body: bodyData);
+
+      print('bodydata is $bodyData');
 
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 

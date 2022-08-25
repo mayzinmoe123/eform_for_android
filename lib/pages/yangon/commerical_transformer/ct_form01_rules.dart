@@ -13,7 +13,7 @@ class CtForm01Rules extends StatefulWidget {
 
 class _CtForm01RulesState extends State<CtForm01Rules> {
   var checkedValue = false;
-  // bool isLoading = true; 
+  // bool isLoading = true;
   bool isLoading = false;
   List<String> rules = [
     "မီတာ/ထရန်စဖေါ်မာ လျှောက်ထားရာတွင် ဌာနမှပူးတွဲတင်ပြရန် သက်မှတ်ထားသော စာရွက်စာတမ်းများအား ထင်ရှားပြတ်သားစွာ ဓါတ်ပုံရိုက်ယူ၍သော်လည်ကောင်း၊ Scan ဖတ်၍သော်လည်ကောင်း ပူးတွဲတင်ပြပေးရမည်။",
@@ -23,7 +23,7 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
     "ပူးတွဲပါစာရွက်စာတမ်းများအား အင်ဂျင်နီယာဌာနမှ ကွင်းဆင်းစစ်ဆေးသည့် အချိန်တွင် စစ်ဆေးသွားမည် ဖြစ်ပြီး စာရွက်စာတန်းများအား အတုပြုလုပ်ခြင်း၊ ပြင်ဆင်ခြင်းများ တွေ့ရှိပါက တည်ဆဲဥပဒေအရ ထိရောက်စွာ အရေးယူခြင်းခံရမည် ဖြစ်ပါသည်။",
   ];
 
-  List<String> rules2 =[
+  List<String> rules2 = [
     "ထရန်စဖေါ်မာတပ်ဆင်ထားသော နေရာသည် လွယ်ကူစွာ ကြည့်ရှုနိုင်သော ဝန်းခြံအရှေ့မျက်နှာစာ နေရာမျိုးဖြစ်ရမည်။",
     "နည်းပညာ စံချိန်စံညွှန်းနှင့် ကိုက်ညီမှုရှိသော အမျိုးအစားကောင်းမွန်သည့် ထရန်စဖေါ်မာကိုသာ တပ်ဆင်ရမည်။",
     "Protection အတွက် HT Side တွင် Lightning Arrestor, Disconnection Switch, Drop Out Fuse (with respected fuse link), Enclosed Cutout Fuse တပ်ဆင်ရန်နှင့် Lightning Arrestor ကို Transformer ၏ HT Bushing နှင့် အနီးဆုံးနေရာတွင် တပ်ဆင်ရမည်။",
@@ -37,38 +37,52 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
   @override
   void initState() {
     super.initState();
-    // checkToken();
+    checkToken();
   }
 
-  // void checkToken() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var token = prefs.getString('token');
-  //   var apiPath = prefs.getString('api_path');
-  //   var url = Uri.parse('${apiPath}api/check_token');
-  //   try {
-  //     var response = await http.post(url, body: {'token': token});
-  //     Map data = jsonDecode(response.body);
-  //     if (data['success']) {
-  //       stopLoading();
-  //     } else {
-  //       stopLoading();
-  //       showAlertDialog(data['title'], data['message'], context);
-  //     }
-  //   } on SocketException catch (e) {
-  //     stopLoading();
-  //     showAlertDialog(
-  //         'Connection timeout!',
-  //         'Error occured while Communication with Server. Check your internet connection',
-  //         context);
-  //     print('check token error $e');
-  //   }
-  // }
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    try {
+      var response = await http.post(url, body: {'token': token});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(context),
-      body: isLoading ? loading() : body(),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(context),
+        body: isLoading ? loading() : body(),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -121,7 +135,8 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
           children: rules.map((title) => _getRulesTxt(title)).toList(),
         ),
         SizedBox(height: 15),
-        getHeaderRulesTxt("ကိုယ့်အားကိုယ်ကိုး ထရန်စဖေါ်မာတည်ဆောက်ခြင်းလုပ်ငန်းမှ ဓာတ်အားခွဲရုံတည်ဆောက်ခြင်းလုပ်ငန်းများအား အောက်ဖော်ပြပါ သတ်မှတ်ချက်များအတိုင်း ဆောင်ရွက်ရမည် ဖြစ်ပါသည်။"),
+        getHeaderRulesTxt(
+            "ကိုယ့်အားကိုယ်ကိုး ထရန်စဖေါ်မာတည်ဆောက်ခြင်းလုပ်ငန်းမှ ဓာတ်အားခွဲရုံတည်ဆောက်ခြင်းလုပ်ငန်းများအား အောက်ဖော်ပြပါ သတ်မှတ်ချက်များအတိုင်း ဆောင်ရွက်ရမည် ဖြစ်ပါသည်။"),
         Column(
           children: rules2.map((title) => _getRulesTxt(title)).toList(),
         ),
@@ -143,9 +158,15 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
     );
   }
 
+  void goToBack() {
+    Navigator.of(context).pop();
+  }
+
   Widget cancelButton() {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        goToBack();
+      },
       style: ElevatedButton.styleFrom(
         shape: StadiumBorder(),
         primary: Colors.grey[600],
@@ -178,7 +199,7 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
     );
   }
 
-Widget _getHeaderRulesTxt(title) {
+  Widget _getHeaderRulesTxt(title) {
     return Container(
       margin: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -213,12 +234,12 @@ Widget _getHeaderRulesTxt(title) {
     );
   }
 
-  
-Widget getHeaderRulesTxt(title) {
+  Widget getHeaderRulesTxt(title) {
     return Container(
+      padding: EdgeInsets.only(top: 20),
       margin: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(width: 0.7, color: Colors.black26)),
+        border: Border(top: BorderSide(width: 0.7, color: Colors.black26)),
       ),
       child: ListTile(
         title: Text(
@@ -229,7 +250,6 @@ Widget getHeaderRulesTxt(title) {
       ),
     );
   }
-
 
   Widget _getCheckBox(name) {
     return CheckboxListTile(
@@ -310,7 +330,7 @@ Widget getHeaderRulesTxt(title) {
   }
 
   void goToNextPage(BuildContext context) {
-    Navigator.pushNamed(context, '/yangon/commerical_transformer/ct_form02_promise');
+    Navigator.pushNamed(context, 'ygn_ct_form02_promise');
   }
 
   void goToHomePage(BuildContext context) {

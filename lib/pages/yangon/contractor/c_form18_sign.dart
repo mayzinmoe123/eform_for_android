@@ -1,29 +1,26 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form11_farm_land.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class CtForm10YCDC extends StatefulWidget {
-  const CtForm10YCDC({Key? key}) : super(key: key);
+class CForm18Sign extends StatefulWidget {
+  const CForm18Sign({Key? key}) : super(key: key);
 
   @override
-  State<CtForm10YCDC> createState() => _CtForm10YCDCState();
+  State<CForm18Sign> createState() => _CForm18SignState();
 }
 
-class _CtForm10YCDCState extends State<CtForm10YCDC> {
+class _CForm18SignState extends State<CForm18Sign> {
   int? formId;
   bool isLoading = false;
-  File? frontFile;
-  bool frontFileError = false;
-  FilePickerResult? result;
-  
+  List frontFiles = [];
+  bool frontFilesError = false;
 
   final subTitle = const Text(
-    "စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)",
+    "ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -33,30 +30,35 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "ရေစက်မီတာ မလျှောက်ထားပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
 
   @override
   Widget build(BuildContext context) {
-   
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
-    print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    print('form_id is $formId');
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("စည်ပင်ထောက်ခံစာ", style: TextStyle(fontSize: 18.0)),
+      title: const Text("ရေစက်မီတာ", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -103,10 +105,9 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
               SizedBox(height: 10),
               noti,
               SizedBox(height: 13),
-              fileWidget(),
+              fileWidgets(),
               SizedBox(height: 20),
-              actionButton(context),
-              SizedBox(height: 20),
+              actionButton(),
             ],
           ),
         ),
@@ -114,7 +115,7 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
     );
   }
 
-  Widget fileWidget() {
+  Widget fileWidgets() {
     return Column(
       children: [front()],
     );
@@ -127,12 +128,11 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
             child: Text(
               '${label}',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.fade,
               textAlign: TextAlign.center,
             ),
           ),
           SizedBox(
-            width: 5.0,
+            width: 10.0,
           ),
           Text(
             '*',
@@ -151,16 +151,20 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
   }
 
   Widget front() {
-    return (frontFile == null)
-        ? uploadWidget('စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', true,
-            frontFileError, frontExplorer)
-        : previewWidget('စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', true,
-            frontFile!, frontClear);
+    return (frontFiles.length <= 0)
+        ? multipleUploadWidget(
+            'ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ',
+            false,
+            frontFilesError,
+            frontExplorer)
+        : imagePreviewWidget(
+            'ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ',
+            false,
+            frontFiles,
+            frontClear);
   }
 
- 
-
-  Widget uploadWidget(String label, bool isRequired, bool errorState,
+  Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
       VoidCallback openExployer) {
     return GestureDetector(
       onTap: openExployer,
@@ -170,6 +174,7 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
         height: 320,
         color: Colors.grey[200],
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isRequired
@@ -183,9 +188,10 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
             ),
             SizedBox(height: 20),
             Text(
-              'ပုံတင်ရန်နှိပ်ပါ (တစ်ပုံသာတင်နိုင်ပါသည်)',
+              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။ )',
               style:
                   TextStyle(color: errorState ? Colors.red : Colors.grey[800]),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -194,15 +200,14 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
   }
 
   void frontExplorer() async {
-    File? file = await _openFileExplorer();
-    if (file != null) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
+      print('file upload');
       setState(() {
-        frontFile = file;
+        frontFiles = files;
       });
     }
   }
-
-
 
   dynamic _openFileExplorer() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -211,35 +216,66 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
     );
     if (result != null) {
       File file = File(result.files.single.path.toString());
+      print('file upload');
       return file;
+    } else {
+      // User canceled the picker
+      print('file cancel');
+      return null;
+    }
+  }
+
+  dynamic _openFileExplorerMutiple() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    );
+    if (result != null) {
+      List<File> images = result.paths.map((path) => File(path!)).toList();
+      return images;
     } else {
       // User canceled the picker
       return null;
     }
   }
 
-  Widget previewWidget(
-      String label, bool isReq, File file, VoidCallback imageClearFun) {
+  Widget imagePreviewWidget(
+      String label, bool isReq, List file, VoidCallback imageClearFun) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: 20),
-        isReq ? requiredText(label) : optionalText(label),
-        SizedBox(height: 20),
-        imagePreview(file),
-        imageClear(imageClearFun)
-      ]),
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // Expanded(child: child)
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
     );
   }
 
-  Image imagePreview(File file) {
-    return Image.file(
-      file,
-      width: double.infinity,
-      height: 200,
+  Widget imagePreview(List files) {
+    return Container(
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        // Create a grid with 2 columns. If you change the scrollDirection to
+        // horizontal, this produces 2 rows.
+        crossAxisCount: 3,
+        // Generate 100 widgets that display their index in the List.
+        children: files.map((file) => Image.file(file)).toList(),
+      ),
     );
+    // return Image.file(
+    //   file,
+    //   width: double.infinity,
+    //   height: 200,
+    // );
   }
 
   FlatButton imageClear(VoidCallback onPressedFun) {
@@ -254,46 +290,86 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
 
   void frontClear() {
     setState(() {
-      frontFile = null;
+      frontFiles = [];
     });
   }
 
-
-  Widget actionButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget actionButton() {
+    var mSize = MediaQuery.of(context).size;
+    return Column(
       children: [
-        ElevatedButton(
-            onPressed: () {
-              goToBack();
-            },
-            style: ElevatedButton.styleFrom(
-                primary: Colors.black12,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
-            child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+        // Container(
+        //   width: mSize.width,
+        //   height: 50,
+        //   decoration: BoxDecoration(color: Colors.redAccent),
+        //   child: Center(
+        //     child: Text(
+        //       "ရေစက်မီတာ မလျှောက်ထားပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontFamily: "Pyidaungsu",
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //       textAlign: TextAlign.center,
+        //     ),
+        //   ),
+        // ),
         SizedBox(
-          width: 10,
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  goToBack();
+                },
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.black12,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+            SizedBox(
+              width: 10,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                onPressed: () {
+                  startLoading();
+                  saveFile();
+                  // if (frontFiles.length > 0) {
+                  //   startLoading();
+                  //   saveFile();
+                  // } else {
+                  //   setState(() {
+                  //     frontFiles.length <= 0
+                  //         ? frontFilesError = true
+                  //         : frontFilesError = false;
+                  //   });
+                  // }
+                },
+                child: Text(
+                  "ဖြည့်သွင်းမည်",
+                  style: TextStyle(fontSize: 15),
+                )),
+          ],
+        ),
+        SizedBox(
+          height: 15,
         ),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+                primary: Colors.orangeAccent),
             onPressed: () {
-              if (frontFile != null) {
-                startLoading();
-                saveFile(context);
-              } else {
-                setState(() {
-                  frontFile == null ? frontFileError = true : true;
-                  
-                });
-              }
+              goToNextPage();
             },
             child: Text(
-              "ဖြည့်သွင်းမည်",
-              style: TextStyle(fontSize: 15),
+              "ဆက်လက်လုပ်ဆောင်မည်",
+              style: TextStyle(fontSize: 15, fontFamily: "Pyidaungsu"),
             )),
-      ], 
-    ); 
+      ],
+    );
   }
 
   Widget _getForm(name, [hintTxt]) {
@@ -310,23 +386,33 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
     );
   }
 
-  void saveFile(BuildContext context) async {
+  void saveFile() async {
+    print('saving file');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/sign");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
-      var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
-      request.files.add(pic1);
+
+      List<http.MultipartFile> frontMultiFiles = [];
+      for (int i = 0; i < frontFiles.length; i++) {
+        var file =
+            await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
+        frontMultiFiles.add(file);
+      }
+      request.files.addAll(frontMultiFiles);
+
       var response = await request.send();
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
       var responseMap = jsonDecode(responseString);
+
+      // print('http resonse $responseMap');
 
       if (responseMap['success'] == true) {
         stopLoading();
@@ -399,8 +485,7 @@ class _CtForm10YCDCState extends State<CtForm10YCDC> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_transformer/ct_form11_farm_land',
+    final result = await Navigator.pushNamed(context, 'ygn_c_overview',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

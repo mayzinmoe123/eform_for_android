@@ -13,8 +13,7 @@ class CpForm01Rules extends StatefulWidget {
 
 class _CpForm01RulesState extends State<CpForm01Rules> {
   var checkedValue = false;
-  // bool isLoading = true; 
-  bool isLoading = false;
+  bool isLoading = true;
   List<String> rules = [
     "ပူးတွဲတင်ပြသည့် အိမ်ထောင်စုစာရင်း၊ နိုင်ငံသားစိစစ်ရေးကဒ်၊ လိုင်စင်၊ စာချုပ်စာတမ်း၊ ထောက်ခံချက်စသည့် အထောက်အထားစာရွက်စာတမ်းများနှင့် ဓာတ်ပုံများကို ထင်ရှားမြင်သာ ပေါ်လွင်ပြီး ဖျက်ရာပြင်ရာမပါရှိရန်။",
     "ပူးတွဲပါစာရွက်စာတမ်းများ မပြည့်စုံခြင်း၊ ထင်ရှားမှု၊ ပြတ်သားမှုမရှိပါက လျှောက်လွှာအား ထည့်သွင်းစဉ်းစားမည် မဟုတ်ပါ။",
@@ -29,38 +28,56 @@ class _CpForm01RulesState extends State<CpForm01Rules> {
   @override
   void initState() {
     super.initState();
-    // checkToken();
+    checkToken();
   }
 
-  // void checkToken() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var token = prefs.getString('token');
-  //   var apiPath = prefs.getString('api_path');
-  //   var url = Uri.parse('${apiPath}api/check_token');
-  //   try {
-  //     var response = await http.post(url, body: {'token': token});
-  //     Map data = jsonDecode(response.body);
-  //     if (data['success']) {
-  //       stopLoading();
-  //     } else {
-  //       stopLoading();
-  //       showAlertDialog(data['title'], data['message'], context);
-  //     }
-  //   } on SocketException catch (e) {
-  //     stopLoading();
-  //     showAlertDialog(
-  //         'Connection timeout!',
-  //         'Error occured while Communication with Server. Check your internet connection',
-  //         context);
-  //     print('check token error $e');
-  //   }
-  // }
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    try {
+      var response = await http.post(url, body: {'token': token});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToBack() {
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(context),
-      body: isLoading ? loading() : body(),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(context),
+        body: isLoading ? loading() : body(),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -132,7 +149,9 @@ class _CpForm01RulesState extends State<CpForm01Rules> {
 
   Widget cancelButton() {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        goToBack();
+      },
       style: ElevatedButton.styleFrom(
         shape: StadiumBorder(),
         primary: Colors.grey[600],

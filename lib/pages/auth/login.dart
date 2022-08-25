@@ -214,6 +214,7 @@ class _LoginState extends State<Login> {
     var apiPath = prefs.getString("api_path");
     try {
       var url = Uri.parse('${apiPath}api/login');
+      print('apiPathi $apiPath');
       var response = await http.post(url, body: {
         'email': email,
         'password': password,

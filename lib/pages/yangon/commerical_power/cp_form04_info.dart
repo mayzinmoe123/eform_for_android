@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,14 +111,21 @@ class _CpForm04InfoState extends State<CpForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(formId),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(formId),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
   AppBar applicationBar(formId) {
     return AppBar(
+      centerTitle: true,
       title: Text("ကိုယ်တိုင်ရေးလျှောက်လွှာပုံစံ",
           style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
@@ -141,8 +150,15 @@ class _CpForm04InfoState extends State<CpForm04Info> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -429,7 +445,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_applicant_info");
+    var url = Uri.parse("${apiPath}api/applicant_info");
     try {
       var response = await http.post(url, body: {
         'token': token,
@@ -458,18 +474,24 @@ class _CpForm04InfoState extends State<CpForm04Info> {
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 
       Map data = jsonDecode(response.body);
-      print('http resonse $data');
-      setState(() {
-        formId = data['form']['id'];
-      });
       if (data['success']) {
+        stopLoading();
+        setState(() {
+          formId = data['form']['id'];
+        });
+        refreshToken(data['token']);
         goToNextPage();
       } else {
         stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
       }
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
-      print('http post error $e');
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
     }
   }
 
@@ -512,11 +534,34 @@ class _CpForm04InfoState extends State<CpForm04Info> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
+  }
+
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
   }
 
   void goToNextPage() async {

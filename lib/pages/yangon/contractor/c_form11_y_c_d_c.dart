@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_application_1/pages/yangon/residential_power/rp_form11_farm_land.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +19,6 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
-  
 
   final subTitle = const Text(
     "စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)",
@@ -40,16 +38,21 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
 
   @override
   Widget build(BuildContext context) {
-   
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -154,11 +157,9 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
     return (frontFile == null)
         ? uploadWidget('စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', true,
             frontFileError, frontExplorer)
-        : previewWidget('စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', true,
-            frontFile!, frontClear);
+        : previewWidget(
+            'စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', true, frontFile!, frontClear);
   }
-
- 
 
   Widget uploadWidget(String label, bool isRequired, bool errorState,
       VoidCallback openExployer) {
@@ -202,8 +203,6 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
     }
   }
 
-
-
   dynamic _openFileExplorer() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -224,13 +223,15 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: 20),
-        isReq ? requiredText(label) : optionalText(label),
-        SizedBox(height: 20),
-        imagePreview(file),
-        imageClear(imageClearFun)
-      ]),
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
     );
   }
 
@@ -258,7 +259,6 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
     });
   }
 
-
   Widget actionButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -284,7 +284,6 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
               } else {
                 setState(() {
                   frontFile == null ? frontFileError = true : true;
-                  
                 });
               }
             },
@@ -292,8 +291,8 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
-      ], 
-    ); 
+      ],
+    );
   }
 
   Widget _getForm(name, [hintTxt]) {
@@ -314,7 +313,7 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/dc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -399,8 +398,7 @@ class _CForm11YCDCState extends State<CForm11YCDC> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form12_meter_bill',
+    final result = await Navigator.pushNamed(context, 'yng_c_form12_meter_bill',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

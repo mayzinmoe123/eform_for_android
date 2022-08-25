@@ -43,9 +43,15 @@ class _TForm12ZoneState extends State<TForm12Zone> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -197,8 +203,8 @@ class _TForm12ZoneState extends State<TForm12Zone> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -310,16 +316,18 @@ class _TForm12ZoneState extends State<TForm12Zone> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFiles.length > 0) {
-                startLoading();
-                saveFile();
-              } else {
-                setState(() {
-                  frontFiles.length <= 0
-                      ? frontFilesError = true
-                      : frontFilesError = false;
-                });
-              }
+              startLoading();
+              saveFile();
+              // if (frontFiles.length > 0) {
+              //   startLoading();
+              //   saveFile();
+              // } else {
+              //   setState(() {
+              //     frontFiles.length <= 0
+              //         ? frontFilesError = true
+              //         : frontFilesError = false;
+              //   });
+              // }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
@@ -363,7 +371,7 @@ class _TForm12ZoneState extends State<TForm12Zone> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_farmland");
+    var url = Uri.parse("${apiPath}api/industry");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -457,8 +465,7 @@ class _TForm12ZoneState extends State<TForm12Zone> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/transformer/t_form13_power',
+    final result = await Navigator.pushNamed(context, 'ygn_t_form13_power',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

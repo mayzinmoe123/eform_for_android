@@ -43,9 +43,15 @@ class _CpForm08OwnershipState extends State<CpForm08Ownership> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -195,8 +201,8 @@ class _CpForm08OwnershipState extends State<CpForm08Ownership> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -345,7 +351,7 @@ class _CpForm08OwnershipState extends State<CpForm08Ownership> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_ownership");
+    var url = Uri.parse("${apiPath}api/ownership");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

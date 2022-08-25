@@ -43,9 +43,15 @@ class _RpForm09PowerState extends State<RpForm09Power> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -189,8 +195,8 @@ class _RpForm09PowerState extends State<RpForm09Power> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -340,7 +346,7 @@ class _RpForm09PowerState extends State<RpForm09Power> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/power");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -435,7 +441,7 @@ class _RpForm09PowerState extends State<RpForm09Power> {
 
   void goToNextPage() async {
     final result = await Navigator.pushNamed(
-        context, '/yangon/residential_power/rp_form10_current_meter',
+        context, '/yangon/residential_power/rp_form10_meter',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

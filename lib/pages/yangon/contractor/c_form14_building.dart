@@ -43,9 +43,15 @@ class _CForm14BuildingState extends State<CForm14Building> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -187,8 +193,8 @@ class _CForm14BuildingState extends State<CForm14Building> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -338,7 +344,7 @@ class _CForm14BuildingState extends State<CForm14Building> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_building");
+    var url = Uri.parse("${apiPath}api/building");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -433,7 +439,7 @@ class _CForm14BuildingState extends State<CForm14Building> {
 
   void goToNextPage() async {
     final result = await Navigator.pushNamed(
-        context, '/yangon/contractor/c_form15_apartment',
+        context, 'ygn_c_form15_apartment_photo',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
