@@ -46,9 +46,15 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -122,7 +128,7 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
   Row requiredText(String label) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Flexible(
+          Expanded(
             child: Text(
               '${label}',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -140,14 +146,6 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
           ),
         ],
       );
-
-  Widget optionalText(label) {
-    return Text(
-      label,
-      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-    );
-  }
 
   Widget front() {
     return (frontFile == null)
@@ -176,7 +174,7 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
           children: [
             isRequired
                 ? requiredText('$labelပုံတင်ရန်')
-                : optionalText('$labelပုံတင်ရန်'),
+                : Text('$labelပုံတင်ရန် *'),
             SizedBox(height: 20),
             Icon(
               Icons.file_upload,
@@ -233,18 +231,15 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            isReq ? requiredText(label) : optionalText(label),
-            SizedBox(height: 20),
-            imagePreview(file),
-            imageClear(imageClearFun)
-          ],
-        ),
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(height: 20),
+        isReq
+            ? Expanded(child: requiredText(label))
+            : Expanded(child: Text(label)),
+        SizedBox(height: 20),
+        imagePreview(file),
+        imageClear(imageClearFun)
+      ]),
     );
   }
 
@@ -333,7 +328,7 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/mandalay/residential_nrc");
+    var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -344,27 +339,29 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
       request.files.add(pic2);
       var response = await request.send();
 
-      // if (response.statusCode == 200) {
-      // stopLoading();
-      // print('Uploaded Success!');
-
-      //Get the response from the server
-      var responseData = await response.stream.toBytes();
-      var responseString = String.fromCharCodes(responseData);
-      var responseMap = jsonDecode(responseString);
-
-      if (responseMap['success'] == true) {
+      if (response.statusCode == 200) {
         stopLoading();
-        refreshToken(responseMap['token']);
-        goToNextPage();
+        print('Uploaded Success!');
+
+        //Get the response from the server
+        var responseData = await response.stream.toBytes();
+        var responseString = String.fromCharCodes(responseData);
+        var responseMap = jsonDecode(responseString);
+
+        if (responseMap['success'] == true) {
+          stopLoading();
+          refreshToken(responseMap['token']);
+          goToNextPage();
+        } else {
+          stopLoading();
+          showAlertDialog(
+              responseMap['title'], responseMap['message'], context);
+        }
       } else {
         stopLoading();
-        showAlertDialog(responseMap['title'], responseMap['message'], context);
+        showAlertDialog('Connection Failed',
+            'Please check you internet connection', context);
       }
-      // } else {
-      //   stopLoading();
-      //   showAlertDialog(responseMap['title'], responseMap['message'], context);
-      // }
     } on SocketException catch (e) {
       stopLoading();
       showAlertDialog('Connection timeout!',
@@ -428,8 +425,7 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/mandalaly/residential_power/cp_form06_household_mdy',
+    final result = await Navigator.pushNamed(context, 'mdy_cp_form06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

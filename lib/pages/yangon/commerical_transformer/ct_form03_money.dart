@@ -23,10 +23,32 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("ကောက်ခံမည့်နှုန်းများ"),
+        appBar: applicationBar(), body: isLoading ? loading() : body());
+  }
+
+  AppBar applicationBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Text("ကောက်ခံမည့်နှုန်းများ", style: TextStyle(fontSize: 18.0)),
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          goToBack();
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            goToHomePage(context);
+          },
+          icon: Icon(
+            Icons.home,
+            size: 18.0,
+          ),
         ),
-        body: isLoading ? loading() : body());
+      ],
+    );
   }
 
   Widget loading() {

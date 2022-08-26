@@ -364,12 +364,13 @@ class _CForm03MeterTypeState extends State<CForm03MeterType> {
       var bodyData = {
         'token': token,
         'form_id': formId != null ? formId.toString() : '',
+        'apply_division': '1', // ygn=1, mdy=3, other=2
         'room_count': roomCount.toString(),
         'apartment_count': apartmentController.text,
         'floor_count': apartmentController.text,
-        'pMeter10': apartmentController.text,
-        'pMeter20': apartmentController.text,
-        'pMeter30': apartmentController.text,
+        'pMeter10': power10Controller.text,
+        'pMeter20': power20Controller.text,
+        'pMeter30': power30Controller.text,
         'meter': meterController.text,
         'water_meter': checkedWaterValue ? 'ON' : 'OFF',
         'elevator_meter': checkedElevatorValue ? 'ON' : 'OFF',

@@ -46,9 +46,15 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -331,7 +337,7 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_recommanded");
+    var url = Uri.parse("${apiPath}api/recommanded");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -418,8 +424,7 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/mandalay/commerical_power/cp_form08_ownership_mdy',
+    final result = await Navigator.pushNamed(context, 'mdy_cp_form08_ownership',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

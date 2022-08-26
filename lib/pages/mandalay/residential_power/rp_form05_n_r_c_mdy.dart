@@ -46,9 +46,15 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -333,7 +339,7 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/mandalay/residential_nrc");
+    var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -343,10 +349,6 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
       var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
       request.files.add(pic2);
       var response = await request.send();
-
-      // if (response.statusCode == 200) {
-      // stopLoading();
-      // print('Uploaded Success!');
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
@@ -361,10 +363,6 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
         stopLoading();
         showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
-      // } else {
-      //   stopLoading();
-      //   showAlertDialog(responseMap['title'], responseMap['message'], context);
-      // }
     } on SocketException catch (e) {
       stopLoading();
       showAlertDialog('Connection timeout!',
@@ -428,8 +426,7 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/mandalaly/residential_power/rp_form06_household_mdy',
+    final result = await Navigator.pushNamed(context, 'mdy_rp_form06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

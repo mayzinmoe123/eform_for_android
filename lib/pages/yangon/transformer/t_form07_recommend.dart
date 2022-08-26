@@ -33,7 +33,7 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "ဘာသာ/သာသနာအတွက်ဖြစ်ပါက ဖြည့်သွင်းရန် မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -111,7 +111,8 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
               fileWidget(),
               SizedBox(height: 20),
               actionButton(context),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              continueButton(),
             ],
           ),
         ),
@@ -157,17 +158,17 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
 
   Widget front() {
     return (frontFile == null)
-        ? uploadWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', true,
+        ? uploadWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
             frontFileError, frontExplorer)
-        : previewWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', true,
+        : previewWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
             frontFile!, frontClear);
   }
 
   Widget back() {
     return (backFile == null)
-        ? uploadWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', true,
+        ? uploadWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
             backFileError, backExplorer)
-        : previewWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', true,
+        : previewWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
             backFile!, backClear);
   }
 
@@ -301,21 +302,38 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFile != null && backFile != null) {
-                startLoading();
-                saveFile(context);
-              } else {
-                setState(() {
-                  frontFile == null ? frontFileError = true : true;
-                  backFile == null ? backFileError = true : true;
-                });
-              }
+              startLoading();
+              saveFile(context);
+              // if (frontFile != null && backFile != null) {
+              //   startLoading();
+              //   saveFile(context);
+              // } else {
+              //   setState(() {
+              //     frontFile == null ? frontFileError = true : true;
+              //     backFile == null ? backFileError = true : true;
+              //   });
+              // }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
       ],
+    );
+  }
+
+  Widget continueButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+          primary: Colors.orange),
+      onPressed: () {
+        goToNextPage();
+      },
+      child: Text(
+        "ဆက်လက်လုပ်ဆောင်မည်",
+        style: TextStyle(fontSize: 15),
+      ),
     );
   }
 
@@ -342,10 +360,14 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
-      var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
-      request.files.add(pic1);
-      var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
-      request.files.add(pic2);
+      if (frontFile != null) {
+        var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
+        request.files.add(pic1);
+      }
+      if (backFile != null) {
+        var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
+        request.files.add(pic2);
+      }
       var response = await request.send();
 
       //Get the response from the server

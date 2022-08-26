@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -191,7 +192,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
               _selectedjob == 'other'
                   ? _getFormRequired("အခြား", otherController)
                   : SizedBox(),
-              _getFormOptional("ပျမ်းမျှလစာ", salaryController),
+              formNumOptional("ပျမ်းမျှလစာ", salaryController),
               _getFormRequired("အဆောက်အဦးပုံစံ၊ အကျယ်အဝန်း၊ အိမ်အမျိုးအစား",
                   buildingTypeController),
               _getFormRequired("အိမ်/တိုက်အမှတ်", homeNoController),
@@ -284,6 +285,26 @@ class _CpForm04InfoState extends State<CpForm04Info> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget formNumOptional(String name, TextEditingController textController,
+      [hintTxt]) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+      child: TextFormField(
+        controller: textController,
+        decoration: InputDecoration(
+          isDense: true,
+          border: OutlineInputBorder(),
+          labelText: (name),
+          helperText: hintTxt,
+          helperStyle: TextStyle(color: Colors.red),
+        ),
+        style: TextStyle(fontSize: 14),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      ),
     );
   }
 

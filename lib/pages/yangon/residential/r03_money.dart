@@ -18,6 +18,11 @@ class _R03MoneyState extends State<R03Money> {
 
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -212,7 +217,7 @@ class _R03MoneyState extends State<R03Money> {
         'token': token,
         'form_id': formId != null ? formId.toString() : '',
         'apply_type': '1', // residential meter
-        'apply_division': '1', // yangon
+        'apply_division': '1', // ygn = 1, mdy = 3,other=2
         'apply_sub_type': '3',
       });
       Map data = jsonDecode(response.body);
