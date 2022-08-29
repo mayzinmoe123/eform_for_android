@@ -72,7 +72,9 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       routes: allLinks,
+
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );
   }
