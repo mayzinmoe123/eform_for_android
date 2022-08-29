@@ -44,9 +44,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => Login(),
+        // '/': (context) => Login(),
         '/register': (context) => Register(),
         '/division_choice': (context) => DivisionChoice(),
+
 
         // Yangon
         '/yangon/meter': (context) => Yangon.MeterApplyChoice(),
@@ -63,6 +64,7 @@ class _MyAppState extends State<MyApp> {
         '/yangon/residential/r10_building': (context) => Yangon.R10Building(),
         '/yangon/residential/r11_power': (context) => Yangon.R11Power(),
         '/yangon/residential/overview': (context) => Yangon.ROverview(),
+        
 
         // Residential Power
         '/yangon/residential_power/rp_form01_rules': (context) =>
@@ -90,6 +92,7 @@ class _MyAppState extends State<MyApp> {
         '/yangon/residential_power/rp_form12_building': (context) =>
             Yangon.RpForm12Building(),
         '/yangon/residential_power/overview': (context) => Yangon.RpOverview(),
+       
 
         // Yangon Commerical Power
         '/yangon/commerical_power/cp_form01_rules': (context) =>
@@ -119,6 +122,7 @@ class _MyAppState extends State<MyApp> {
         '/yangon/commerical_power/cp_form13_building': (context) =>
             Yangon.CpForm13Building(),
         '/yangon/commerical_power/overview': (context) => Yangon.CpOverview(),
+         
 
         // Yangon Contractor
         'ygn_c_form01_rules': (context) => Yangon.CForm01Rules(),
@@ -141,6 +145,7 @@ class _MyAppState extends State<MyApp> {
         'ygn_c_form17_location': (context) => Yangon.CForm17Location(),
         'ygn_c_form18_sign': (context) => Yangon.CForm18Sign(),
         'ygn_c_overview': (context) => Yangon.COverview(),
+        
 
         // Yangon Transformer (Residential)
         'ygn_t_form01_rules': (context) => Yangon.TForm01Rules(),
@@ -162,6 +167,7 @@ class _MyAppState extends State<MyApp> {
         'ygn_t_form12_zone': (context) => Yangon.TForm12Zone(),
         'ygn_t_form13_power': (context) => Yangon.TForm13Power(),
         'ygn_c_overview': (context) => Yangon.TOverview(),
+        '/': (context) => Yangon.TOverview(),
 
         //Mandalay
         //Residential
