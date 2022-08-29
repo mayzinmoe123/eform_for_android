@@ -116,9 +116,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 10),
         Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
       ],
     );
@@ -134,10 +132,14 @@ class _DivisionChoiceState extends State<DivisionChoice> {
             Navigator.pushNamed(context, '/yangon/meter');
           }),
           const SizedBox(height: 10.0),
-          divisionLink("မန္တလေးတိုင်းဒေသကြီးတွင် မီတာလျှောက်ထားခြင်း", () {}),
+          divisionLink("မန္တလေးတိုင်းဒေသကြီးတွင် မီတာလျှောက်ထားခြင်း", () {
+            Navigator.pushNamed(context, 'mdy_meter');
+          }),
           const SizedBox(height: 10.0),
-          divisionLink(
-              "အခြားတိုင်းဒေသကြီး/ပြည်နယ်များတွင် မီတာလျှောက်ထားခြင်း", () {}),
+          divisionLink("အခြားတိုင်းဒေသကြီး/ပြည်နယ်များတွင် မီတာလျှောက်ထားခြင်း",
+              () {
+            Navigator.pushNamed(context, 'other_meter');
+          }),
         ],
       ),
     );

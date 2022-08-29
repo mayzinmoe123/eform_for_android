@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../../utils/helper/num_translate.dart';
-// import 'package:flutter_application_1/utils/helper/num_translate.dart';
 
 class TForm03Money extends StatefulWidget {
   const TForm03Money({Key? key}) : super(key: key);
@@ -19,19 +18,43 @@ class _TForm03MoneyState extends State<TForm03Money> {
   bool selectedValueError = false;
   int? formId;
   bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("ကောက်ခံမည့်နှုန်းများ"),
-        ),
+        appBar: applicationBar(),
         body: isLoading ? loading() : body(context),
       ),
       onWillPop: () async {
         goToBack();
         return true;
       },
+    );
+  }
+
+  AppBar applicationBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Text("ကောက်ခံမည့်နှုန်းများ", style: TextStyle(fontSize: 18.0)),
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          goToBack();
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            goToHomePage(context);
+          },
+          icon: Icon(
+            Icons.home,
+            size: 18.0,
+          ),
+        ),
+      ],
     );
   }
 
@@ -598,7 +621,7 @@ class _TForm03MoneyState extends State<TForm03Money> {
         'token': token,
         'form_id': formId != null ? formId.toString() : '',
         'apply_type': '4', // transformer
-        'apply_division': '1', // yangon
+        'apply_division': '1', // ygn=1, mdy=3, other=2
         'apply_tsf_type': '1', // residential = 1, commercial = 2
         'pole_type': selectedValue.toString(),
         'apply_sub_type': subType.toString(),

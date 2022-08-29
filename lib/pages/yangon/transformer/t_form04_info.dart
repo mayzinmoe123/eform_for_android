@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -201,7 +204,8 @@ class _TForm04InfoState extends State<TForm04Info> {
               _selectedjob == 'other' && !religiousCheckedValue
                   ? _getFormRequired("အခြား", otherController)
                   : SizedBox(),
-              _getFormOptional("ပျမ်းမျှလစာ", salaryController),
+              if (!religiousCheckedValue)
+                formNumOptional("ပျမ်းမျှလစာ", salaryController),
               Container(
                   margin: EdgeInsets.all(8),
                   child: Text(
@@ -293,6 +297,26 @@ class _TForm04InfoState extends State<TForm04Info> {
             return "${name}ကို ထည့်ပါ။";
           }
         },
+      ),
+    );
+  }
+
+  Widget formNumOptional(String name, TextEditingController textController,
+      [hintTxt]) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+      child: TextFormField(
+        controller: textController,
+        decoration: InputDecoration(
+          isDense: true,
+          border: OutlineInputBorder(),
+          labelText: (name),
+          helperText: hintTxt,
+          helperStyle: TextStyle(color: Colors.red),
+        ),
+        style: TextStyle(fontSize: 14),
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       ),
     );
   }
@@ -510,18 +534,21 @@ class _TForm04InfoState extends State<TForm04Info> {
 
       Map data = jsonDecode(response.body);
       print('http resonse $data');
-      setState(() {
-        formId = data['form']['id'];
-      });
-      refreshToken(data['token']);
       if (data['success']) {
+        setState(() {
+          formId = data['form']['id'];
+        });
+        refreshToken(data['token']);
         goToNextPage();
       } else {
         stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
       }
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
-      print('http post error $e');
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
+      print('connection error $e');
     }
   }
 

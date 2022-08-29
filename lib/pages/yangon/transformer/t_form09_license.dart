@@ -30,7 +30,7 @@ class _TForm09LicenseState extends State<TForm09License> {
   );
 
   final noti = const Text(
-    "အနီရောင် ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -102,6 +102,8 @@ class _TForm09LicenseState extends State<TForm09License> {
             children: [
               SizedBox(height: 15),
               subTitle,
+              SizedBox(height: 10),
+              noti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),
@@ -290,22 +292,6 @@ class _TForm09LicenseState extends State<TForm09License> {
     var mSize = MediaQuery.of(context).size;
     return Column(
       children: [
-        Container(
-          width: mSize.width,
-          height: 50,
-          decoration: BoxDecoration(color: Colors.redAccent),
-          child: Center(
-            child: Text(
-              "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: "Pyidaungsu",
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
         SizedBox(
           height: 20,
         ),

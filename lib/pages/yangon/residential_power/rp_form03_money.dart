@@ -193,7 +193,7 @@ class _RpForm03MoneyState extends State<RpForm03Money> {
       var response = await http.post(url, body: {
         'token': token,
         'apply_type': '2', // residential power meter
-        'apply_division': '1', // yangon
+        'apply_division': '1', // ygn=1, mdy=3, other=2
         'apply_sub_type': type.toString(),
         'form_id': formId != null ? formId.toString() : '',
       });

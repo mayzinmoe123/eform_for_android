@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +14,7 @@ class RForm04InfoMdy extends StatefulWidget {
 
 class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
   int? formId;
-  bool isLoading = true;
+  bool isLoading = false;
 
   String? _selectedjob;
   bool jobError = false;
@@ -81,22 +83,21 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
       print('response is $response');
       Map data = jsonDecode(response.body);
       if (data['success']) {
+        stopLoading();
         setState(() {
           townshipList = data['townships'];
         });
         print('township list is $townshipList');
       } else {
-        showAlertDialog(
-            'Connection Failed!',
-            'There is a problem while retrieving the townships list. Please try later or connect to developer team',
-            context);
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
         print('check token error');
       }
       stopLoading();
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
-      showAlertDialog(
-          'Connection Failed!', 'Check your internet connection', context);
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
       print('check token error $e');
     }
   }
@@ -109,9 +110,15 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(formId),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(formId),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -141,8 +148,15 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -429,9 +443,9 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_applicant_info");
+    var url = Uri.parse("${apiPath}api/applicant_info");
     try {
-      var response = await http.post(url, body: {
+      var bodyData = {
         'token': token,
         'form_id': formId.toString(),
         'fullname': nameController.text,
@@ -453,23 +467,35 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
         'township_id': townshipId.toString(),
         'district_id': districtId.toString(),
         'div_state_id': divisionId.toString()
-      });
+      };
+      var response = await http.post(url, body: bodyData);
+
+      print('bodydata is $bodyData');
 
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 
       Map data = jsonDecode(response.body);
       print('http resonse $data');
-      setState(() {
-        formId = data['form']['id'];
-      });
+
       if (data['success']) {
+        stopLoading();
+        setState(() {
+          formId = data['form']['id'];
+        });
+        print('succeess formId');
+        refreshToken(data['token']);
         goToNextPage();
       } else {
         stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
       }
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
-      print('http post error $e');
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
     }
   }
 
@@ -492,7 +518,7 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
         style: TextStyle(fontFamily: "Pyidaungsu"),
       ),
       action: SnackBarAction(
-        label: "Dismiss",
+        label: "ပိတ်မည်",
         onPressed: () {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
@@ -512,16 +538,38 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/residential/r05_nrc',
+    final result = await Navigator.pushNamed(context, 'mdy_r_form05_n_r_c',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

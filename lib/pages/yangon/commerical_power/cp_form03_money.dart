@@ -97,14 +97,9 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
                 getTableBodyDetail(
                     "စုစုပေါင်း", "၉၄၄,၅၀၀", "၁,၂၁၉,၅၀၀", "၁,၄၉၄,၅၀၀"),
                 _getChooseBtn(),
-                // TableRow(children: [
-                //   ElevatedButton(onPressed: () {}, child: Text("ရွေးချယ်မည်")),
-                // ])
               ],
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
           ],
         ),
       ),
@@ -190,7 +185,7 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
         'token': token,
         'form_id': formId != null ? formId.toString() : '',
         'apply_type': '3', // commercial power meter
-        'apply_division': '1', // yangon
+        'apply_division': '1', // ygn=1, mdy=3, other=2
         'apply_sub_type': type.toString(),
       });
       Map data = jsonDecode(response.body);

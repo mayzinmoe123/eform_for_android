@@ -45,9 +45,15 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(context),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -78,8 +84,15 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   }
 
   Widget loading() {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
     );
   }
 
@@ -115,9 +128,12 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   Row requiredText(String label) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '${label}',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          Flexible(
+            child: Text(
+              '${label}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(
             width: 10.0,
@@ -129,6 +145,14 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
           ),
         ],
       );
+
+  Widget optionalText(label) {
+    return Text(
+      label,
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    );
+  }
 
   Widget front() {
     return (frontFiles.length <= 0)
@@ -160,7 +184,7 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
           children: [
             isRequired
                 ? requiredText('$labelပုံတင်ရန်')
-                : Text('$labelပုံတင်ရန် *'),
+                : optionalText('$labelပုံတင်ရန်'),
             SizedBox(height: 20),
             Icon(
               Icons.file_upload,
@@ -181,8 +205,8 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   }
 
   void frontExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         frontFiles = files;
@@ -191,8 +215,8 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   }
 
   void backExplorer() async {
-    List files = await _openFileExplorerMutiple();
-    if (files.length > 0) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
       print('file upload');
       setState(() {
         backFiles = files;
@@ -241,7 +265,7 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           // Expanded(child: child)
           SizedBox(height: 20),
-          isReq ? requiredText(label) : Text(label),
+          isReq ? requiredText(label) : optionalText(label),
           SizedBox(height: 20),
           imagePreview(file),
           imageClear(imageClearFun)
@@ -312,7 +336,6 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
             onPressed: () {
               if (frontFiles.length > 0 && backFiles.length > 0) {
                 startLoading();
-                goToNextPage(formId);
                 saveFile();
               } else {
                 setState(() {
@@ -351,7 +374,7 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_form10");
+    var url = Uri.parse("${apiPath}api/form10");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -375,40 +398,26 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
 
       var response = await request.send();
 
-      if (response.statusCode == 200) {
+      //Get the response from the server
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      var responseMap = jsonDecode(responseString);
+
+      print('http resonse $responseMap');
+
+      if (responseMap['success'] == true) {
         stopLoading();
-        print('Uploaded Success in household!');
-
-        //Get the response from the server
-        var responseData = await response.stream.toBytes();
-        var responseString = String.fromCharCodes(responseData);
-        var responseMap = jsonDecode(responseString);
-
-        print('http resonse $responseMap');
-
-        if (responseMap['success'] == true) {
-          stopLoading();
-          var form = responseMap['form'];
-          goToNextPage(form["id"]);
-        } else {
-          stopLoading();
-          showAlertDialog(
-              'Upload Failed',
-              'some error occours in upload files. Please try later or connect to developer team',
-              context);
-        }
+        refreshToken(responseMap['token']);
+        goToNextPage();
       } else {
         stopLoading();
-        print('token $token');
-        showAlertDialog('Connection Failed',
-            'Please check you internet connection', context);
+        showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
-    } catch (e) {
-      print('http post error $e');
-      print('token $token');
+    } on SocketException catch (e) {
       stopLoading();
-      showAlertDialog('Connection Failed',
-          'Please check you internet connection http post error $e', context);
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
+      print('connection error $e');
     }
   }
 
@@ -436,17 +445,39 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('CLOSE'),
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
               )
             ],
           );
         });
   }
 
-  void goToNextPage(formIdValue) async {
-    final result = await Navigator.pushNamed(
-        context, '/mandalay/residential/r_form07_recommend_mdy',
-        arguments: {'form_id': formIdValue});
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToNextPage() async {
+    final result = await Navigator.pushNamed(context, 'mdy_r_form07_recommend',
+        arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });

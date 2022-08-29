@@ -1,128 +1,298 @@
 import 'dart:io';
+import 'dart:convert';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_application_1/pages/mandalay/contractor/c_form10_live_mdy.dart';
-import 'package:flutter_application_1/pages/yangon/commerical_power/cp_form12_farm_land.dart';
-import 'package:flutter_application_1/pages/yangon/contractor/c_form10_live.dart';
-
-
+import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class CForm09AllowMdy extends StatefulWidget {
   const CForm09AllowMdy({Key? key}) : super(key: key);
 
   @override
-  State<CForm09AllowMdy> createState() =>
-      _CForm09AllowMdyState();
+  State<CForm09AllowMdy> createState() => _CForm09AllowMdyState();
 }
 
 class _CForm09AllowMdyState extends State<CForm09AllowMdy> {
-  PlatformFile? file;
-  PlatformFile? file2;
+  int? formId;
+  bool isLoading = false;
+  File? frontFile;
+  bool frontFileError = false;
   FilePickerResult? result;
+
+  final subTitle = const Text(
+    "ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)",
+    style: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      decoration: TextDecoration.underline,
+    ),
+    textAlign: TextAlign.center,
+  );
+
+  final noti = const Text(
+    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    style: TextStyle(color: Colors.red),
+    textAlign: TextAlign.center,
+  );
+
   @override
- Widget build(BuildContext context) {
-    var mSize = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("ဆောက်လုပ်ခွင့် ပုံတင်ရန် (မူရင်း)",style: TextStyle(fontFamily: "Pyidaungsu"),),
+  Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Form(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  "***ကြယ်အမှတ်အသားပါသော ကွက်လပ်များကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontFamily: "Pyidaungsu"
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  "ဆောက်လုပ်ခွင့် ပုံတင်ရန် (မူရင်း) ***",
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                    fontFamily: "Pyidaungsu"
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                
-                SizedBox(
-                  height: 13,
-                ),
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _openFileExplorer();
-                      },
-                      child: Text("ဓာတ်ပုံ‌ရွေးချယ်ရန်"),
-                    ),
-                    (file?.path == null)
-                        ? Card()
-                        : Card(
-                          child: Image.file(
-                              File(file!.path.toString()),
-                              width: mSize.width,
-                              height: 200,
-                            ),
-                        ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                 SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.black12,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 7)),
-                        child:
-                            Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 13,fontFamily: "Pyidaungsu"))),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 7)),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                CForm10LiveMdy()));
-                        },
-                        child: Text(
-                          "ဖြည့်သွင်းမည်",
-                          style: TextStyle(fontSize: 13),
-                        )),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+    );
+  }
+
+  AppBar applicationBar() {
+    return AppBar(
+      centerTitle: true,
+      title: const Text("ဆောက်လုပ်ခွင့်အထောက်အထား",
+          style: TextStyle(fontSize: 18.0)),
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          goToBack();
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            goToHomePage(context);
+          },
+          icon: const Icon(
+            Icons.home,
+            size: 18.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        child: Form(
+          child: Column(
+            children: [
+              SizedBox(height: 15),
+              subTitle,
+              SizedBox(height: 10),
+              noti,
+              SizedBox(height: 13),
+              fileWidget(),
+              SizedBox(height: 20),
+              actionButton(context),
+              SizedBox(height: 20),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget fileWidget() {
+    return Column(
+      children: [front()],
+    );
+  }
+
+  Row requiredText(String label) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              '${label}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.fade,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(
+            width: 5.0,
+          ),
+          Text(
+            '*',
+            style: TextStyle(
+                color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+
+  Widget optionalText(label) {
+    return Text(
+      label,
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget front() {
+    return (frontFile == null)
+        ? uploadWidget('ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)', true,
+            frontFileError, frontExplorer)
+        : previewWidget('ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)', true,
+            frontFile!, frontClear);
+  }
+
+  Widget uploadWidget(String label, bool isRequired, bool errorState,
+      VoidCallback openExployer) {
+    return GestureDetector(
+      onTap: openExployer,
+      child: Container(
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        width: double.infinity,
+        height: 320,
+        color: Colors.grey[200],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            isRequired
+                ? requiredText('$labelပုံတင်ရန်')
+                : optionalText('$labelပုံတင်ရန်'),
+            SizedBox(height: 20),
+            Icon(
+              Icons.file_upload,
+              size: 40,
+              color: Colors.blue,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'ပုံတင်ရန်နှိပ်ပါ (တစ်ပုံသာတင်နိုင်ပါသည်)',
+              style:
+                  TextStyle(color: errorState ? Colors.red : Colors.grey[800]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void frontExplorer() async {
+    File? file = await _openFileExplorer();
+    if (file != null) {
+      setState(() {
+        frontFile = file;
+      });
+    }
+  }
+
+  dynamic _openFileExplorer() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
+    );
+    if (result != null) {
+      File file = File(result.files.single.path.toString());
+      return file;
+    } else {
+      // User canceled the picker
+      return null;
+    }
+  }
+
+  Widget previewWidget(
+      String label, bool isReq, File file, VoidCallback imageClearFun) {
+    return Container(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      height: 320,
+      color: Colors.grey[200],
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
+    );
+  }
+
+  Image imagePreview(File file) {
+    return Image.file(
+      file,
+      width: double.infinity,
+      height: 200,
+    );
+  }
+
+  FlatButton imageClear(VoidCallback onPressedFun) {
+    return FlatButton(
+      onPressed: onPressedFun,
+      child: Text(
+        'ပုံပယ်ဖျက်မည်',
+        style: TextStyle(fontSize: 12, color: Colors.redAccent),
+      ),
+    );
+  }
+
+  void frontClear() {
+    setState(() {
+      frontFile = null;
+    });
+  }
+
+  Widget actionButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              goToBack();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.black12,
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+            child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+        SizedBox(
+          width: 10,
+        ),
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+            onPressed: () {
+              if (frontFile != null) {
+                startLoading();
+                saveFile(context);
+              } else {
+                setState(() {
+                  frontFile == null ? frontFileError = true : true;
+                });
+              }
+            },
+            child: Text(
+              "ဖြည့်သွင်းမည်",
+              style: TextStyle(fontSize: 15),
+            )),
+      ],
     );
   }
 
@@ -140,24 +310,109 @@ class _CForm09AllowMdyState extends State<CForm09AllowMdy> {
     );
   }
 
-  void _openFileExplorer() async {
-    result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'jpeg'],
-    );
-    if (result == null) return;
+  void saveFile(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String apiPath = prefs.getString('api_path').toString();
+    String token = prefs.getString('token').toString();
+    var url = Uri.parse("${apiPath}api/building_permit");
+    try {
+      var request = await http.MultipartRequest('POST', url);
+      request.fields["token"] = token;
+      request.fields["form_id"] = formId.toString();
+      var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
+      request.files.add(pic1);
+      var response = await request.send();
 
-    // Do something with the file
+      //Get the response from the server
+      var responseData = await response.stream.toBytes();
+      var responseString = String.fromCharCodes(responseData);
+      var responseMap = jsonDecode(responseString);
 
-    file = result!.files.first;
-    print(file);
-
-    // viewfile(file);
-    setState(() {});
+      if (responseMap['success'] == true) {
+        stopLoading();
+        refreshToken(responseMap['token']);
+        goToNextPage();
+      } else {
+        stopLoading();
+        showAlertDialog(responseMap['title'], responseMap['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server', context);
+      print('connection error $e');
+    }
   }
 
+  void stopLoading() {
+    setState(() {
+      isLoading = false;
+    });
+  }
 
-  // void viewfile(PlatformFile file) {
-  //   OpenFile.open(file.path);
-  // }
+  void startLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void showAlertDialog(String title, String content, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: title != 'Unauthorized' ? Text('CLOSE') : logoutButton(),
+              )
+            ],
+          );
+        });
+  }
+
+  Widget logoutButton() {
+    return GestureDetector(
+      child: Text('LOG OUT'),
+      onTap: () {
+        logout();
+      },
+    );
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
+  }
+
+  void refreshToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+    });
+  }
+
+  void goToNextPage() async {
+    final result = await Navigator.pushNamed(context, 'mdy_c_form10_live',
+        arguments: {'form_id': formId});
+    setState(() {
+      formId = (result ?? 0) as int;
+    });
+    print('form id is $formId');
+  }
+
+  void goToBack() {
+    Navigator.of(context).pop(formId);
+  }
+
+  void goToHomePage(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/division_choice', (route) => false);
+  }
 }

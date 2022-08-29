@@ -32,7 +32,7 @@ class _TForm06HouseholdState extends State<TForm06Household> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "ဘာသာ/သာသနာအတွက်ဖြစ်ပါက ဖြည့်သွင်းရန် မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -111,7 +111,8 @@ class _TForm06HouseholdState extends State<TForm06Household> {
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              continueButton(),
             ],
           ),
         ),
@@ -146,17 +147,17 @@ class _TForm06HouseholdState extends State<TForm06Household> {
   Widget front() {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
-            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', true, frontFilesError, frontExplorer)
+            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFilesError, frontExplorer)
         : imagePreviewWidget(
-            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', true, frontFiles, frontClear);
+            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFiles, frontClear);
   }
 
   Widget back() {
     return (backFiles.length <= 0)
         ? multipleUploadWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', true, backFilesError, backExplorer)
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFilesError, backExplorer)
         : imagePreviewWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', true, backFiles, backClear);
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFiles, backClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -323,25 +324,42 @@ class _TForm06HouseholdState extends State<TForm06Household> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFiles.length > 0 && backFiles.length > 0) {
-                startLoading();
-                saveFile();
-              } else {
-                setState(() {
-                  frontFiles.length <= 0
-                      ? frontFilesError = true
-                      : frontFilesError = false;
-                  backFiles.length <= 0
-                      ? backFilesError = true
-                      : backFilesError = false;
-                });
-              }
+              // if (frontFiles.length > 0 && backFiles.length > 0) {
+              //   startLoading();
+              //   saveFile();
+              // } else {
+              //   setState(() {
+              //     frontFiles.length <= 0
+              //         ? frontFilesError = true
+              //         : frontFilesError = false;
+              //     backFiles.length <= 0
+              //         ? backFilesError = true
+              //         : backFilesError = false;
+              //   });
+              // }
+              startLoading();
+              saveFile();
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
       ],
+    );
+  }
+
+  Widget continueButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+          primary: Colors.orange),
+      onPressed: () {
+        goToNextPage();
+      },
+      child: Text(
+        "ဆက်လက်လုပ်ဆောင်မည်",
+        style: TextStyle(fontSize: 15),
+      ),
     );
   }
 

@@ -156,10 +156,10 @@ class _CForm10LiveState extends State<CForm10Live> {
 
   Widget front() {
     return (frontFile == null)
-        ? uploadWidget('လူနေထိုင်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)', true,
-            frontFileError, frontExplorer)
-        : previewWidget('လူနေထိုင်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)', true,
-            frontFile!, frontClear);
+        ? uploadWidget(
+            'လူနေထိုင်ခွင့် အထောက်အထား', true, frontFileError, frontExplorer)
+        : previewWidget(
+            'လူနေထိုင်ခွင့် အထောက်အထား', true, frontFile!, frontClear);
   }
 
   Widget uploadWidget(String label, bool isRequired, bool errorState,

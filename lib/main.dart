@@ -9,8 +9,9 @@ import 'package:flutter_application_1/pages/auth/register.dart';
 // division choice
 import 'package:flutter_application_1/pages/division_choice.dart';
 
-import 'yangon.dart' as Yangon;
-import 'mandalay.dart' as Mandalay;
+import 'yangon.dart';
+import 'mandalay.dart';
+import 'other.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,10 +40,39 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
+    Map<String, Widget Function(BuildContext)> allLink = {};
+    Map<String, Widget Function(BuildContext)> initialLink = {
+      '/': (context) => Login(),
+      '/register': (context) => Register(),
+      '/division_choice': (context) => DivisionChoice(),
+    };
+    allLink.addAll(initialLink);
+
+    Yangon yangon = Yangon();
+    Map<String, Widget Function(BuildContext)> yangonLink =
+        yangon.link(context);
+    allLink.addAll(yangonLink);
+
+    Mandalay mandalay = Mandalay();
+    Map<String, Widget Function(BuildContext)> mandalayLink =
+        mandalay.link(context);
+    allLink.addAll(mandalayLink);
+
+    Other other = Other();
+    Map<String, Widget Function(BuildContext)> otherLink = other.link(context);
+    allLink.addAll(otherLink);
+
+    return allLink;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var allLinks = getAllLinks(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+<<<<<<< HEAD
       routes: {
         // '/': (context) => Login(),
         '/register': (context) => Register(),
@@ -278,6 +308,9 @@ class _MyAppState extends State<MyApp> {
         '/mandalay/transformer/t_form10_live_mdy': (context) =>
             Mandalay.TForm10YCDCMdy()
       },
+=======
+      routes: allLinks,
+>>>>>>> 3b72083c0ab9ddfe32af3a1d3211cb46738910dc
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );
   }
