@@ -440,7 +440,7 @@ class _TForm13PowerState extends State<TForm13Power> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_overview',
+    final result = await Navigator.pushNamed(context, 'ygn_t_overview',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

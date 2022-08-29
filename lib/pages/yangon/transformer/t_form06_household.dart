@@ -174,7 +174,7 @@ class _TForm06HouseholdState extends State<TForm06Household> {
           children: [
             isRequired
                 ? requiredText('$labelပုံတင်ရန်')
-                : Text('$labelပုံတင်ရန် *'),
+                : Text('$labelပုံတင်ရန်'),
             SizedBox(height: 20),
             Icon(
               Icons.file_upload,

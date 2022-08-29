@@ -1,27 +1,26 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm10YCDCMdy extends StatefulWidget {
-  const TForm10YCDCMdy({Key? key}) : super(key: key);
+class TForm08Ownership extends StatefulWidget {
+  const TForm08Ownership({Key? key}) : super(key: key);
 
   @override
-  State<TForm10YCDCMdy> createState() => _TForm10YCDCMdyState();
+  State<TForm08Ownership> createState() => _TForm08OwnershipState();
 }
 
-class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
+class _TForm08OwnershipState extends State<TForm08Ownership> {
   int? formId;
   bool isLoading = false;
-  File? frontFile;
-  bool frontFileError = false;
-  FilePickerResult? result;
+  List frontFiles = [];
+  bool frontFilesError = false;
 
   final subTitle = const Text(
-    "စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)",
+    "လျှောက်ထားသူ၏ ပိုင်ဆိုင်မှုအထောက်အထားဓါတ်ပုံ(မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -31,7 +30,7 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   );
 
   final noti = const Text(
-    "အလင်းရောင်သုံး ထရန်ဖော်မာဖြစ်ပါက ဖြည့်သွင်းရန်မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည်ကို နှိပ်ပါ။!",
+    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -59,7 +58,8 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("စည်ပင်ထောက်ခံစာ", style: TextStyle(fontSize: 18.0)),
+      title: const Text("ပိုင်ဆိုင်မှုအထောက်အထား",
+          style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -106,11 +106,10 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
               SizedBox(height: 10),
               noti,
               SizedBox(height: 13),
-              fileWidget(),
+              fileWidgets(),
               SizedBox(height: 20),
-              actionButton(context),
-              SizedBox(height: 10),
-              continueButton(),
+              actionButton(),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -118,7 +117,7 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
     );
   }
 
-  Widget fileWidget() {
+  Widget fileWidgets() {
     return Column(
       children: [front()],
     );
@@ -131,12 +130,11 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
             child: Text(
               '${label}',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.fade,
               textAlign: TextAlign.center,
             ),
           ),
           SizedBox(
-            width: 5.0,
+            width: 10.0,
           ),
           Text(
             '*',
@@ -155,14 +153,20 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   }
 
   Widget front() {
-    return (frontFile == null)
-        ? uploadWidget('စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', false,
-            frontFileError, frontExplorer)
-        : previewWidget(
-            'စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)', false, frontFile!, frontClear);
+    return (frontFiles.length <= 0)
+        ? multipleUploadWidget(
+            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
+            true,
+            frontFilesError,
+            frontExplorer)
+        : imagePreviewWidget(
+            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
+            true,
+            frontFiles,
+            frontClear);
   }
 
-  Widget uploadWidget(String label, bool isRequired, bool errorState,
+  Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
       VoidCallback openExployer) {
     return GestureDetector(
       onTap: openExployer,
@@ -185,9 +189,10 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
             ),
             SizedBox(height: 20),
             Text(
-              'ပုံတင်ရန်နှိပ်ပါ (တစ်ပုံသာတင်နိုင်ပါသည်)',
+              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။ )',
               style:
                   TextStyle(color: errorState ? Colors.red : Colors.grey[800]),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -196,10 +201,11 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   }
 
   void frontExplorer() async {
-    File? file = await _openFileExplorer();
-    if (file != null) {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
+      print('file upload');
       setState(() {
-        frontFile = file;
+        frontFiles = files;
       });
     }
   }
@@ -211,35 +217,66 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
     );
     if (result != null) {
       File file = File(result.files.single.path.toString());
+      print('file upload');
       return file;
+    } else {
+      // User canceled the picker
+      print('file cancel');
+      return null;
+    }
+  }
+
+  dynamic _openFileExplorerMutiple() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    );
+    if (result != null) {
+      List<File> images = result.paths.map((path) => File(path!)).toList();
+      return images;
     } else {
       // User canceled the picker
       return null;
     }
   }
 
-  Widget previewWidget(
-      String label, bool isReq, File file, VoidCallback imageClearFun) {
+  Widget imagePreviewWidget(
+      String label, bool isReq, List file, VoidCallback imageClearFun) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        SizedBox(height: 20),
-        isReq ? requiredText(label) : optionalText(label),
-        SizedBox(height: 20),
-        imagePreview(file),
-        imageClear(imageClearFun)
-      ]),
+      child: SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // Expanded(child: child)
+          SizedBox(height: 20),
+          isReq ? requiredText(label) : optionalText(label),
+          SizedBox(height: 20),
+          imagePreview(file),
+          imageClear(imageClearFun)
+        ]),
+      ),
     );
   }
 
-  Image imagePreview(File file) {
-    return Image.file(
-      file,
-      width: double.infinity,
-      height: 200,
+  Widget imagePreview(List files) {
+    return Container(
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        // Create a grid with 2 columns. If you change the scrollDirection to
+        // horizontal, this produces 2 rows.
+        crossAxisCount: 3,
+        // Generate 100 widgets that display their index in the List.
+        children: files.map((file) => Image.file(file)).toList(),
+      ),
     );
+    // return Image.file(
+    //   file,
+    //   width: double.infinity,
+    //   height: 200,
+    // );
   }
 
   FlatButton imageClear(VoidCallback onPressedFun) {
@@ -254,11 +291,11 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
 
   void frontClear() {
     setState(() {
-      frontFile = null;
+      frontFiles = [];
     });
   }
 
-  Widget actionButton(BuildContext context) {
+  Widget actionButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -277,37 +314,22 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              startLoading();
-              saveFile(context);
-              // if (frontFile != null) {
-              //   startLoading();
-              //   saveFile(context);
-              // } else {
-              //   setState(() {
-              //     frontFile == null ? frontFileError = true : true;
-              //   });
-              // }
+              if (frontFiles.length > 0) {
+                startLoading();
+                saveFile();
+              } else {
+                setState(() {
+                  frontFiles.length <= 0
+                      ? frontFilesError = true
+                      : frontFilesError = false;
+                });
+              }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
       ],
-    );
-  }
-
-  Widget continueButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          primary: Colors.orange),
-      onPressed: () {
-        goToNextPage();
-      },
-      child: Text(
-        "ဆက်လက်လုပ်ဆောင်မည်",
-        style: TextStyle(fontSize: 15),
-      ),
     );
   }
 
@@ -325,25 +347,32 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
     );
   }
 
-  void saveFile(BuildContext context) async {
+  void saveFile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/dc");
+    var url = Uri.parse("${apiPath}api/ownership");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
-      if (frontFile != null) {
-        var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
-        request.files.add(pic1);
+
+      List<http.MultipartFile> frontMultiFiles = [];
+      for (int i = 0; i < frontFiles.length; i++) {
+        var file =
+            await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
+        frontMultiFiles.add(file);
       }
+      request.files.addAll(frontMultiFiles);
+
       var response = await request.send();
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
       var responseMap = jsonDecode(responseString);
+
+      // print('http resonse $responseMap');
 
       if (responseMap['success'] == true) {
         stopLoading();
@@ -416,7 +445,7 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_overview',
+    final result = await Navigator.pushNamed(context, 'other_t09_license',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

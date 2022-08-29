@@ -6,14 +6,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm05NRCMdy extends StatefulWidget {
-  const TForm05NRCMdy({Key? key}) : super(key: key);
+class TForm07Recommend extends StatefulWidget {
+  const TForm07Recommend({Key? key}) : super(key: key);
 
   @override
-  State<TForm05NRCMdy> createState() => _TForm05NRCMdyState();
+  State<TForm07Recommend> createState() => _TForm07RecommendState();
 }
 
-class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
+class _TForm07RecommendState extends State<TForm07Recommend> {
   int? formId;
   bool isLoading = false;
   File? frontFile;
@@ -23,7 +23,7 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
   FilePickerResult? result;
 
   final subTitle = const Text(
-    "လျှောက်ထားသူ၏ မှတ်ပုံတင်/သာသနာရေးကတ် (မူရင်း)",
+    "လျှောက်ထားသူ၏ ထောက်ခံစာဓါတ်ပုံ(မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "ဘာသာ/သာသနာအတွက်ဖြစ်ပါက ဖြည့်သွင်းရန် မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -45,7 +45,7 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
     setState(() {
       formId = data['form_id'];
     });
-    print('form_id is $formId');
+    print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -61,8 +61,7 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("မှတ်ပုံတင်/သာသနာရေးကတ်ဓါတ်ပုံ",
-          style: TextStyle(fontSize: 18.0)),
+      title: const Text("ထောက်ခံစာဓါတ်ပုံ", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -112,7 +111,8 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
               fileWidget(),
               SizedBox(height: 20),
               actionButton(context),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              continueButton(),
             ],
           ),
         ),
@@ -158,15 +158,18 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
 
   Widget front() {
     return (frontFile == null)
-        ? uploadWidget(
-            'မှတ်ပုံတင်အရှေ့ဘက်', true, frontFileError, frontExplorer)
-        : previewWidget('မှတ်ပုံတင်အရှေ့ဘက်', true, frontFile!, frontClear);
+        ? uploadWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
+            frontFileError, frontExplorer)
+        : previewWidget('နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
+            frontFile!, frontClear);
   }
 
   Widget back() {
     return (backFile == null)
-        ? uploadWidget('မှတ်ပုံတင်အနောက်ဘက်', true, backFileError, backExplorer)
-        : previewWidget('မှတ်ပုံတင်အနောက်ဘက်', true, backFile!, backClear);
+        ? uploadWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
+            backFileError, backExplorer)
+        : previewWidget('ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ', false,
+            backFile!, backClear);
   }
 
   Widget uploadWidget(String label, bool isRequired, bool errorState,
@@ -240,18 +243,13 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
       padding: EdgeInsets.only(left: 20, right: 20),
       height: 320,
       color: Colors.grey[200],
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            isReq ? requiredText(label) : optionalText(label),
-            SizedBox(height: 20),
-            imagePreview(file),
-            imageClear(imageClearFun)
-          ],
-        ),
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SizedBox(height: 20),
+        isReq ? requiredText(label) : optionalText(label),
+        SizedBox(height: 20),
+        imagePreview(file),
+        imageClear(imageClearFun)
+      ]),
     );
   }
 
@@ -304,21 +302,38 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFile != null && backFile != null) {
-                startLoading();
-                saveFile(context);
-              } else {
-                setState(() {
-                  frontFile == null ? frontFileError = true : true;
-                  backFile == null ? backFileError = true : true;
-                });
-              }
+              startLoading();
+              saveFile(context);
+              // if (frontFile != null && backFile != null) {
+              //   startLoading();
+              //   saveFile(context);
+              // } else {
+              //   setState(() {
+              //     frontFile == null ? frontFileError = true : true;
+              //     backFile == null ? backFileError = true : true;
+              //   });
+              // }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
       ],
+    );
+  }
+
+  Widget continueButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+          primary: Colors.orange),
+      onPressed: () {
+        goToNextPage();
+      },
+      child: Text(
+        "ဆက်လက်လုပ်ဆောင်မည်",
+        style: TextStyle(fontSize: 15),
+      ),
     );
   }
 
@@ -340,20 +355,20 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/nrc");
+    var url = Uri.parse("${apiPath}api/recommanded");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
-      var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
-      request.files.add(pic1);
-      var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
-      request.files.add(pic2);
+      if (frontFile != null) {
+        var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
+        request.files.add(pic1);
+      }
+      if (backFile != null) {
+        var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
+        request.files.add(pic2);
+      }
       var response = await request.send();
-
-      // if (response.statusCode == 200) {
-      // stopLoading();
-      // print('Uploaded Success!');
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
@@ -368,10 +383,6 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
         stopLoading();
         showAlertDialog(responseMap['title'], responseMap['message'], context);
       }
-      // } else {
-      //   stopLoading();
-      //   showAlertDialog(responseMap['title'], responseMap['message'], context);
-      // }
     } on SocketException catch (e) {
       stopLoading();
       showAlertDialog('Connection timeout!',
@@ -435,7 +446,7 @@ class _TForm05NRCMdyState extends State<TForm05NRCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form06_household',
+    final result = await Navigator.pushNamed(context, 'other_t08_ownership',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

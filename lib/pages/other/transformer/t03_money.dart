@@ -6,14 +6,14 @@ import 'dart:io';
 
 import '../../../utils/helper/num_translate.dart';
 
-class TForm03MoneyMdy extends StatefulWidget {
-  const TForm03MoneyMdy({Key? key}) : super(key: key);
+class TForm03Money extends StatefulWidget {
+  const TForm03Money({Key? key}) : super(key: key);
 
   @override
-  State<TForm03MoneyMdy> createState() => _TForm03MoneyMdyState();
+  State<TForm03Money> createState() => _TForm03MoneyState();
 }
 
-class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
+class _TForm03MoneyState extends State<TForm03Money> {
   int selectedValue = 0;
   bool selectedValueError = false;
   int? formId;
@@ -21,7 +21,16 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: applicationBar(), body: body());
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+    );
   }
 
   AppBar applicationBar() {
@@ -49,7 +58,20 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
     );
   }
 
-  Widget body() {
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 17),
@@ -60,7 +82,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
               children: <Widget>[
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _buildCells(22),
+                  children: _buildCells(28),
                 ),
                 Flexible(
                   child: SingleChildScrollView(
@@ -105,185 +127,242 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
                   _getDetailDataHeader2("အကြောင်းအရာများ",
                       "၁၁/၀.၄ ကေဗွီ ထရန်စဖော်မာ Rating အလိုက် ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
                   _getDetailDataHeader(
-                    "အမျိုးအစား (ကေဗွီအေ)",
-                    "မီတာသတ်မှတ်ကြေး",
-                    "အာမခံစဘော်ငွေ",
-                    "လိုင်းကြိုး (ဆက်သွယ်ခ)",
-                    "မီးဆက်ခ",
-                    "မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-                    "တည်ဆောက်စရိတ်",
-                    "စုစုပေါင်း",
+                      "အမျိုးအစား (ကေဗွီအေ)",
+                      "မီတာသတ်မှတ်ကြေး",
+                      "အာမခံစဘော်ငွေ",
+                      "လိုင်းကြိုး (ဆက်သွယ်ခ)",
+                      "မီးဆက်ခ",
+                      "မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+                      "စုစုပေါင်း"),
+                  _getDetailData(
+                    "1",
+                    "၅၀",
+                    "၁,၈၀၀,၀၀၀/-",
+                    "၃၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၂,၁၃၅,၅၀၀/-",
                   ),
                   _getDetailData(
-                      "1",
-                      "၅၀",
-                      "၁,၈၀၀,၀၀၀/-",
-                      "၃၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၂,၁၃၅,၅၀၀/-"),
+                    "2",
+                    "၁၀၀",
+                    "၂,၁၀၀,၀၀၀/-",
+                    "၆၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၂,၇၃၅,၅၀၀/-",
+                  ),
                   _getDetailData(
-                      "2",
-                      "၁၀၀",
-                      "၂,၁၀၀,၀၀၀/-",
-                      "၆၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၂,၇၃၅,၅၀၀/-"),
+                    "4",
+                    "၁၅၀",
+                    "၂,၄၀၀,၀၀၀/-",
+                    "၉၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၃,၃၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "23",
+                    "၁၆၀",
+                    "၁,၈၀၀,၀၀၀/-",
+                    "၉၆၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၃,၃၉၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "5",
+                    "၂၀၀",
+                    "၂,၇၀၀,၀၀၀/-",
+                    "၁,၂၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၃,၉၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "6",
+                    "၂၅၀",
+                    "၃,၀၀၀,၀၀၀/-",
+                    "၁,၅၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၄,၅၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "7",
+                    "၃၀၀",
+                    "၃,၃၀၀,၀၀၀/-",
+                    "၁,၈၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၅,၁၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "8",
+                    "၃၁၅",
+                    "၃,၃၀၀,၀၀၀/-",
+                    "၁,၈၉၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၅,၂၂၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "9",
+                    "၄၀၀",
+                    "၃,၉၀၀,၀၀၀/-",
+                    "၂,၄၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၆,၃၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "10",
+                    "၄၅၀",
+                    "၄,၂၀၀,၀၀၀/-",
+                    "၂,၇၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၆,၉၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "11",
+                    "၅၀၀",
+                    "၄,၅၀၀,၀၀၀/-",
+                    "၃,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၇,၅၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "24",
+                    "၇၀၀",
+                    "၅,၈၀၀,၀၀၀/-",
+                    "၄,၂၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၀,၀၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "13",
+                    "၇၅၀",
+                    "၆,၃၀၀,၀၀၀/-",
+                    "၄,၅၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၀,၈၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "25",
+                    "၉၀၀",
+                    "၆,၈၀၀,၀၀၀/-",
+                    "၅,၄၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၂,၂၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "15",
+                    "၁၀၀၀",
+                    "၇,၈၀၀,၀၀၀/-",
+                    "၆,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၃,၈၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "16",
+                    "၁၁၀၀",
+                    "၈,၃၀၀,၀၀၀/-",
+                    "၆,၆၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၄,၉၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "17",
+                    "၁၂၅၀",
+                    "၉,၃၀၀,၀၀၀/-",
+                    "၇,၅၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၆,၈၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "26",
+                    "၂၀၀၀",
+                    "၁၈,၀၀၀,၀၀၀/-",
+                    "၁၂,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၃၀,၀၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "19",
+                    "၂၅၀၀",
+                    "၂၁,၀၀၀,၀၀၀/-",
+                    "၁၅,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၂၃၆,၀၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "20",
+                    "၃၀၀၀",
+                    "၂၅,၀၀၀,၀၀၀/-",
+                    "၁၈,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၄၃,၀၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "21",
+                    "၅၀၀၀",
+                    "၅၀,၀၀၀,၀၀၀/-",
+                    "၃၀,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၈၀,၀၃၅,၅၀၀/-",
+                  ),
+                  _getDetailData(
+                    "22",
+                    "၁၀၀၀၀",
+                    "၁၀၀,၀၀၀,၀၀၀/-",
+                    "၆၀,၀၀၇,၅၀၀/-",
+                    "၆,၀၀၀/-",
+                    "၂,၀၀၀/-",
+                    "၂၀,၀၀၀/-",
+                    "၁၆၀,၀၃၅,၅၀၀/-",
+                  ),
                   _getDetailData(
                       "23",
-                      "၁၆၀",
-                      "၂,၄၀၀,၀၀၀/-",
-                      "၉၆၇,၅၀၀/-",
+                      "၁၅၀၀၀",
+                      "၁၅၀,၀၀၀,၀၀၀/-",
+                      "၉၀,၀၀၇,၅၀၀/-	",
                       "၆,၀၀၀/-",
                       "၂,၀၀၀/-",
                       "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၃,၇၉၅,၅၀၀/-"),
-                  _getDetailData(
-                      "5",
-                      "၂၀၀",
-                      "၂,၇၀၀,၀၀၀/-",
-                      "၁,၂၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၄,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "6",
-                      "၂၅၀",
-                      "၃,၀၀၀,၀၀၀/-",
-                      "၁,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၄,၉၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "8",
-                      "၃၁၅",
-                      "၃,၃၀၀,၀၀၀/-",
-                      "၁,၈၉၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၅,၆၂၅,၅၀၀/-"),
-                  _getDetailData(
-                      "9",
-                      "၄၀၀",
-                      "၃,၉၀၀,၀၀၀/-",
-                      "၂,၄၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၆,၇၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "11",
-                      "၅၀၀",
-                      "၄,၅၀၀,၀၀၀/-",
-                      "၃,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၈,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "12",
-                      "၆၃၀",
-                      "၅,၈၀၀,၀၀၀/-",
-                      "၃,၇၈၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၀,၁၁၅,၅၀၀/-"),
-                  _getDetailData(
-                      "13",
-                      "၇၅၀",
-                      "၆,၃၀၀,၀၀၀/-",
-                      "၄,၅၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၁,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "14",
-                      "၈၀၀",
-                      "၆,၈၀၀,၀၀၀/-	",
-                      "၄,၈၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၂,၁၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "15",
-                      "၁၀၀၀",
-                      "၇,၈၀၀,၀၀၀/-",
-                      "၆,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၄,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "17",
-                      "၁၂၅၀",
-                      "၉,၃၀၀,၀၀၀/-",
-                      "၇,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၀၀၀,၀၀၀/-",
-                      "၁၇,၈၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "18",
-                      "၁၅၀၀",
-                      "၁၈,၀၀၀,၀၀၀/-",
-                      "၉,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၀၀၀,၀၀၀/-",
-                      "၂၈,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "20",
-                      "၃၀၀၀",
-                      "၂၅,၀၀၀,၀၀၀/-",
-                      "၁၈,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၂၀၀,၀၀၀/-",
-                      "၄၄,၂၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "21",
-                      "၅၀၀၀",
-                      "၅၀,၀၀၀,၀၀၀/-",
-                      "၃၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၆၀၀,၀၀၀/-",
-                      "၈၁,၆၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "22",
-                      "၁၀၀၀၀",
-                      "၁၀၀,၀၀၀,၀၀၀/-",
-                      "၆၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၆၀၀,၀၀၀/-",
-                      "၁၆၁,၆၃၅,၅၀၀/-"),
+                      "၂၄၀,၀၃၅,၅၀၀/-"),
                   _getDetailData(
                       "24",
                       "၂၀၀၀၀",
@@ -292,27 +371,24 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
                       "၆,၀၀၀/-",
                       "၂,၀၀၀/-",
                       "၂၀,၀၀၀/-",
-                      "၂၅,၀၀၀,၀၀၀/-",
-                      "၃၄၅,၀၃၅,၅၀၀/-"),
+                      "၃၂၀,၀၃၅,၅၀၀/-"),
                   _getDetailData(
                       "25",
                       "၂၅၀၀၀",
                       "၂၅၀,၀၀၀,၀၀၀/-",
-                      "၁၅၀,၀၀၇,၅၀၀/-	",
+                      "၁၅၀,၀၀၇,၅၀၀/-",
                       "၆,၀၀၀/-",
                       "၂,၀၀၀/-",
                       "၂၀,၀၀၀/-",
-                      "၃၀,၀၀၀,၀၀၀/-",
-                      "၄၃၀,၀၃၅,၅၀၀/-"),
+                      "၄၀၀,၀၃၅,၅၀၀/-"),
                   _getDetailData(
                       "26",
                       "၃၀၀၀၀",
                       "၃၀၀,၀၀၀,၀၀၀/-",
-                      "၁၈၀,၀၀၇,၅၀၀/-	",
+                      "၁၈၀,၀၀၇,၅၀၀/-",
                       "၆,၀၀၀/-",
                       "၂,၀၀၀/-",
                       "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
                       "၄၈၀,၀၃၅,၅၀၀/-"),
                 ],
               ),
@@ -328,28 +404,25 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
                   _getDetailDataHeader2("အကြောင်းအရာများ",
                       "၁၁/၀.၄ ကေဗွီ ထရန်စဖော်မာ Rating အလိုက် ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
                   _getDetailData(
-                    "",
-                    "အမျိုးအစား (ကေဗွီအေ)",
-                    "မီတာသတ်မှတ်ကြေး",
-                    "အာမခံစဘော်ငွေ",
-                    "လိုင်းကြိုး (ဆက်သွယ်ခ)",
-                    "မီးဆက်ခ",
-                    "မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-                    "တည်ဆောက်စရိတ်",
-                    "စုစုပေါင်း",
-                  ),
+                      "",
+                      "အမျိုးအစား (ကေဗွီအေ)",
+                      "မီတာသတ်မှတ်ကြေး",
+                      "အာမခံစဘော်ငွေ",
+                      "လိုင်းကြိုး (ဆက်သွယ်ခ)",
+                      "မီးဆက်ခ",
+                      "မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+                      "စုစုပေါင်း"),
                 ],
               ),
             ));
   }
 
-  Widget _getDetailData(String subtype, String d1, String d2, String d3,
-      String d4, String d5, String d6, String d7, String d8) {
+  Widget _getDetailData(subType, d1, d2, d3, d4, d5, d6, d7) {
     return Container(
       alignment: Alignment.centerLeft,
       color: Colors.white,
       // width: MediaQuery.of(context).size.width,
-      width: 1070,
+      width: 950,
       height: 80.0,
       margin: EdgeInsets.all(4.0),
       child: Row(
@@ -361,19 +434,18 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
           _getTableBody(d5),
           _getTableBody(d6),
           _getTableBody(d7),
-          _getTableBody(d8),
-          _makeChooseBtn(subtype),
+          _makeChooseBtn(subType),
         ],
       ),
     );
   }
 
-  Widget _getDetailDataHeader(d1, d2, d3, d4, d5, d6, d7, d8) {
+  Widget _getDetailDataHeader(d1, d2, d3, d4, d5, d6, d7) {
     return Container(
       alignment: Alignment.centerLeft,
       color: Colors.white,
       // width: MediaQuery.of(context).size.width,
-      width: 1070,
+      width: 950,
       height: 80.0,
       margin: EdgeInsets.all(4.0),
       child: Row(
@@ -385,7 +457,6 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
           _getTableBody(d5),
           _getTableBody(d6),
           _getTableBody(d7),
-          _getTableBody(d8),
         ],
       ),
     );
@@ -396,7 +467,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
       alignment: Alignment.centerLeft,
       color: Colors.white,
       // width: MediaQuery.of(context).size.width,
-      width: 1070,
+      width: 950,
       height: 80.0,
       margin: EdgeInsets.all(4.0),
       child: Row(
@@ -476,7 +547,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
         'token': token,
         'form_id': formId != null ? formId.toString() : '',
         'apply_type': '4', // transformer
-        'apply_division': '3', // ygn=1, mdy=3, other=2
+        'apply_division': '2', // ygn=1, mdy=3, other=2
         'apply_sub_type': subType.toString(),
       };
       var response = await http.post(url, body: bodyData);
@@ -564,7 +635,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form04_info',
+    final result = await Navigator.pushNamed(context, 'other_t04_info',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

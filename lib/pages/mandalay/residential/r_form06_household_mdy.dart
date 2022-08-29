@@ -165,9 +165,9 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   Widget back() {
     return (backFiles.length <= 0)
         ? multipleUploadWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', true, backFilesError, backExplorer)
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFilesError, backExplorer)
         : imagePreviewWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', true, backFiles, backClear);
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFiles, backClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -334,7 +334,7 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFiles.length > 0 && backFiles.length > 0) {
+              if (frontFiles.length > 0) {
                 startLoading();
                 saveFile();
               } else {
@@ -342,9 +342,6 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
                   frontFiles.length <= 0
                       ? frontFilesError = true
                       : frontFilesError = false;
-                  backFiles.length <= 0
-                      ? backFilesError = true
-                      : backFilesError = false;
                 });
               }
             },

@@ -188,7 +188,7 @@ class Yangon {
       'ygn_t_form11_farmland': (context) => TForm11FarmLand(),
       'ygn_t_form12_zone': (context) => TForm12Zone(),
       'ygn_t_form13_power': (context) => TForm13Power(),
-      'ygn_c_overview': (context) => TOverview(),
+      'ygn_t_overview': (context) => TOverview(),
     };
   }
 }

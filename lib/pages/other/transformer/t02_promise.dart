@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm02PromiseMdy extends StatefulWidget {
-  const TForm02PromiseMdy({Key? key}) : super(key: key);
+class TForm02Promise extends StatefulWidget {
+  const TForm02Promise({Key? key}) : super(key: key);
 
   @override
-  State<TForm02PromiseMdy> createState() => _TForm02PromiseMdyState();
+  State<TForm02Promise> createState() => _TForm02PromiseState();
 }
 
-class _TForm02PromiseMdyState extends State<TForm02PromiseMdy> {
+class _TForm02PromiseState extends State<TForm02Promise> {
   var checkedValue = false;
   bool isLoading = true;
   List<String> rules = [
@@ -20,7 +20,6 @@ class _TForm02PromiseMdyState extends State<TForm02PromiseMdy> {
     "သတ်မှတ်ကြေးငွေများကို တစ်လုံးတစ်ခဲတည်း ပေးသွင်းသွားမည်ဖြစ်ပြီး ဓာတ်အားခများကိုလည်း လစဉ်ပုံမှန်ပေးချေသွားပါမည်။",
     "တည်ဆဲဥပဒေ၊ စည်းမျဉ်းများနှင့် အခါအားလျှော်စွာ ထုတ်ပြန်သောအမိန့်နှင့် ညွှန်ကြားချက်များကို တိကျစွာလိုက်နာ ဆောင်ရွက်သွားပါမည်ဟု ဝန်ခံကတိပြုပါသည်။",
     "လျှောက်ထားသူသည် ဓာတ်အားသုံးစွဲခွင့် ရရှိပြီးနောက်ပိုင်းတွင် လိုအပ်လာပါက ဌာန၏ သတ်မှတ်ထားသော အခြားနေရာများသို့ ဓါတ်အားလိုင်းချိတ်ဆက်နိုင်စေရန် ခွင့်ပြုပေးရမည်ဖြစ်ပြီး ကန့်ကွက်ရန် မရှိကြောင်း ဝန်ခံကတိပြုပါသည်။",
-    "မီတာတပ်ဆင်သည့်နေရာတွင် ကန့်ကွက်မှု တစ်စုံတစ်ရာ ဖြစ်ပွားပါက မီတာဖြုတ်သိမ်းခြင်းကို သဘောတူပါသည်။",
   ];
 
   @override
@@ -264,7 +263,7 @@ class _TForm02PromiseMdyState extends State<TForm02PromiseMdy> {
   }
 
   void goToNextPage(BuildContext context) {
-    Navigator.pushNamed(context, 'mdy_t_form03_money_type');
+    Navigator.pushNamed(context, 'other_t03_money_type');
   }
 
   void goToHomePage(BuildContext context) {

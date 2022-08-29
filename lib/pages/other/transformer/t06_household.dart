@@ -6,21 +6,23 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm08OwnershipMdy extends StatefulWidget {
-  const TForm08OwnershipMdy({Key? key}) : super(key: key);
+class TForm06Household extends StatefulWidget {
+  const TForm06Household({Key? key}) : super(key: key);
 
   @override
-  State<TForm08OwnershipMdy> createState() => _TForm08OwnershipMdyState();
+  State<TForm06Household> createState() => _TForm06HouseholdState();
 }
 
-class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
+class _TForm06HouseholdState extends State<TForm06Household> {
   int? formId;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  List backFiles = [];
+  bool backFilesError = false;
 
   final subTitle = const Text(
-    "လျှောက်ထားသူ၏ ပိုင်ဆိုင်မှုအထောက်အထားဓါတ်ပုံ(မူရင်း)",
+    "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -30,7 +32,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
   );
 
   final noti = const Text(
-    "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
+    "ဘာသာ/သာသနာအတွက်ဖြစ်ပါက ဖြည့်သွင်းရန် မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -58,7 +60,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("ပိုင်ဆိုင်မှုအထောက်အထား",
+      title: const Text("အိမ်ထောင်စုစာရင်းဓါတ်ပုံ",
           style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
@@ -109,7 +111,8 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              continueButton(),
             ],
           ),
         ),
@@ -119,19 +122,16 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
 
   Widget fileWidgets() {
     return Column(
-      children: [front()],
+      children: [front(), SizedBox(height: 20), back()],
     );
   }
 
   Row requiredText(String label) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Flexible(
-            child: Text(
-              '${label}',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+          Text(
+            '${label}',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           SizedBox(
             width: 10.0,
@@ -144,26 +144,20 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
         ],
       );
 
-  Widget optionalText(label) {
-    return Text(
-      label,
-      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-    );
-  }
-
   Widget front() {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
-            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
-            true,
-            frontFilesError,
-            frontExplorer)
+            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFilesError, frontExplorer)
         : imagePreviewWidget(
-            'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း \n (အရောင်းအဝယ်စာချုပ် (သို့) မြေဂရမ်)',
-            true,
-            frontFiles,
-            frontClear);
+            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFiles, frontClear);
+  }
+
+  Widget back() {
+    return (backFiles.length <= 0)
+        ? multipleUploadWidget(
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFilesError, backExplorer)
+        : imagePreviewWidget(
+            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFiles, backClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -180,7 +174,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
           children: [
             isRequired
                 ? requiredText('$labelပုံတင်ရန်')
-                : optionalText('$labelပုံတင်ရန်'),
+                : Text('$labelပုံတင်ရန်'),
             SizedBox(height: 20),
             Icon(
               Icons.file_upload,
@@ -189,7 +183,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
             ),
             SizedBox(height: 20),
             Text(
-              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။ )',
+              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။)',
               style:
                   TextStyle(color: errorState ? Colors.red : Colors.grey[800]),
               textAlign: TextAlign.center,
@@ -206,6 +200,16 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
       print('file upload');
       setState(() {
         frontFiles = files;
+      });
+    }
+  }
+
+  void backExplorer() async {
+    List? files = await _openFileExplorerMutiple();
+    if (files != null && files.length > 0) {
+      print('file upload');
+      setState(() {
+        backFiles = files;
       });
     }
   }
@@ -251,7 +255,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           // Expanded(child: child)
           SizedBox(height: 20),
-          isReq ? requiredText(label) : optionalText(label),
+          isReq ? requiredText(label) : Text(label),
           SizedBox(height: 20),
           imagePreview(file),
           imageClear(imageClearFun)
@@ -295,6 +299,12 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
     });
   }
 
+  void backClear() {
+    setState(() {
+      backFiles = [];
+    });
+  }
+
   Widget actionButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -314,22 +324,42 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
             onPressed: () {
-              if (frontFiles.length > 0) {
-                startLoading();
-                saveFile();
-              } else {
-                setState(() {
-                  frontFiles.length <= 0
-                      ? frontFilesError = true
-                      : frontFilesError = false;
-                });
-              }
+              startLoading();
+              saveFile();
+              // if (frontFiles.length > 0 && backFiles.length > 0) {
+              //   startLoading();
+              //   saveFile();
+              // } else {
+              //   setState(() {
+              //     frontFiles.length <= 0
+              //         ? frontFilesError = true
+              //         : frontFilesError = false;
+              //     backFiles.length <= 0
+              //         ? backFilesError = true
+              //         : backFilesError = false;
+              //   });
+              // }
             },
             child: Text(
               "ဖြည့်သွင်းမည်",
               style: TextStyle(fontSize: 15),
             )),
       ],
+    );
+  }
+
+  Widget continueButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+          primary: Colors.orange),
+      onPressed: () {
+        goToNextPage();
+      },
+      child: Text(
+        "ဆက်လက်လုပ်ဆောင်မည်",
+        style: TextStyle(fontSize: 15),
+      ),
     );
   }
 
@@ -351,7 +381,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/ownership");
+    var url = Uri.parse("${apiPath}api/form10");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -365,14 +395,20 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
       }
       request.files.addAll(frontMultiFiles);
 
+      List<http.MultipartFile> backMultiFiles = [];
+      for (int i = 0; i < backFiles.length; i++) {
+        var file =
+            await http.MultipartFile.fromPath('back[]', backFiles[i].path);
+        backMultiFiles.add(file);
+      }
+      request.files.addAll(backMultiFiles);
+
       var response = await request.send();
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
       var responseMap = jsonDecode(responseString);
-
-      // print('http resonse $responseMap');
 
       if (responseMap['success'] == true) {
         stopLoading();
@@ -445,7 +481,7 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form09_allow',
+    final result = await Navigator.pushNamed(context, 'other_t07_recommend',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

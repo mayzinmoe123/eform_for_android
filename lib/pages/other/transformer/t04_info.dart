@@ -6,14 +6,14 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm04InfoMdy extends StatefulWidget {
-  const TForm04InfoMdy({Key? key}) : super(key: key);
+class TForm04Info extends StatefulWidget {
+  const TForm04Info({Key? key}) : super(key: key);
 
   @override
-  State<TForm04InfoMdy> createState() => _TForm04InfoMdyState();
+  State<TForm04Info> createState() => _TForm04InfoState();
 }
 
-class _TForm04InfoMdyState extends State<TForm04InfoMdy> {
+class _TForm04InfoState extends State<TForm04Info> {
   bool religiousCheckedValue = false;
   bool lightTransCheckedValue = false;
   int? formId;
@@ -76,7 +76,7 @@ class _TForm04InfoMdyState extends State<TForm04InfoMdy> {
     String token = prefs.getString('token').toString();
     String apiPath = prefs.getString('api_path').toString();
     String division =
-        '3'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
+        '1'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
 
     try {
       var url = Uri.parse(
@@ -182,8 +182,6 @@ class _TForm04InfoMdyState extends State<TForm04InfoMdy> {
               requiredNoti(),
               SizedBox(height: 13),
               _getReligiousCheckBox("ဘာသာ/သာသနာအတွက်ဖြစ်ပါက အမှန်ခြစ်ပါ"),
-              _getLightTransformerCheckBox(
-                  "အလင်းရောင်သုံး ထရန်ဖော်မာဖြစ်ပါက အမှန်ခြစ်ပါ"),
               SizedBox(height: 13),
               _getFormRequired("နာမည်အပြည့်အစုံ", nameController),
               Container(
@@ -530,7 +528,6 @@ class _TForm04InfoMdyState extends State<TForm04InfoMdy> {
         'token': token,
         'form_id': formId.toString(),
         'religion': religiousCheckedValue ? 'yes' : 'no',
-        'is_light': lightTransCheckedValue ? 'yes' : 'no',
         'fullname': nameController.text.toString(),
         'nrc': nrcController.text.toString(),
         'jobType': _selectedjob ?? '',
@@ -646,7 +643,7 @@ class _TForm04InfoMdyState extends State<TForm04InfoMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form05_n_r_c',
+    final result = await Navigator.pushNamed(context, 'other_t05_nrc',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

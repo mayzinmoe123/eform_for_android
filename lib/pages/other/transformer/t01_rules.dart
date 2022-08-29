@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm01RulesMdy extends StatefulWidget {
-  const TForm01RulesMdy({Key? key}) : super(key: key);
+class TForm01Rules extends StatefulWidget {
+  const TForm01Rules({Key? key}) : super(key: key);
 
   @override
-  State<TForm01RulesMdy> createState() => _TForm01RulesMdyState();
+  State<TForm01Rules> createState() => _TForm01RulesState();
 }
 
-class _TForm01RulesMdyState extends State<TForm01RulesMdy> {
+class _TForm01RulesState extends State<TForm01Rules> {
   var checkedValue = false;
   bool isLoading = true;
   List<String> rules = [
@@ -329,7 +329,7 @@ class _TForm01RulesMdyState extends State<TForm01RulesMdy> {
   }
 
   void goToNextPage(BuildContext context) {
-    Navigator.pushNamed(context, 'mdy_t_form02_promise');
+    Navigator.pushNamed(context, 'other_t02_promise');
   }
 
   void goToHomePage(BuildContext context) {

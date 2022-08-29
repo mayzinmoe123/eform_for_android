@@ -105,7 +105,7 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
             _getMeterlist("ကန်ထရိုက်တိုက် မီတာလျှောက်ထားခြင်း",
                 Icons.business_center, 'other_c01_rules'),
             _getMeterlist("အိမ်သုံးထရန်စဖော်မာ လျှောက်ထားခြင်း",
-                Icons.flash_on_outlined, ''),
+                Icons.flash_on_outlined, 'other_t01_rules'),
             // _getMeterlist("ကျေးရွာမီးလင်းရေး", Icons.lightbulb_circle,
             //     '/yangon/residential/r01_rules'),
           ],

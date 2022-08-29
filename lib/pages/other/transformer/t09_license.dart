@@ -6,23 +6,21 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TForm06HouseholdMdy extends StatefulWidget {
-  const TForm06HouseholdMdy({Key? key}) : super(key: key);
+class TForm09License extends StatefulWidget {
+  const TForm09License({Key? key}) : super(key: key);
 
   @override
-  State<TForm06HouseholdMdy> createState() => _TForm06HouseholdMdyState();
+  State<TForm09License> createState() => _TForm09LicenseState();
 }
 
-class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
+class _TForm09LicenseState extends State<TForm09License> {
   int? formId;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
-  List backFiles = [];
-  bool backFilesError = false;
 
   final subTitle = const Text(
-    "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
+    "လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)",
     style: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
@@ -32,7 +30,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
   );
 
   final noti = const Text(
-    "ဘာသာ/သာသနာအတွက်ဖြစ်ပါက ဖြည့်သွင်းရန် မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
+    "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
   );
@@ -44,7 +42,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
     setState(() {
       formId = data['form_id'];
     });
-    print('info form_id is $formId');
+    print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -60,8 +58,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
   AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
-      title: const Text("အိမ်ထောင်စုစာရင်းဓါတ်ပုံ",
-          style: TextStyle(fontSize: 18.0)),
+      title: const Text("လုပ်ငန်းလိုင်စင်", style: TextStyle(fontSize: 18.0)),
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
@@ -111,8 +108,6 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
               fileWidgets(),
               SizedBox(height: 20),
               actionButton(),
-              SizedBox(height: 10),
-              continueButton(),
             ],
           ),
         ),
@@ -122,16 +117,19 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
 
   Widget fileWidgets() {
     return Column(
-      children: [front(), SizedBox(height: 20), back()],
+      children: [front()],
     );
   }
 
   Row requiredText(String label) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '${label}',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          Flexible(
+            child: Text(
+              '${label}',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(
             width: 10.0,
@@ -144,20 +142,20 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
         ],
       );
 
-  Widget front() {
-    return (frontFiles.length <= 0)
-        ? multipleUploadWidget(
-            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFilesError, frontExplorer)
-        : imagePreviewWidget(
-            'အိမ်ထောင်စုစာရင်းရှေ့ဖက်', false, frontFiles, frontClear);
+  Widget optionalText(label) {
+    return Text(
+      label,
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    );
   }
 
-  Widget back() {
-    return (backFiles.length <= 0)
-        ? multipleUploadWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFilesError, backExplorer)
-        : imagePreviewWidget(
-            'အိမ်ထောင်စုစာရင်းနောက်ဖက်', false, backFiles, backClear);
+  Widget front() {
+    return (frontFiles.length <= 0)
+        ? multipleUploadWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', false,
+            frontFilesError, frontExplorer)
+        : imagePreviewWidget('လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)', false,
+            frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -170,11 +168,12 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
         height: 320,
         color: Colors.grey[200],
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isRequired
                 ? requiredText('$labelပုံတင်ရန်')
-                : Text('$labelပုံတင်ရန် *'),
+                : optionalText('$labelပုံတင်ရန်'),
             SizedBox(height: 20),
             Icon(
               Icons.file_upload,
@@ -183,7 +182,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
             ),
             SizedBox(height: 20),
             Text(
-              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။)',
+              'ပုံတင်ရန်နှိပ်ပါ \n (ပုံများကို တပြိုင်နက်ထဲ ရွေးချယ်တင်နိုင်ပါသည်။ )',
               style:
                   TextStyle(color: errorState ? Colors.red : Colors.grey[800]),
               textAlign: TextAlign.center,
@@ -200,16 +199,6 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
       print('file upload');
       setState(() {
         frontFiles = files;
-      });
-    }
-  }
-
-  void backExplorer() async {
-    List? files = await _openFileExplorerMutiple();
-    if (files != null && files.length > 0) {
-      print('file upload');
-      setState(() {
-        backFiles = files;
       });
     }
   }
@@ -255,7 +244,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           // Expanded(child: child)
           SizedBox(height: 20),
-          isReq ? requiredText(label) : Text(label),
+          isReq ? requiredText(label) : optionalText(label),
           SizedBox(height: 20),
           imagePreview(file),
           imageClear(imageClearFun)
@@ -299,67 +288,81 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
     });
   }
 
-  void backClear() {
-    setState(() {
-      backFiles = [];
-    });
-  }
-
   Widget actionButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    var mSize = MediaQuery.of(context).size;
+    return Column(
       children: [
-        ElevatedButton(
-            onPressed: () {
-              goToBack();
-            },
-            style: ElevatedButton.styleFrom(
-                primary: Colors.black12,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
-            child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+        // Container(
+        //   width: mSize.width,
+        //   height: 50,
+        //   decoration: BoxDecoration(color: Colors.redAccent),
+        //   child: Center(
+        //     child: Text(
+        //       "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontFamily: "Pyidaungsu",
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //       textAlign: TextAlign.center,
+        //     ),
+        //   ),
+        // ),
         SizedBox(
-          width: 10,
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  goToBack();
+                },
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.black12,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                child: Text("မပြုလုပ်ပါ", style: TextStyle(fontSize: 15))),
+            SizedBox(
+              width: 10,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                onPressed: () {
+                  startLoading();
+                  saveFile();
+                  // if (frontFiles.length > 0) {
+                  //   startLoading();
+                  //   saveFile();
+                  // } else {
+                  //   setState(() {
+                  //     frontFiles.length <= 0
+                  //         ? frontFilesError = true
+                  //         : frontFilesError = false;
+                  //   });
+                  // }
+                },
+                child: Text(
+                  "ဖြည့်သွင်းမည်",
+                  style: TextStyle(fontSize: 15),
+                )),
+          ],
+        ),
+        SizedBox(
+          height: 15,
         ),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+                padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+                primary: Colors.orangeAccent),
             onPressed: () {
-              startLoading();
-              saveFile();
-              // if (frontFiles.length > 0 && backFiles.length > 0) {
-              //   startLoading();
-              //   saveFile();
-              // } else {
-              //   setState(() {
-              //     frontFiles.length <= 0
-              //         ? frontFilesError = true
-              //         : frontFilesError = false;
-              //     backFiles.length <= 0
-              //         ? backFilesError = true
-              //         : backFilesError = false;
-              //   });
-              // }
+              goToNextPage();
             },
             child: Text(
-              "ဖြည့်သွင်းမည်",
-              style: TextStyle(fontSize: 15),
+              "ဆက်လက်လုပ်ဆောင်မည်",
+              style: TextStyle(fontSize: 15, fontFamily: "Pyidaungsu"),
             )),
       ],
-    );
-  }
-
-  Widget continueButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          primary: Colors.orange),
-      onPressed: () {
-        goToNextPage();
-      },
-      child: Text(
-        "ဆက်လက်လုပ်ဆောင်မည်",
-        style: TextStyle(fontSize: 15),
-      ),
     );
   }
 
@@ -378,10 +381,11 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
   }
 
   void saveFile() async {
+    print('saving file');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/form10");
+    var url = Uri.parse("${apiPath}api/license");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -395,20 +399,14 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
       }
       request.files.addAll(frontMultiFiles);
 
-      List<http.MultipartFile> backMultiFiles = [];
-      for (int i = 0; i < backFiles.length; i++) {
-        var file =
-            await http.MultipartFile.fromPath('back[]', backFiles[i].path);
-        backMultiFiles.add(file);
-      }
-      request.files.addAll(backMultiFiles);
-
       var response = await request.send();
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
       var responseMap = jsonDecode(responseString);
+
+      // print('http resonse $responseMap');
 
       if (responseMap['success'] == true) {
         stopLoading();
@@ -481,7 +479,7 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form07_recommend',
+    final result = await Navigator.pushNamed(context, 'other_t10_dc',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;

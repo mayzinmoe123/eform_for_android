@@ -49,6 +49,18 @@ import 'pages/other/contractor/c10_live.dart';
 import 'pages/other/contractor/c11_dc.dart';
 import 'pages/other/contractor/c12_meter_bill.dart';
 import 'pages/other/contractor/c_overview.dart';
+// Transformer Meter
+import 'pages/other/transformer/t01_rules.dart';
+import 'pages/other/transformer/t02_promise.dart';
+import 'pages/other/transformer/t03_money.dart';
+import 'pages/other/transformer/t04_info.dart';
+import 'pages/other/transformer/t05_nrc.dart';
+import 'pages/other/transformer/t06_household.dart';
+import 'pages/other/transformer/t07_recommend.dart';
+import 'pages/other/transformer/t08_ownership.dart';
+import 'pages/other/transformer/t09_license.dart';
+import 'pages/other/transformer/t10_dc.dart';
+import 'pages/other/transformer/t_overview.dart';
 
 class Other {
   Map<String, Widget Function(BuildContext)> link(BuildContext context) {
@@ -105,6 +117,19 @@ class Other {
       'other_c11_dc': (context) => C11Dc(),
       'other_c12_meter_bill': (context) => C12MeterBill(),
       'other_c_overview': (context) => COverview(),
+
+      // transformer
+      'other_t01_rules': (context) => TForm01Rules(),
+      'other_t02_promise': (context) => TForm02Promise(),
+      'other_t03_money_type': (context) => TForm03Money(),
+      'other_t04_info': (context) => TForm04Info(),
+      'other_t05_nrc': (context) => TForm05NRC(),
+      'other_t06_household': (context) => TForm06Household(),
+      'other_t07_recommend': (context) => TForm07Recommend(),
+      'other_t08_ownership': (context) => TForm08Ownership(),
+      'other_t09_license': (context) => TForm09License(),
+      'other_t10_dc': (context) => TForm10Dc(),
+      'other_t_overview': (context) => TOverview()
     };
   }
 }
