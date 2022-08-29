@@ -21,6 +21,9 @@ class _TOverviewState extends State<TOverview> {
   bool showRecommendCheck = false;
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
+  bool showBuildingCheck = false;
+  bool showLicenseCheck = false;
+  bool showYCDCCheck = false;
 
   bool isLoading = false;
 
@@ -127,6 +130,31 @@ class _TOverviewState extends State<TOverview> {
               height: 20,
             ),
            
+            //အိမ်ထောင်စုစာရင်း
+            mainTitle(
+                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton),
+            SizedBox(
+              height: 10,
+            ),
+            showHouseholdCheck == true
+                ? showMultiImages("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)","အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)")
+                : Container(),
+                 SizedBox(
+              height: 20,
+            ),
+            //ထောက်ခံစာ 
+            mainTitle(
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton),
+            SizedBox(
+              height: 10,
+            ),
+            showRecommendCheck == true
+                ? showSingleImage("နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)","ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)"
+                    )
+                : Container(),
+                 SizedBox(
+              height: 20,
+            ),
             
              //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle(
@@ -140,6 +168,33 @@ class _TOverviewState extends State<TOverview> {
                  SizedBox(
               height: 20,
             ),
+
+            //လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)
+            mainTitle(
+                "လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)", showLicenseCheck, licenseToggleButton),
+            SizedBox(
+              height: 10,
+            ),
+            showLicenseCheck == true
+                ? multiImageFront("လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)") 
+                : Container(),
+                 SizedBox(
+              height: 20,
+            ),
+
+              //စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)
+            mainTitle(
+                "စည်ပင်ထောက်ခံစာ (မူရင်း)", showYCDCCheck   , ycdcToggleButton),
+            SizedBox(
+              height: 10,
+            ),
+            showYCDCCheck    == true
+                ? multiImageFront("စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)")
+                : Container(),
+                 SizedBox(
+              height: 20,
+            ),
+
 
 
             actionButton(context),
@@ -639,6 +694,37 @@ TableRow _getTableHeader(String d1, List d2) {
    ownershipToggleButton() {
     setState(() {
       showOwernshipCheck = !showOwernshipCheck;
+    });
+  }
+
+  householdToggleButton() {
+    setState(() {
+      showHouseholdCheck = !showHouseholdCheck;
+    });
+  }
+
+  recommendToggleButton() {
+    setState(() {
+      showRecommendCheck = !showRecommendCheck;
+    });
+  }
+  
+  farmlandToggleButton() {
+    setState(() {
+      showFarmLandCheck = !showFarmLandCheck;
+    });
+  }
+
+
+  licenseToggleButton() {
+    setState(() {
+      showLicenseCheck = !showLicenseCheck;
+    });
+  }
+
+   ycdcToggleButton(){
+    setState(() {
+      showYCDCCheck = !showYCDCCheck;
     });
   }
   

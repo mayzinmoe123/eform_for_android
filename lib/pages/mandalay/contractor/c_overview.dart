@@ -110,7 +110,7 @@ class _COverviewState extends State<COverview> {
             ),
 
              //အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား
-            hideEditmainTitle("အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား ", showMeterTypeCheck,
+            hideEditmainTitle("အခန်းအရေအတွက် နှင့်\nမီတာအမျိုးအစား ", showMeterTypeCheck,
                 meterTypeToggleButton),
             SizedBox(
               height: 10,
