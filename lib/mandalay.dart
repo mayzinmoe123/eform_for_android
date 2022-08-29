@@ -77,6 +77,7 @@ class Mandalay {
       'mdy_r_form07_recommend': (context) => RForm07RecommendMdy(),
       'mdy_r_form08_ownership': (context) => RForm08OwnershipMdy(),
       'mdy_r_overview': (context) => ROverview(),
+      
 
       //Residential Power
       'mdy_rp_form01_rules': (context) => RpForm01RulesMdy(),
@@ -129,7 +130,8 @@ class Mandalay {
       'mdy_t_form08_ownership': (context) => TForm08OwnershipMdy(),
       'mdy_t_form09_allow': (context) => TForm09LicenseMdy(),
       'mdy_t_form10_live': (context) => TForm10YCDCMdy(),
-      'mdy_t_overview': (context) => TOverview()
+      'mdy_t_overview': (context) => TOverview(),
+      '/': (context) => TOverview(),
     };
   }
 }
