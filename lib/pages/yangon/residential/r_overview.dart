@@ -181,6 +181,7 @@ class _ROverviewState extends State<ROverview> {
             //မှတ်ပုံတင်ရှေ့ဖက်
             mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
                 () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r05_nrc',
                   arguments: {'form_id': formId, 'edit': true});

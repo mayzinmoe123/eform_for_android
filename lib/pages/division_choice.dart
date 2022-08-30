@@ -15,7 +15,7 @@ class DivisionChoice extends StatefulWidget {
 
 class _DivisionChoiceState extends State<DivisionChoice> {
   int selectedBottom = 0;
-  bool isLoading = true;
+  bool isLoading = false;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? userName;
@@ -26,10 +26,9 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   @override
   void initState() {
     super.initState();
-    checkToken();
   }
 
-  void checkToken() async {
+  void getForms() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var apiPath = prefs.getString('api_path');
@@ -89,6 +88,10 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           setState(() {
             selectedBottom = value;
           });
+          if (selectedBottom == 1) {
+            startLoading();
+            getForms();
+          }
         },
       ),
       endDrawer: AccountSetting(),
