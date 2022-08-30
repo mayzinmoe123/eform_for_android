@@ -59,8 +59,9 @@ and write bellow in build()
         }
       });
     }
+step 3 : jobField() => set value => value: _selectedjob,
 
-step3 . in info page >> getTownshipList()
+step 4 . in info page >> getTownshipList()
 for (var i = 0; i < townshipList.length; i++) {
           if (townshipList[i]['id'] == townshipId) {
             setState(() {
@@ -75,7 +76,7 @@ for (var i = 0; i < townshipList.length; i++) {
           }
         }
 
-step 4 : goToNextPage()
+step 5 : goToNextPage()
 if (edit) {
       goToBack();
     } else { ...
