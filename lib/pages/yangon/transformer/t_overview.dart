@@ -112,7 +112,7 @@ class _TOverviewState extends State<TOverview> {
 
            
             //မီတာအမျိုးအစား
-            hideEditmainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
+            mainTitle("လျှောက်ထားသည့်\nမီတာအမျိုးအစား ", showMoneyCheck,
                 moneyToggleButton),
             SizedBox(
               height: 10,
@@ -179,7 +179,7 @@ class _TOverviewState extends State<TOverview> {
               height: 10,
             ),
             showLicenseCheck == true
-                ? multiImageFront("လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)")
+                ? multiImageFront("လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)") 
                 : Container(),
                  SizedBox(
               height: 20,
@@ -272,7 +272,7 @@ class _TOverviewState extends State<TOverview> {
               'ရုံးသို့ပို့ရန် သေချာပါက ပေးပို့မည်ကိုနှိပ်ပါ။', context);
         },
         style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
         child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
   }
 

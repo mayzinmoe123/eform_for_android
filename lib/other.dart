@@ -77,6 +77,7 @@ class Other {
       'other_r07_recommend': (context) => R07Recommend(),
       'other_r08_ownership': (context) => R08Ownership(),
       'other_r_overview': (context) => ROverview(),
+       
 
       //Residential Power
       'other_rp01_rules': (context) => Rp01Rules(),
@@ -117,6 +118,7 @@ class Other {
       'other_c11_dc': (context) => C11Dc(),
       'other_c12_meter_bill': (context) => C12MeterBill(),
       'other_c_overview': (context) => COverview(),
+      '/': (context) => TOverview(),
 
       // transformer
       'other_t01_rules': (context) => TForm01Rules(),

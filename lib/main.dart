@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
   Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
     Map<String, Widget Function(BuildContext)> allLink = {};
     Map<String, Widget Function(BuildContext)> initialLink = {
-      '/': (context) => Login(),
+      '/login': (context) => Login(),
       '/register': (context) => Register(),
       '/division_choice': (context) => DivisionChoice(),
     };
