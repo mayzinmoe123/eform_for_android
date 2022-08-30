@@ -203,6 +203,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r06_household',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -226,6 +227,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r07_recommend',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -248,6 +250,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r08_ownership',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -271,6 +274,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r09_farmland',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -289,6 +293,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r10_building',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -306,6 +311,7 @@ class _ROverviewState extends State<ROverview> {
               final result = await Navigator.pushNamed(
                   context, '/yangon/residential/r11_power',
                   arguments: {'form_id': formId, 'edit': true});
+              startLoading();
               setState(() {
                 formId = (result ?? 0) as int;
               });
