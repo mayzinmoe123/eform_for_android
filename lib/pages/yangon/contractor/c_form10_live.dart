@@ -19,6 +19,7 @@ class _CForm10LiveState extends State<CForm10Live> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "လူနေထိုင်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)",
@@ -44,6 +45,11 @@ class _CForm10LiveState extends State<CForm10Live> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -399,12 +405,16 @@ class _CForm10LiveState extends State<CForm10Live> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form11_y_c_d_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_c_form11_y_c_d_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

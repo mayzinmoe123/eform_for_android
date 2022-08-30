@@ -18,6 +18,7 @@ class _CForm18SignState extends State<CForm18Sign> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)",
@@ -43,6 +44,11 @@ class _CForm18SignState extends State<CForm18Sign> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -485,12 +491,16 @@ class _CForm18SignState extends State<CForm18Sign> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_c_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

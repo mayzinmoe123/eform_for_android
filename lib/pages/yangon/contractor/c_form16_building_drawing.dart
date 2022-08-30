@@ -18,6 +18,7 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ အဆောက်အဦး Drawing",
@@ -43,6 +44,11 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -439,12 +445,16 @@ class _CForm16BuildingDrawingState extends State<CForm16BuildingDrawing> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form17_location',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_c_form17_location',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

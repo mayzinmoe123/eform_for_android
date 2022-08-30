@@ -18,6 +18,7 @@ class _CForm13FarmLandState extends State<CForm13FarmLand> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)",
@@ -43,6 +44,11 @@ class _CForm13FarmLandState extends State<CForm13FarmLand> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -466,13 +472,17 @@ class _CForm13FarmLandState extends State<CForm13FarmLand> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, 'ygn_c_form14_building_photo',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, 'ygn_c_form14_building_photo',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/models/constructor_form.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -26,11 +27,40 @@ class _CForm03MeterTypeState extends State<CForm03MeterType> {
   bool checkedWaterValue = false;
   bool checkedElevatorValue = false;
 
+  int? oldRoomCount;
+  int? oldWater;
+  int? oldElevator;
+
   int? formId;
   bool isLoading = false;
 
+  bool edit = false;
+  ConstructorForm? cForm;
+
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null && cForm == null) {
+      setState(() {
+        edit = data['edit'];
+        cForm = data['cForm'];
+        apartmentController.text = nullCheck(cForm!.apartmentCount);
+        floorController.text = nullCheck(cForm!.floorCount);
+        power10Controller.text = nullCheck(cForm!.pMeter10);
+        power20Controller.text = nullCheck(cForm!.pMeter20);
+        power30Controller.text = nullCheck(cForm!.pMeter30);
+        meterController.text = nullCheck(cForm!.meter);
+
+        roomCount = nullCheckNum(cForm!.roomCount);
+        checkedWaterValue = nullCheckBool(cForm!.waterMeter);
+        checkedElevatorValue = nullCheckBool(cForm!.elevatorMeter);
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(context),
@@ -41,6 +71,27 @@ class _CForm03MeterTypeState extends State<CForm03MeterType> {
         return true;
       },
     );
+  }
+
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return 0;
+    }
+    return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 
   AppBar applicationBar(BuildContext context) {
@@ -367,7 +418,7 @@ class _CForm03MeterTypeState extends State<CForm03MeterType> {
         'apply_division': '1', // ygn=1, mdy=3, other=2
         'room_count': roomCount.toString(),
         'apartment_count': apartmentController.text,
-        'floor_count': apartmentController.text,
+        'floor_count': floorController.text,
         'pMeter10': power10Controller.text,
         'pMeter20': power20Controller.text,
         'pMeter30': power30Controller.text,
@@ -475,12 +526,16 @@ class _CForm03MeterTypeState extends State<CForm03MeterType> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_c_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+import '../../../models/constructor_form.dart';
+
 class COverview extends StatefulWidget {
   const COverview({Key? key}) : super(key: key);
 
@@ -32,8 +35,84 @@ class _COverviewState extends State<COverview> {
   bool showBuilingDrawingCheck = false;
   bool showLocationCheck = false;
   bool showSignCheck = false;
-  bool isLoading = false;
-  bool showCurrentMeterCheck =false;
+  bool showCurrentMeterCheck = false;
+  String formText = "";
+
+  Map? form;
+  Map? cform;
+  List? colName;
+  List? feeName;
+  bool chkSend = false;
+  List files = [];
+  bool isLoading = true;
+  String msg = '';
+  String state = 'send';
+
+  String? townshipName;
+  String? address;
+  String? date;
+  Map? result;
+
+  @override
+  void initState() {
+    super.initState();
+    getFormData();
+  }
+
+  void getFormData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/ygn_c_show');
+    try {
+      var response = await http
+          .post(url, body: {'token': token, 'form_id': formId.toString()});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+        print(data);
+        setState(() {
+          form = data['form'];
+          cform = data['c_form'];
+          files = data['files'];
+          colName = data['tbl_col_name'];
+          feeName = data['fee_names'];
+          chkSend = data['chk_send'];
+          msg = data['msg'];
+          state = data['state'];
+          result = data;
+          formText =
+              "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ ${result!['address']}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['apartment_count']} ခန်းတွဲ x ${result!['c_form']['floor_count']} ထပ် = ${result!['c_form']['room_count']} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter']}လုံး)၊ ";
+
+          if (result!['c_form']['pMeter10'] > 0 ||
+              result!['c_form']['pMeter10'] > 0 ||
+              result!['c_form']['pMeter10'] > 0) {
+            formText =
+                "$formText ပါဝါမီတာ(${result!['c_form']['pMeter10'] + result!['c_form']['pMeter20'] + result!['c_form']['pMeter30']}လုံး)";
+          }
+          if (result!['c_form']['water_meter'] == 1) {
+            formText = '$formText ရေစက်မီတာ(1လုံး)';
+          }
+
+          if (result!['c_form']['water_meter'] == 1) {
+            formText = '$formTextဓါတ်လှေကားအသုံးပြုရန် ပါဝါမီတာ(၁)လုံး';
+          }
+          formText = '$formTextတပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။';
+        });
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,225 +185,446 @@ class _COverviewState extends State<COverview> {
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
-            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form04_info',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    'appForm': ApplicationFormModel.mapToObject(form!),
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showFormCheck == true ? showForm() : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား
-            hideEditmainTitle("အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား ", showMeterTypeCheck,
-                meterTypeToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            //အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား
+            mainTitle("အခန်းအရေအတွက် နှင့် မီတာအမျိုးအစား ", showMeterTypeCheck,
+                meterTypeToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form03_money_type', arguments: {
+                'form_id': formId,
+                'edit': true,
+                'cForm': ConstructorForm.mapToObject(cform!)
+              });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showMeterTypeCheck == true ? showMeterTypeTable() : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
-            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form05_n_r_c',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showNRCCheck == true
-                ?showSingleImage("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)","မှတ်ပုံတင်နောက်ဖက် (မူရင်း)")
-       : Container(),
-             SizedBox(
-              height: 20,
-            ),
+                ? singleTwo(files, 'nrc_copy_front', 'မှတ်ပုံတင်အရှေ့ဘက်',
+                    'nrc_copy_back', 'မှတ်ပုံတင်အနောက်ဘက်')
+                : Container(),
+            SizedBox(height: 20),
+
             //အိမ်ထောင်စုစာရင်း
-            mainTitle(
-                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            mainTitle("အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck,
+                householdToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form06_household',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showHouseholdCheck == true
-                ? showMultiImages("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)","အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)")
+                ? multiTwo(
+                    files,
+                    'form_10_front',
+                    'အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)',
+                    'form_10_back',
+                    'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
-            //ထောက်ခံစာ 
+            SizedBox(height: 20),
+
+            //ထောက်ခံစာ
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck, recommendToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showRecommendCheck == true
-                ? showSingleImage("နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)","ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)"
-                    )
+                ? singleTwo(
+                    files,
+                    'occupy_letter',
+                    'နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ',
+                    'no_invade_letter',
+                    'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
-            
-             //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
-            mainTitle(
-                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 20),
+
+            //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
+            mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
+                ownershipToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form08_ownership',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showOwernshipCheck == true
-                ? multiImageFront("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)")
+                ? multiOne(
+                    files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)
-            mainTitle(
-                "ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)", showAllowCheck , allowToggleButton),
-            SizedBox(
-              height: 10,
-            ),
-            showAllowCheck  == true
-                ? singleImageFront("ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)")
+            //ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)
+            mainTitle("ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)", showAllowCheck,
+                allowToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form09_allow',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
+            showAllowCheck == true
+                ? singleOne(files, 'building_permit',
+                    "ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //လူနေထိုင်ခွင့် (မူရင်း)
+            //လူနေထိုင်ခွင့် (မူရင်း)
             mainTitle(
-                "လူနေထိုင်ခွင့် (မူရင်း)", showLiveCheck  , liveToggleButton),
-            SizedBox(
-              height: 10,
-            ),
-            showLiveCheck   == true
-                ? singleImageFront("လူနေထိုင်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)")
+                "လူနေထိုင်ခွင့် (မူရင်း)", showLiveCheck, liveToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form10_live',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
+            showLiveCheck == true
+                ? singleOne(
+                    files, 'bcc', "လူနေထိုင်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)
+            //စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)
             mainTitle(
-                "စည်ပင်ထောက်ခံစာ (မူရင်း)", showYCDCCheck   , ycdcToggleButton),
-            SizedBox(
-              height: 10,
-            ),
-            showYCDCCheck    == true
-                ? singleImageFront("စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)")
+                "စည်ပင်ထောက်ခံစာ (မူရင်း)", showYCDCCheck, ycdcToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form11_y_c_d_c',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
+            showYCDCCheck == true
+                ? singleOne(
+                    files, 'dc_recomm', "စည်ပင်ထောက်ခံစာဓါတ်ပုံ(မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //နောက်ဆုံးပေးဆောင်ထားသော (မီတာ/ယာယီမီတာ) ချလံ ဓါတ်ပုံ (မူရင်း)
-            mainTitle(
-                "နောက်ဆုံးပေးဆောင်ထားသော\n(မီတာ/ယာယီမီတာ)ချလံ(မူရင်း)", showMeterBillCheck    , meterBillToggleButton),
-            SizedBox(
-              height: 10,
-            ),
-            showMeterBillCheck    == true
-                ? singleImageFront("နောက်ဆုံးပေးဆောင်ထားသော\n(မီတာ/ယာယီမီတာ)ချလံဓါတ်ပုံ(မူရင်း)")
+            mainTitle("နောက်ဆုံးပေးဆောင်ထားသော\n(မီတာ/ယာယီမီတာ)ချလံ(မူရင်း)",
+                showMeterBillCheck, meterBillToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'yng_c_form12_meter_bill',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
+            showMeterBillCheck == true
+                ? singleOne(files, 'prev_bill',
+                    "နောက်ဆုံးပေးဆောင်ထားသော\n(မီတာ/ယာယီမီတာ)ချလံဓါတ်ပုံ(မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက် 
-             Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: Text("လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)"),
-             ),
-            mainTitle(
-                "သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)", showFarmLandCheck, farmlandToggleButton),
-            SizedBox(
-              height: 10,
+            //လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက်
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  "လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)"),
             ),
+            mainTitle("သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)", showFarmLandCheck,
+                farmlandToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form13_farm_land',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showFarmLandCheck == true
-                ? multiImageFront("ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)")
+                ? multiOne(files, 'farmland', "ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //အဆောက်အဦးဓါတ်ပုံ
-             mainTitle(
-                "အဆောက်အဦးဓါတ်ပုံ", showBuildingCheck, buildingToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            //အဆောက်အဦးဓါတ်ပုံ
+            mainTitle(
+                "အဆောက်အဦးဓါတ်ပုံ", showBuildingCheck, buildingToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form14_building_photo',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showBuildingCheck == true
-                ? multiImageFront("အဆောက်အဦးဓါတ်ပုံ ")
+                ? multiOne(files, 'building', "အဆောက်အဦးဓါတ်ပုံ")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-
-             //တိုက်ပုံစံဓါတ်ပုံ
-             mainTitle(
-                "တိုက်ပုံစံဓါတ်ပုံ", showApartmentCheck, apartmentToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            //တိုက်ပုံစံဓါတ်ပုံ
+            mainTitle(
+                "တိုက်ပုံစံဓါတ်ပုံ", showApartmentCheck, apartmentToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form15_apartment_photo',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showApartmentCheck == true
-                ? multiImageFront("တိုက်ပုံစံဓါတ်ပုံ ")
+                ? multiOne(files, 'bq', "တိုက်ပုံစံဓါတ်ပုံ ")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-             //အဆောက်အဦး Drawing
-             mainTitle(
-                "အဆောက်အဦး Drawing", showBuilingDrawingCheck, buildingDrawingToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            //အဆောက်အဦး Drawing
+            mainTitle("အဆောက်အဦး Drawing", showBuilingDrawingCheck,
+                buildingDrawingToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form16_building_drawing',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showBuilingDrawingCheck == true
-                ? multiImageFront("အဆောက်အဦး Drawing ")
+                ? multiOne(files, 'drawing', "အဆောက်အဦး Drawing")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //တည်နေရာပြမြေပုံ
-             mainTitle(
-                "တည်နေရာပြမြေပုံ", showLocationCheck,locationToggleButton),
-            SizedBox(
-              height: 10,
-            ),
+            mainTitle(
+                "တည်နေရာပြမြေပုံ", showLocationCheck, locationToggleButton,
+                () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form17_location',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showLocationCheck == true
-                ? multiImageFront("တည်နေရာပြမြေပုံ ")
+                ? multiOne(files, 'map', "တည်နေရာပြမြေပုံ")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
-           //ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)
+            //ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)
             Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: Text("ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)"),
-             ),
-             mainTitle(
-                "လက်မှတ်ရေးထိုးထားမှုစာ(မူရင်း)", showSignCheck,signToggleButton),
-            SizedBox(
-              height: 10,
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  "ရေစက်မီတာလျှောက်ထားရာတွင် ကန်ထရိုက်ရှိ အခန်းစေ့နေသူများ၏ ကန့်ကွက်မှုမရှိကြောင်း လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)"),
             ),
+            mainTitle("လက်မှတ်ရေးထိုးထားမှုစာ(မူရင်း)", showSignCheck,
+                signToggleButton, () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, 'ygn_c_form18_sign',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+            SizedBox(height: 10),
             showSignCheck == true
-                ? multiImageFront("လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)")
+                ? multiOne(files, 'sign', "လက်မှတ်ရေးထိုးထားမှုစာ (မူရင်း)")
                 : Container(),
-                 SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             actionButton(context),
             SizedBox(height: 20),
-
-           
           ],
         ),
       ),
     );
   }
 
+  Widget multiOne(List files, String column, String title) {
+    return Column(
+        children: files.map((e) {
+      return Column(
+        children: [
+          imagesWidget(e[column], title),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget multiTwo(List files, String column1, String title1, String column2,
+      String title2) {
+    return Column(
+        children: files.map((file) {
+      return Column(
+        children: [
+          imagesWidget(file[column1], title1),
+          imagesWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget singleOne(List files, String column, String title) {
+    return Column(
+        children: files.map((e) {
+      return Column(
+        children: [
+          imageWidget(e[column], title),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget singleTwo(List files, String column1, String title1, String column2,
+      String title2) {
+    return Column(
+        children: files.map((file) {
+      return Column(
+        children: [
+          imageWidget(file[column1], title1),
+          imageWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget imagesWidget(String? urls, String title) {
+    if (urls != null && urls != '') {
+      List urlList = urls.split(",");
+      int count = 1;
+      return Column(
+          children: urlList.map((url) {
+        return Column(
+          children: [
+            imageWidget(url, '$title (${count++})'),
+          ],
+        );
+      }).toList());
+    } else {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                  style: TextStyle(), textAlign: TextAlign.center),
+            ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    }
+  }
+
+  Widget imageWidget(String? url, String title) {
+    try {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            url != null && url != ''
+                ? Image.network(
+                    result!['path'] + url,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                : Container(
+                    width: double.infinity,
+                    child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                        style: TextStyle(), textAlign: TextAlign.center),
+                  ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    } catch (e) {
+      return Container(
+        width: double.infinity,
+        child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+            style: TextStyle(), textAlign: TextAlign.center),
+      );
+    }
+  }
 
   Widget title() {
     return Center(
@@ -355,18 +655,31 @@ class _COverviewState extends State<COverview> {
       child: RichText(
         text: TextSpan(
           children: <TextSpan>[
-            new TextSpan(text: txt1),
             new TextSpan(
-                text: txt2,
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              text: txt1,
+              style: new TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
+            new TextSpan(
+              text: txt2,
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
+  Widget mainTitle(String title, bool checkVal, VoidCallback checkState,
+      VoidCallback editLink) {
     var mSize = MediaQuery.of(context).size;
     return ElevatedButton(
       child: InkWell(
@@ -379,12 +692,16 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: () {},
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send'
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          ),
         ]),
       ),
       style: ButtonStyle(
@@ -429,7 +746,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
     );
   }
 
-  Widget showMeterTypeTable(){
+  Widget showMeterTypeTable() {
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       border: TableBorder.all(
@@ -443,7 +760,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
       ],
     );
   }
-  
+
   // Widget showMoneyTable() {
   //   return Table(
   //     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -478,7 +795,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", "YGN-1661485206")]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,12 +805,12 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  မင်္ဂလာတောင်ညွှန့်မြို့နယ်"),
+              Text("  ${result!['township_name']}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ၂၆-၀၈-၂၀၂၂",
+              "ရက်စွဲ။   ။ ${result!['date']}",
             ),
           ]),
           SizedBox(
@@ -510,7 +827,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ Innwa၊ 6 block၊ မင်္ဂလာတောင်ညွှန့်မြို့နယ်၊ရန်ကုန်အရှေ့ပိုင်းခရိုင်၊ရန်ကုန်တိုင်းဒေသကြီးတွင် ကန်ထရိုက်တိုက် (၁၀ ခန်းတွဲ x ၁၁ ထပ် = ၁၁၀ ခန်း) အတွက် အိမ်သုံးမီတာ (၁၁၀) လုံး တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
+                formText,
                 textAlign: TextAlign.justify,
               ),
               SizedBox(
@@ -520,21 +837,14 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 "    တပ်ဆင်သုံးစွဲခွင့်ပြုပါကလျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်းမှသတ်မှတ်ထားသောအခွန်အခများကိုအကြေပေးဆောင်မည့်အပြင်တည်ဆဲဥပဒေများအတိုင်းလိုက်နာဆောင်ရွက်မည်ဖြစ်ပါကြောင်းနှင့်အိမ်တွင်းဝါယာသွယ်တန်းခြင်းလုပ်ငန်းများကိုလျှပ်စစ်ကျွမ်းကျင်လက်မှတ်ရှိသူများနှင့်သာဆောင်ရွက်မည်ဖြစ်ကြောင်းဝန်ခံကတိပြုလျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Text(
                 "တပ်ဆင်သုံးစွဲလိုသည့် လိပ်စာ",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 7,
-              ),
-              Text(
-                  "အမှတ် (142)၊ Innwa၊ 6 block၊မင်္ဂလာတောင်ညွှန့်မြို့နယ်၊ ရန်ကုန်အရှေ့ပိုင်းခရိုင်၊ ရန်ကုန်တိုင်းဒေသကြီး၊"),
-              SizedBox(
-                height: 14,
-              ),
+              SizedBox(height: 7),
+              Text("${result!['address']}"),
+              SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -549,9 +859,9 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 children: [
                   Align(
                       alignment: Alignment.centerRight,
-                      child: Container(child: Text(" Si Thu Myo"))),
-                  Text("  ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
-                  Text("  09123456789"),
+                      child: Container(child: Text(form!['fullname'] ?? '-'))),
+                  Text("  ${form!['nrc'] ?? '-'}"),
+                  Text("  ${form!['applied_phone'] ?? '-'}"),
                 ],
               ),
             ],
@@ -561,153 +871,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
     );
   }
 
-  Widget singleImageFront(title) {
-    return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-        SizedBox(
-              height: 10,
-            ),
-      ],
-    );
-  }
-
-  Widget singleImageBack(title) {
-    return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
-  }
-
-    Widget showSingleImage(frontTitle,backTitle){
-    return Column(
-      children: [
-        singleImageFront(frontTitle),
-        SizedBox(height: 10,),
-        singleImageBack(backTitle),
-      ],
-    );
-  }
-
-
-  Widget multiImageFront(title) {
-    return Column(
-      children: [
-        Card(
-          elevation: 10,
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
-  }
-
-  Widget multiImageBack(title) {
-    return Column(
-      children: [
-        Card(
-          elevation: 10,
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
-  }
-
-   Widget showMultiImages(frontTitle,backTitle){
-    return Column(
-      children: [
-        multiImageFront(frontTitle),
-        SizedBox(height: 10,),
-         multiImageBack(backTitle),
-      ],
-    );
-  }
-
-TableRow _getTableHeader(String d1, List d2) {
+  TableRow _getTableHeader(String d1, List d2) {
     return TableRow(children: [
       Container(
         padding: EdgeInsets.all(10),
@@ -791,7 +955,6 @@ TableRow _getTableHeader(String d1, List d2) {
     ]);
   }
 
-
   void stopLoading() {
     setState(() {
       isLoading = false;
@@ -811,12 +974,11 @@ TableRow _getTableHeader(String d1, List d2) {
     });
   }
 
-  meterTypeToggleButton(){
+  meterTypeToggleButton() {
     setState(() {
       showMeterTypeCheck = !showMeterTypeCheck;
     });
   }
-
 
   moneyToggleButton() {
     setState(() {
@@ -841,78 +1003,80 @@ TableRow _getTableHeader(String d1, List d2) {
       showRecommendCheck = !showRecommendCheck;
     });
   }
-  
-   ownershipToggleButton() {
+
+  ownershipToggleButton() {
     setState(() {
       showOwernshipCheck = !showOwernshipCheck;
     });
   }
-  
+
   farmlandToggleButton() {
     setState(() {
       showFarmLandCheck = !showFarmLandCheck;
     });
   }
+
   buildingToggleButton() {
     setState(() {
       showBuildingCheck = !showBuildingCheck;
     });
   }
+
   powerToggleButton() {
     setState(() {
       showPowerCheck = !showPowerCheck;
     });
   }
 
-  currentMeterToggleButton(){
+  currentMeterToggleButton() {
     setState(() {
       showCurrentMeterCheck = !showCurrentMeterCheck;
     });
   }
 
-  allowToggleButton(){
+  allowToggleButton() {
     setState(() {
       showAllowCheck = !showAllowCheck;
     });
   }
 
-  liveToggleButton(){
+  liveToggleButton() {
     setState(() {
       showLiveCheck = !showLiveCheck;
     });
   }
 
-  ycdcToggleButton(){
+  ycdcToggleButton() {
     setState(() {
       showYCDCCheck = !showYCDCCheck;
     });
   }
 
-  meterBillToggleButton(){
+  meterBillToggleButton() {
     setState(() {
       showMeterBillCheck = !showMeterBillCheck;
     });
   }
 
-  apartmentToggleButton(){
+  apartmentToggleButton() {
     setState(() {
       showApartmentCheck = !showApartmentCheck;
     });
   }
 
-  buildingDrawingToggleButton(){
+  buildingDrawingToggleButton() {
     setState(() {
       showBuilingDrawingCheck = !showBuilingDrawingCheck;
     });
   }
 
-  locationToggleButton(){
+  locationToggleButton() {
     setState(() {
       showLocationCheck = !showLocationCheck;
     });
   }
 
-  signToggleButton(){
+  signToggleButton() {
     setState(() {
       showSignCheck = !showSignCheck;
     });

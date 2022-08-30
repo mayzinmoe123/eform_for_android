@@ -6,6 +6,9 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+import '../../../models/constructor_form.dart';
+
 class CForm04Info extends StatefulWidget {
   const CForm04Info({Key? key}) : super(key: key);
 
@@ -16,6 +19,9 @@ class CForm04Info extends StatefulWidget {
 class _CForm04InfoState extends State<CForm04Info> {
   int? formId;
   bool isLoading = true;
+
+  bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
@@ -82,6 +88,19 @@ class _CForm04InfoState extends State<CForm04Info> {
           townshipList = data['townships'];
         });
         print('township list is $townshipList');
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
       } else {
         showAlertDialog(
             'Connection Failed!',
@@ -106,6 +125,33 @@ class _CForm04InfoState extends State<CForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null && appForm == null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (_selectedjob == null) {
+          _selectedjob = nullCheck(appForm!.jobType.toString());
+        }
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(formId),
@@ -116,6 +162,20 @@ class _CForm04InfoState extends State<CForm04Info> {
         return true;
       },
     );
+  }
+
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
   }
 
   AppBar applicationBar(formId) {
@@ -547,13 +607,17 @@ class _CForm04InfoState extends State<CForm04Info> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form05_n_r_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_c_form05_n_r_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {

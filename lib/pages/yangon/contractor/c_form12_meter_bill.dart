@@ -19,6 +19,7 @@ class _CForm12MeterBillState extends State<CForm12MeterBill> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "နောက်ဆုံးပေးဆောင်ထားသော (မီတာ/ယာယီမီတာ) ချလံ(မူရင်း)",
@@ -44,6 +45,11 @@ class _CForm12MeterBillState extends State<CForm12MeterBill> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -399,12 +405,17 @@ class _CForm12MeterBillState extends State<CForm12MeterBill> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form13_farm_land',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, 'ygn_c_form13_farm_land',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

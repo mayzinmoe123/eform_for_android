@@ -15,6 +15,7 @@ class R07Recommend extends StatefulWidget {
 
 class _R07RecommendState extends State<R07Recommend> {
   int? formId;
+  bool edit = false;
   bool isLoading = false;
   File? frontFile;
   bool frontFileError = false;
@@ -45,6 +46,11 @@ class _R07RecommendState extends State<R07Recommend> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -424,13 +430,17 @@ class _R07RecommendState extends State<R07Recommend> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/residential/r08_ownership',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, '/yangon/residential/r08_ownership',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

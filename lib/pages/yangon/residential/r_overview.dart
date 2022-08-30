@@ -33,6 +33,8 @@ class _ROverviewState extends State<ROverview> {
   bool chkSend = false;
   List files = [];
   bool isLoading = true;
+  String msg = '';
+  String state = 'send';
 
   String? townshipName;
   String? address;
@@ -64,6 +66,8 @@ class _ROverviewState extends State<ROverview> {
           colName = data['tbl_col_name'];
           feeName = data['fee_names'];
           chkSend = data['chk_send'];
+          msg = data['msg'];
+          state = data['state'];
           result = data;
         });
       } else {
@@ -147,8 +151,19 @@ class _ROverviewState extends State<ROverview> {
         child: Column(
           children: [
             title(),
-
-            // showForm(),
+            SizedBox(height: 20),
+            Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(20),
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
@@ -244,7 +259,7 @@ class _ROverviewState extends State<ROverview> {
                 : Container(),
             SizedBox(height: 20),
 
-            //အိမ်ထောင်စုစာရင်း
+            //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
                 ownershipToggleButton, () async {
               final result = await Navigator.pushNamed(
@@ -383,12 +398,12 @@ class _ROverviewState extends State<ROverview> {
   Widget imagesWidget(String? urls, String title) {
     if (urls != null && urls != '') {
       List urlList = urls.split(",");
+      int count = 1;
       return Column(
           children: urlList.map((url) {
-        int count = 1;
         return Column(
           children: [
-            imageWidget(url, 'title ($count)'),
+            imageWidget(url, '$title (${count++})'),
           ],
         );
       }).toList());
@@ -509,12 +524,16 @@ class _ROverviewState extends State<ROverview> {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: editLink,
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send'
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -1009,6 +1028,21 @@ class _ROverviewState extends State<ROverview> {
         });
   }
 
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }
+
   void showAlertDialog(String title, String content, BuildContext context) {
     showDialog(
         context: context,
@@ -1032,6 +1066,7 @@ class _ROverviewState extends State<ROverview> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
+    String email = prefs.getString('user_email').toString();
     var url = Uri.parse("${apiPath}api/yangon/residential_send_form");
     try {
       var response = await http.post(url, body: {
@@ -1045,8 +1080,11 @@ class _ROverviewState extends State<ROverview> {
       if (data['success']) {
         stopLoading();
         setState(() {
+          chkSend = false;
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });
+        showSnackBar(context, msg);
         refreshToken(data['token']);
         Navigator.pop(context);
         goToNextPage();

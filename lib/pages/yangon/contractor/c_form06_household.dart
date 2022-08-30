@@ -21,6 +21,8 @@ class _CForm06HouseholdState extends State<CForm06Household> {
   List backFiles = [];
   bool backFilesError = false;
 
+  bool edit = false;
+
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
     style: TextStyle(
@@ -44,6 +46,11 @@ class _CForm06HouseholdState extends State<CForm06Household> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -453,12 +460,17 @@ class _CForm06HouseholdState extends State<CForm06Household> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_c_form07_recommend',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, 'ygn_c_form07_recommend',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

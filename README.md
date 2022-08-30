@@ -26,7 +26,7 @@ step 2: in info page >> declare var
     bool edit = false;
     ApplicationFormModel? appForm;
 and write bellow in build()
-    if (data['edit'] != null) {
+    if (data['edit'] != null && appForm == null ) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -59,6 +59,20 @@ and write bellow in build()
         }
       });
     }
+
+    String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
+  }
 step 3 : jobField() => set value => value: _selectedjob,
 
 step 4 . in info page >> getTownshipList()
