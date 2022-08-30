@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
     Map<String, Widget Function(BuildContext)> allLink = {};
     Map<String, Widget Function(BuildContext)> initialLink = {
+      '/': (context) => Login(),
       '/login': (context) => Login(),
       '/register': (context) => Register(),
       '/division_choice': (context) => DivisionChoice(),
@@ -72,9 +73,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       routes: allLinks,
-
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );
   }
