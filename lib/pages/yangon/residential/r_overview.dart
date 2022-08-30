@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class ROverview extends StatefulWidget {
   const ROverview({Key? key}) : super(key: key);
 
@@ -62,7 +64,6 @@ class _ROverviewState extends State<ROverview> {
           colName = data['tbl_col_name'];
           feeName = data['fee_names'];
           chkSend = data['chk_send'];
-
           result = data;
         });
       } else {
@@ -159,6 +160,7 @@ class _ROverviewState extends State<ROverview> {
                   arguments: {
                     'form_id': formId,
                     'edit': true,
+                    'appForm': ApplicationFormModel.mapToObject(form!),
                   });
               setState(() {
                 formId = (result ?? 0) as int;

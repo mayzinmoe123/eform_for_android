@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/models/application_form_model.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,7 @@ class _R04InfoState extends State<R04Info> {
   int? formId;
   bool isLoading = false;
   bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
@@ -89,7 +91,19 @@ class _R04InfoState extends State<R04Info> {
         setState(() {
           townshipList = data['townships'];
         });
-        print('township list is $townshipList');
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -104,6 +118,20 @@ class _R04InfoState extends State<R04Info> {
     }
   }
 
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
@@ -112,7 +140,37 @@ class _R04InfoState extends State<R04Info> {
       formId = data['form_id'];
     });
     if (data['edit'] != null) {
-      edit = data['edit'];
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (_selectedjob == null) {
+          _selectedjob = nullCheck(appForm!.jobType.toString());
+        }
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
     }
     print('info form_id is $formId');
     return WillPopScope(
@@ -189,7 +247,7 @@ class _R04InfoState extends State<R04Info> {
                   ? _getFormRequired("ရာထူး", positionController)
                   : SizedBox(),
               _selectedjob != 'other'
-                  ? _getFormRequired("ဌာန/ကုမ္ပဏီ*", departmentController)
+                  ? _getFormRequired("ဌာန/ကုမ္ပဏီ", departmentController)
                   : SizedBox(),
               _selectedjob == 'other'
                   ? _getFormRequired("အခြား", otherController)
@@ -358,6 +416,7 @@ class _R04InfoState extends State<R04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+          value: _selectedjob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -375,6 +434,7 @@ class _R04InfoState extends State<R04Info> {
             setState(() {
               _selectedjob = selected.toString();
             });
+            print('selected job is ${_selectedjob}');
           }),
     );
   }
@@ -398,14 +458,14 @@ class _R04InfoState extends State<R04Info> {
           );
         }).toList(),
         onChanged: (selected) {
-          print('township dropdown $selected');
+          print('slected township dropdown $selected');
           setState(() {
-            districtController.text = selected['district_name'];
-            divisionController.text = selected['division_states_name'];
             _selectedTownship = selected!;
             townshipId = selected['id'];
             districtId = selected['district_id'];
             divisionId = selected['division_state_id'];
+            districtController.text = selected['district_name'];
+            divisionController.text = selected['division_states_name'];
           });
         },
       ),
@@ -493,6 +553,8 @@ class _R04InfoState extends State<R04Info> {
         'district_id': districtId.toString(),
         'div_state_id': divisionId.toString()
       };
+
+      print('saving tid ${townshipId.toString()}');
       var response = await http.post(url, body: bodyData);
 
       print('bodydata is $bodyData');
