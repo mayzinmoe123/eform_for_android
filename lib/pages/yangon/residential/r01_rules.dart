@@ -13,8 +13,7 @@ class R01Rules extends StatefulWidget {
 
 class _R01RulesState extends State<R01Rules> {
   var checkedValue = false;
-  // bool isLoading = true;
-  bool isLoading = false;
+  bool isLoading = true;
   List<String> rules = [
     "ပူးတွဲတင်ပြသည့် အိမ်ထောင်စုစာရင်း၊ နိုင်ငံသားစိစစ်ရေးကဒ်၊ လိုင်စင်၊ စာချုပ်စာတမ်း၊ ထောက်ခံချက်စသည့် အထောက်အထားစာရွက်စာတမ်းများနှင့် ဓာတ်ပုံများကို ထင်ရှားမြင်သာ ပေါ်လွင်ပြီး ဖျက်ရာပြင်ရာမပါရှိရန်။",
     "ပူးတွဲပါစာရွက်စာတမ်းများ မပြည့်စုံခြင်း၊ ထင်ရှားမှု၊ ပြတ်သားမှုမရှိပါက လျှောက်လွှာအား ထည့်သွင်းစဉ်းစားမည် မဟုတ်ပါ။",

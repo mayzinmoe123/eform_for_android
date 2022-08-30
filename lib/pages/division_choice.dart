@@ -190,13 +190,13 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   }
 
   String getMeterType(value) {
-    if (value == '1') {
-      return 'အိမ်သုံ';
-    } else if (value == '2') {
+    if (value == 1) {
+      return 'အိမ်သုံး';
+    } else if (value == 2) {
       return 'အိမ်သုံးပါဝါ';
-    } else if (value == '3') {
+    } else if (value == 3) {
       return 'လုပ်ငန်းသုံးပါဝါ';
-    } else if (value == '4') {
+    } else if (value == 4) {
       return 'ထရန်စဖော်မာ';
     } else {
       return 'ကန်ထရိုက်တိုက်';

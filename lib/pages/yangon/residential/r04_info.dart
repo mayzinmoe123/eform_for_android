@@ -16,6 +16,7 @@ class R04Info extends StatefulWidget {
 class _R04InfoState extends State<R04Info> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
 
   String? _selectedjob;
   bool jobError = false;
@@ -110,6 +111,9 @@ class _R04InfoState extends State<R04Info> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      edit = data['edit'];
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -589,14 +593,18 @@ class _R04InfoState extends State<R04Info> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/residential/r05_nrc',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, '/yangon/residential/r05_nrc',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {
