@@ -187,6 +187,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showNRCCheck == true
@@ -227,6 +228,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showRecommendCheck == true
@@ -248,6 +250,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showOwernshipCheck == true
@@ -270,6 +273,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showFarmLandCheck == true
@@ -287,6 +291,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showBuildingCheck == true
@@ -303,6 +308,7 @@ class _ROverviewState extends State<ROverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(height: 10),
             showPowerCheck == true
@@ -399,27 +405,35 @@ class _ROverviewState extends State<ROverview> {
   }
 
   Widget imageWidget(String? url, String title) {
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          url != null && url != ''
-              ? Image.network(
-                  result!['path'] + url,
-                  width: double.infinity,
-                  height: 200,
-                )
-              : Container(
-                  width: double.infinity,
-                  child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
-                      style: TextStyle(), textAlign: TextAlign.center),
-                ),
-          SizedBox(height: 10.0),
-          Text(title),
-        ],
-      ),
-    ));
+    try {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            url != null && url != ''
+                ? Image.network(
+                    result!['path'] + url,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                : Container(
+                    width: double.infinity,
+                    child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                        style: TextStyle(), textAlign: TextAlign.center),
+                  ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    } catch (e) {
+      return Container(
+        width: double.infinity,
+        child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+            style: TextStyle(), textAlign: TextAlign.center),
+      );
+    }
   }
 
   Widget title() {

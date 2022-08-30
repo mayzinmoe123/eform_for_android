@@ -15,7 +15,7 @@ class DivisionChoice extends StatefulWidget {
 
 class _DivisionChoiceState extends State<DivisionChoice> {
   int selectedBottom = 0;
-  bool isLoading = true;
+  bool isLoading = false;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? userName;
