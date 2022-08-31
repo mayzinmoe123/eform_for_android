@@ -21,6 +21,7 @@ class _CForm05NRCMdyState extends State<CForm05NRCMdy> {
   File? backFile;
   bool backFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
@@ -45,6 +46,11 @@ class _CForm05NRCMdyState extends State<CForm05NRCMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -434,12 +440,17 @@ class _CForm05NRCMdyState extends State<CForm05NRCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_c_form06_household',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, 'mdy_c_form06_household',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

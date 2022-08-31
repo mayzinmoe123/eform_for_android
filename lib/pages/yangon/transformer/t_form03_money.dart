@@ -568,7 +568,7 @@ class _TForm03MoneyState extends State<TForm03Money> {
       decoration: BoxDecoration(border: Border.all(color: Colors.black38)),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );
@@ -581,7 +581,7 @@ class _TForm03MoneyState extends State<TForm03Money> {
       padding: EdgeInsets.all(14),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );

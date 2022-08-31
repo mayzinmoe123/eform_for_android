@@ -91,6 +91,8 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           if (selectedBottom == 1) {
             startLoading();
             getForms();
+          } else {
+            stopLoading();
           }
         },
       ),
@@ -341,7 +343,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
         context, '/', (Route<dynamic> route) => false);
   }
 
-  void goToDetailPage(BuildContext context, Map form) {
+  void goToDetailPage(BuildContext context, Map form) async {
     print('go to detail');
     print('form $form');
     if (form['apply_type'] != null && form['apply_division'] != null) {
@@ -351,8 +353,12 @@ class _DivisionChoiceState extends State<DivisionChoice> {
       String type = form['apply_type'].toString();
       String routeName = getRouteName(div, type);
       print('routeName $routeName');
-      Navigator.pushNamed(context, routeName,
+      var result = await Navigator.pushNamed(context, routeName,
           arguments: {'form_id': form['id']});
+      if (result != null) {
+        startLoading();
+        getForms();
+      }
     }
   }
 

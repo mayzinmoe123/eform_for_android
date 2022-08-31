@@ -36,8 +36,8 @@ class _COverviewState extends State<COverview> {
   bool showLocationCheck = false;
   bool showSignCheck = false;
   bool showCurrentMeterCheck = false;
-  String formText = "";
 
+  String formText = "";
   Map? form;
   Map? cform;
   List? colName;
@@ -83,7 +83,7 @@ class _COverviewState extends State<COverview> {
           state = data['state'];
           result = data;
           formText =
-              "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address']}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['apartment_count']} ခန်းတွဲ x ${result!['c_form']['floor_count']} ထပ် = ${result!['c_form']['room_count']} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter']}လုံး)၊ ";
+              "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['apartment_count'] ?? '-'} ခန်းတွဲ x ${result!['c_form']['floor_count'] ?? '-'} ထပ် = ${result!['c_form']['room_count'] ?? '-'} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter'] ?? '-'}လုံး)၊ ";
 
           if (result!['c_form']['pMeter10'] > 0 ||
               result!['c_form']['pMeter10'] > 0 ||
@@ -662,7 +662,7 @@ class _COverviewState extends State<COverview> {
         child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
   }
 
-  Widget textSpan(txt1, txt2) {
+  Widget textSpan(String txt1, String txt2) {
     return Flexible(
       child: RichText(
         text: TextSpan(
@@ -705,7 +705,7 @@ class _COverviewState extends State<COverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send' && chkSend == true
+            child: state != 'send' || chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
@@ -765,33 +765,19 @@ class _COverviewState extends State<COverview> {
         color: Colors.grey,
       ),
       children: [
-        getTableBodyDetail("အခန်းအရေအတွက်", "၁၁၀ ခန်း ( ၁၀ ခန်းတွဲ x ၁၁ ထပ် )"),
-        getTableBodyDetail("အိမ်သုံးမီတာ အရေအတွက်", "၁၁၀ လုံး"),
-        getTableBodyDetail("ရေစက်မီတာ", "မပါပါ"),
-        getTableBodyDetail("ဓါတ်လှေကားမီတာ", "မပါပါ"),
+        getTableBodyDetail("အခန်းအရေအတွက်",
+            "${cform!['room_count'] ?? '-'} ခန်း ( ${cform!['apartment_count'] ?? '-'} ခန်းတွဲ x ${cform!['floor_count'] ?? '-'} ထပ် )"),
+        getTableBodyDetail(
+            "အိမ်သုံးမီတာ အရေအတွက်", "${cform!['meter'] ?? '-'} လုံး"),
+        getTableBodyDetail("ပါဝါမီတာ အရေအတွက်",
+            "10KW - ${cform!['pMeter10'] ?? '-'} လုံး \n 20KW - ${cform!['pMeter20'] ?? '-'} လုံး \n 30KW - ${cform!['pMeter30'] ?? '-'} လုံး"),
+        getTableBodyDetail(
+            "ရေစက်မီတာ", cform!['water_meter'] > 0 ? 'ပါသည်' : 'မပါပါ'),
+        getTableBodyDetail(
+            "ဓါတ်လှေကားမီတာ", cform!['elevator_meter'] > 0 ? 'ပါသည်' : 'မပါပါ'),
       ],
     );
   }
-
-  // Widget showMoneyTable() {
-  //   return Table(
-  //     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-  //     border: TableBorder.all(
-  //       color: Colors.grey,
-  //     ),
-  //     children: [
-  //       _getTableHeader(
-  //           "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "Type Three"]),
-  //       getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "၈၀,၀၀၀"),
-  //       getTableBodyDetail("အာမခံစဘော်ငွေ", "၄,၀၀၀"),
-  //       getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "၂,၀၀၀"),
-  //       getTableBodyDetail("မီးဆက်ခ", "၂,၀၀၀"),
-  //       getTableBodyDetail("ကြီးကြပ်ခ", "၁,၀၀၀"),
-  //       getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၁,၀၀၀"),
-  //       getTableFooter("စုစုပေါင်း", "၉၀,၀၀၀"),
-  //     ],
-  //   );
-  // }
 
   Widget showForm() {
     return Container(
@@ -807,7 +793,7 @@ class _COverviewState extends State<COverview> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -817,13 +803,11 @@ class _COverviewState extends State<COverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  ${result!['township_name']}"),
+              Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Text(
-              "ရက်စွဲ။   ။ ${result!['date']}",
-            ),
+            Text("ရက်စွဲ။   ။ ${result!['date'] ?? '-'}"),
           ]),
           SizedBox(
             height: 10,
@@ -842,9 +826,7 @@ class _COverviewState extends State<COverview> {
                 formText,
                 textAlign: TextAlign.justify,
               ),
-              SizedBox(
-                height: 5,
-              ),
+              SizedBox(height: 5),
               Text(
                 "    တပ်ဆင်သုံးစွဲခွင့်ပြုပါကလျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်းမှသတ်မှတ်ထားသောအခွန်အခများကိုအကြေပေးဆောင်မည့်အပြင်တည်ဆဲဥပဒေများအတိုင်းလိုက်နာဆောင်ရွက်မည်ဖြစ်ပါကြောင်းနှင့်အိမ်တွင်းဝါယာသွယ်တန်းခြင်းလုပ်ငန်းများကိုလျှပ်စစ်ကျွမ်းကျင်လက်မှတ်ရှိသူများနှင့်သာဆောင်ရွက်မည်ဖြစ်ကြောင်းဝန်ခံကတိပြုလျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
@@ -855,7 +837,7 @@ class _COverviewState extends State<COverview> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 7),
-              Text(result!['address']),
+              Text(result!['address'] ?? '-'),
               SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),
@@ -1168,6 +1150,7 @@ class _COverviewState extends State<COverview> {
         });
         setState(() {
           chkSend = false;
+          state = 'send';
           msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });

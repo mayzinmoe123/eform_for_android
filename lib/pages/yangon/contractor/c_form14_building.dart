@@ -159,8 +159,8 @@ class _CForm14BuildingState extends State<CForm14Building> {
   Widget front() {
     return (frontFiles.length <= 0)
         ? multipleUploadWidget(
-            'အဆောက်အဦးဓါတ်ပုံ', false, frontFilesError, frontExplorer)
-        : imagePreviewWidget('အဆောက်အဦးဓါတ်ပုံ', false, frontFiles, frontClear);
+            'အဆောက်အဦးဓါတ်ပုံ', true, frontFilesError, frontExplorer)
+        : imagePreviewWidget('အဆောက်အဦးဓါတ်ပုံ', true, frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,

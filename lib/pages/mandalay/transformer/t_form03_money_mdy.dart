@@ -91,7 +91,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
         child: Text(
             replaceFarsiNumber(
                 "${index == 0 || index == -1 || index == 1 ? '' : (index++) - 1}"),
-            style: TextStyle(fontSize: 16)),
+            style: TextStyle(fontSize: 14)),
       ),
     );
   }
@@ -416,7 +416,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
       decoration: BoxDecoration(border: Border.all(color: Colors.black38)),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );
@@ -429,7 +429,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
       padding: EdgeInsets.all(14),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );

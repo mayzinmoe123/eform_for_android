@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 
+import '../../../models/constructor_form.dart';
+
 class C03MeterType extends StatefulWidget {
   const C03MeterType({Key? key}) : super(key: key);
 
@@ -27,8 +29,30 @@ class _C03MeterTypeState extends State<C03MeterType> {
   int? formId;
   bool isLoading = false;
 
+  bool edit = false;
+  ConstructorForm? cForm;
+
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null && cForm == null) {
+      setState(() {
+        edit = data['edit'];
+        cForm = data['cForm'];
+        power10Controller.text = nullCheck(cForm!.pMeter10);
+        power20Controller.text = nullCheck(cForm!.pMeter20);
+        power30Controller.text = nullCheck(cForm!.pMeter30);
+        meterController.text = nullCheck(cForm!.meter);
+        roomController.text = nullCheck(cForm!.roomCount);
+        checkedWaterValue = nullCheckBool(cForm!.waterMeter);
+        checkedElevatorValue = nullCheckBool(cForm!.elevatorMeter);
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(context),
@@ -39,6 +63,27 @@ class _C03MeterTypeState extends State<C03MeterType> {
         return true;
       },
     );
+  }
+
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return 0;
+    }
+    return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 
   AppBar applicationBar(BuildContext context) {
@@ -473,12 +518,16 @@ class _C03MeterTypeState extends State<C03MeterType> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_c04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_c04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

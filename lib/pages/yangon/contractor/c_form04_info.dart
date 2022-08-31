@@ -27,6 +27,10 @@ class _CForm04InfoState extends State<CForm04Info> {
   bool jobError = false;
   List<Map> jobs = [
     {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
+    {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
     },
@@ -132,24 +136,16 @@ class _CForm04InfoState extends State<CForm04Info> {
         nameController.text = nullCheck(appForm!.fullname);
         nrcController.text = nullCheck(appForm!.nrc);
         phoneController.text = nullCheck(appForm!.appliedPhone);
-        if (_selectedjob == null) {
-          _selectedjob = nullCheck(appForm!.jobType.toString());
-        }
+        _selectedjob = nullCheck(appForm!.jobType.toString());
         homeNoController.text = nullCheck(appForm!.appliedHomeNo);
         streetController.text = nullCheck(appForm!.appliedStreet);
         laneController.text = nullCheck(appForm!.appliedLane);
         quarterController.text = nullCheck(appForm!.appliedQuarter);
         townController.text = nullCheck(appForm!.appliedTown);
 
-        if (townshipId == null) {
-          townshipId = nullCheckNum(appForm!.townshipId);
-        }
-        if (districtId == null) {
-          districtId = nullCheckNum(appForm!.districtId);
-        }
-        if (divisionId == null) {
-          divisionId = nullCheckNum(appForm!.divStateId);
-        }
+        townshipId = nullCheckNum(appForm!.townshipId);
+        districtId = nullCheckNum(appForm!.districtId);
+        divisionId = nullCheckNum(appForm!.divStateId);
       });
     }
     return WillPopScope(
@@ -171,11 +167,18 @@ class _CForm04InfoState extends State<CForm04Info> {
     return value;
   }
 
-  int? nullCheckNum(value) {
+  int nullCheckNum(value) {
     if (value == null || value == '' || value == 'null') {
-      return null;
+      return 0;
     }
     return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 
   AppBar applicationBar(formId) {

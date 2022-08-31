@@ -20,6 +20,7 @@ class _C11DcState extends State<C11Dc> {
   bool frontFileError = false;
   FilePickerResult? result;
 
+  bool edit = false;
   final subTitle = const Text(
     "စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)",
     style: TextStyle(
@@ -44,6 +45,11 @@ class _C11DcState extends State<C11Dc> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -398,12 +404,16 @@ class _C11DcState extends State<C11Dc> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_c12_meter_bill',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_c12_meter_bill',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

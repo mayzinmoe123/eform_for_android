@@ -27,6 +27,10 @@ class _TForm04InfoState extends State<TForm04Info> {
   bool jobError = false;
   List<Map> jobs = [
     {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
+    {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
     },

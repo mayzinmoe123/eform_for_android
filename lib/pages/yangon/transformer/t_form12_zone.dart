@@ -18,6 +18,7 @@ class _TForm12ZoneState extends State<TForm12Zone> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "စက်မှုဇုံဖြစ်ပါက ဇုံကော်မတီ၏ ထောက်ခံချက်(မူရင်း) ",
@@ -42,6 +43,11 @@ class _TForm12ZoneState extends State<TForm12Zone> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -155,16 +161,10 @@ class _TForm12ZoneState extends State<TForm12Zone> {
 
   Widget front() {
     return (frontFiles.length <= 0)
-        ? multipleUploadWidget(
-            'လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက်',
-            false,
-            frontFilesError,
-            frontExplorer)
-        : imagePreviewWidget(
-            'လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက်',
-            false,
-            frontFiles,
-            frontClear);
+        ? multipleUploadWidget('စက်မှုဇုံဖြစ်ပါက ဇုံကော်မတီ၏ ထောက်ခံချက် ',
+            false, frontFilesError, frontExplorer)
+        : imagePreviewWidget('စက်မှုဇုံဖြစ်ပါက ဇုံကော်မတီ၏ ထောက်ခံချက်', false,
+            frontFiles, frontClear);
   }
 
   Widget multipleUploadWidget(String label, bool isRequired, bool errorState,
@@ -465,12 +465,16 @@ class _TForm12ZoneState extends State<TForm12Zone> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form13_power',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_t_form13_power',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {
