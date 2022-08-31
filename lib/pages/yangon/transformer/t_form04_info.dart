@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class TForm04Info extends StatefulWidget {
   const TForm04Info({Key? key}) : super(key: key);
 
@@ -17,6 +19,9 @@ class _TForm04InfoState extends State<TForm04Info> {
   bool religiousCheckedValue = false;
   int? formId;
   bool isLoading = true;
+
+  bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
@@ -89,6 +94,19 @@ class _TForm04InfoState extends State<TForm04Info> {
           townshipList = data['townships'];
         });
         print('township list is $townshipList');
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
       } else {
         showAlertDialog(
             'Connection Failed!',
@@ -113,6 +131,33 @@ class _TForm04InfoState extends State<TForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null && appForm == null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        religiousCheckedValue = nullCheckBool(appForm!.isReligion);
+        print('is religion ${appForm!.isReligion}');
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        _selectedjob = nullCheck(appForm!.jobType.toString());
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        townshipId = nullCheckNum(appForm!.townshipId);
+        districtId = nullCheckNum(appForm!.districtId);
+        divisionId = nullCheckNum(appForm!.divStateId);
+      });
+    }
     return WillPopScope(
       onWillPop: () async {
         goToBack();
@@ -129,6 +174,27 @@ class _TForm04InfoState extends State<TForm04Info> {
         },
       ),
     );
+  }
+
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return 0;
+    }
+    return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 
   AppBar applicationBar() {
@@ -389,6 +455,7 @@ class _TForm04InfoState extends State<TForm04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+          value: _selectedjob,
           hint: Text("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: Text("အလုပ်အကိုင်(ဘာသာ/သာသနာအတွက် ဖြစ်ပါက ဖြည့်ရန်မလိုပါ)"),
@@ -502,6 +569,7 @@ class _TForm04InfoState extends State<TForm04Info> {
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
     var url = Uri.parse("${apiPath}api/applicant_info_transformer");
+    print('save religiousCheckedValue $religiousCheckedValue');
     try {
       Map bodyData = {
         'token': token,
@@ -622,13 +690,17 @@ class _TForm04InfoState extends State<TForm04Info> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form05_n_r_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_t_form05_n_r_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {

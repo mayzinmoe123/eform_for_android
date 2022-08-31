@@ -73,7 +73,7 @@ class ApplicationFormModel {
         applyType = map["apply_type"].toString(),
         applySubType = map["apply_sub_type"].toString(),
         applyDivision = map["apply_division"].toString(),
-        isReligion = map["apply_division"].toString(),
+        isReligion = map["is_religion"].toString(),
         serialCode = map["serial_code"].toString(),
         fullname = map["fullname"].toString(),
         nrc = map["nrc"].toString(),

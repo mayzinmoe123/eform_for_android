@@ -16,7 +16,7 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 preview for info
-step 1: add argsin Navigator.pushNamed
+step 1: add args in Navigator.pushNamed
                 arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -67,11 +67,18 @@ and write bellow in build()
     return value;
   }
 
-  int? nullCheckNum(value) {
+  int nullCheckNum(value) {
     if (value == null || value == '' || value == 'null') {
-      return null;
+      return 0;
     }
     return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 step 3 : jobField() => set value => value: _selectedjob,
 
@@ -111,3 +118,35 @@ if (edit) {
       goToBack();
     } else { ...
     }
+
+--------------------------------------------------------------------------
+
+overview page >>
+step 1 : replace Widget mainTitle() [add func parameter, Flexible and condition]
+step 2 : sendFile() => 
+        startLoading();
+        setState(() {
+          formId = data['form']['id'];
+        });
+        setState(() {
+          chkSend = false;
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
+          formId = data['form']['id'];
+        });
+        showSnackBar(context, msg);
+
+step 3 : add new fun 
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }

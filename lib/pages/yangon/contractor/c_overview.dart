@@ -83,7 +83,7 @@ class _COverviewState extends State<COverview> {
           state = data['state'];
           result = data;
           formText =
-              "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ ${result!['address']}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['apartment_count']} ခန်းတွဲ x ${result!['c_form']['floor_count']} ထပ် = ${result!['c_form']['room_count']} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter']}လုံး)၊ ";
+              "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address']}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['apartment_count']} ခန်းတွဲ x ${result!['c_form']['floor_count']} ထပ် = ${result!['c_form']['room_count']} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter']}လုံး)၊ ";
 
           if (result!['c_form']['pMeter10'] > 0 ||
               result!['c_form']['pMeter10'] > 0 ||
@@ -181,7 +181,19 @@ class _COverviewState extends State<COverview> {
         child: Column(
           children: [
             title(),
-            // showForm(),
+            SizedBox(height: 20),
+            Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(20),
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
@@ -507,7 +519,7 @@ class _COverviewState extends State<COverview> {
                 : Container(),
             SizedBox(height: 20),
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
           ],
         ),
@@ -693,7 +705,7 @@ class _COverviewState extends State<COverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send'
+            child: state != 'send' && chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
@@ -843,7 +855,7 @@ class _COverviewState extends State<COverview> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 7),
-              Text("${result!['address']}"),
+              Text(result!['address']),
               SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),
@@ -1135,6 +1147,7 @@ class _COverviewState extends State<COverview> {
   }
 
   void sendFile() async {
+    startLoading();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
@@ -1153,6 +1166,12 @@ class _COverviewState extends State<COverview> {
         setState(() {
           formId = data['form']['id'];
         });
+        setState(() {
+          chkSend = false;
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
+          formId = data['form']['id'];
+        });
+        showSnackBar(context, msg);
         refreshToken(data['token']);
         Navigator.pop(context);
         goToNextPage();
@@ -1170,6 +1189,21 @@ class _COverviewState extends State<COverview> {
           context);
       print('check token error $e');
     }
+  }
+
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
   }
 
   Widget logoutButton() {

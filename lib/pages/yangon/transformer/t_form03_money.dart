@@ -18,9 +18,22 @@ class _TForm03MoneyState extends State<TForm03Money> {
   bool selectedValueError = false;
   int? formId;
   bool isLoading = false;
+  bool edit = false;
 
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+        selectedValue = data['pole_type'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -700,7 +713,7 @@ class _TForm03MoneyState extends State<TForm03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -711,12 +724,16 @@ class _TForm03MoneyState extends State<TForm03Money> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_t_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

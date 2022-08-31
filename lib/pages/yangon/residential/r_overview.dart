@@ -525,7 +525,7 @@ class _ROverviewState extends State<ROverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send'
+            child: state != 'send' && chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
@@ -1063,10 +1063,10 @@ class _ROverviewState extends State<ROverview> {
   }
 
   void sendFile() async {
+    startLoading();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    String email = prefs.getString('user_email').toString();
     var url = Uri.parse("${apiPath}api/yangon/residential_send_form");
     try {
       var response = await http.post(url, body: {
