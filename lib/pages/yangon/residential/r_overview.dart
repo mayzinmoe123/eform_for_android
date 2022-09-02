@@ -612,7 +612,7 @@ class _ROverviewState extends State<ROverview> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -622,12 +622,12 @@ class _ROverviewState extends State<ROverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
-              Text('  ${result!['township_name']}'),
+              Text('  ${result!['township_name'] ?? '-'}'),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ${result!['date']}",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
           SizedBox(
@@ -642,7 +642,7 @@ class _ROverviewState extends State<ROverview> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address']}နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင်(အိမ်သုံး)မီတာတစ်လုံး တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန် လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-' }နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင်(အိမ်သုံး)မီတာတစ်လုံး တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန် လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 5),
@@ -658,7 +658,7 @@ class _ROverviewState extends State<ROverview> {
               SizedBox(
                 height: 7,
               ),
-              Text(result!['address']),
+              Text(result!['address'] ?? '-' ),
               SizedBox(
                 height: 14,
               ),

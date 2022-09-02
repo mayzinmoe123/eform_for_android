@@ -24,6 +24,10 @@ class _R04InfoState extends State<R04Info> {
   bool jobError = false;
   List<Map> jobs = [
     {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
+    {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
     },

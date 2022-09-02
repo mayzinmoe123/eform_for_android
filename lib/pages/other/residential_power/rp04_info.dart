@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class Rp04Info extends StatefulWidget {
   const Rp04Info({Key? key}) : super(key: key);
 
@@ -15,11 +17,18 @@ class Rp04Info extends StatefulWidget {
 
 class _Rp04InfoState extends State<Rp04Info> {
   int? formId;
-  bool isLoading = true;
+ bool isLoading = false;
+  // bool isLoading = true;
+  bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? selectedJob;
   bool jobError = false;
   List<Map> jobs = [
+    {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
     {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
@@ -74,7 +83,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     String token = prefs.getString('token').toString();
     String apiPath = prefs.getString('api_path').toString();
     String division =
-        '1'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
+        '2'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
 
     try {
       var url = Uri.parse(
@@ -84,9 +93,24 @@ class _Rp04InfoState extends State<Rp04Info> {
       print('response is $response');
       Map data = jsonDecode(response.body);
       if (data['success']) {
+        stopLoading();
         setState(() {
-          townshipList = data['townships'];
+          townshipList = data['townships'];   
         });
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+        print('township list is $townshipList');
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
         print('township list is $townshipList');
       } else {
         showAlertDialog(
@@ -104,6 +128,27 @@ class _Rp04InfoState extends State<Rp04Info> {
     }
   }
 
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return 0;
+    }
+    return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
@@ -111,10 +156,45 @@ class _Rp04InfoState extends State<Rp04Info> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (selectedJob == null) {
+          selectedJob = nullCheck(appForm!.jobType.toString());
+        }
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
+    }
+
+    
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
-        appBar: applicationBar(),
+        appBar: applicationBar(formId),
         body: isLoading ? loading() : body(context),
       ),
       onWillPop: () async {
@@ -124,7 +204,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     );
   }
 
-  AppBar applicationBar() {
+  AppBar applicationBar(formId) {
     return AppBar(
       centerTitle: true,
       title: Text("ကိုယ်တိုင်ရေးလျှောက်လွှာပုံစံ",
@@ -281,6 +361,9 @@ class _Rp04InfoState extends State<Rp04Info> {
     );
   }
 
+  
+  
+
   Widget _getFormRequiredReadonly(
       String name, TextEditingController textController, BuildContext context,
       [hintTxt]) {
@@ -349,6 +432,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+        value: selectedJob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),

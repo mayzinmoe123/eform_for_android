@@ -16,6 +16,7 @@ class RpForm12Building extends StatefulWidget {
 class _RpForm12BuildingState extends State<RpForm12Building> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -42,6 +43,11 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
     setState(() {
       formId = data['form_id'];
     });
+     if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -441,6 +447,9 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(
         context, '/yangon/residential_power/overview',
         arguments: {'form_id': formId});
@@ -448,6 +457,7 @@ class _RpForm12BuildingState extends State<RpForm12Building> {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+    }
   }
 
   void goToBack() {

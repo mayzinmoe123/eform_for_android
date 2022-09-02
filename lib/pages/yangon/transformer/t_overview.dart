@@ -74,7 +74,6 @@ class _TOverviewState extends State<TOverview> {
           result = data;
         });
 
-        print('fee ${data["fee"]}');
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -582,7 +581,7 @@ class _TOverviewState extends State<TOverview> {
           SizedBox(height: 15),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code']?? '-' )]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,12 +591,12 @@ class _TOverviewState extends State<TOverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  ${result!['township_name']}"),
+              Text("  ${result!['township_name'] ?? '-' }"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ${result!['date']}",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-' }",
             ),
           ]),
           SizedBox(height: 10),
@@ -612,7 +611,7 @@ class _TOverviewState extends State<TOverview> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address']} နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင် ${result!['tsf_type']}တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'} နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင် ${result!['tsf_type'] ?? '-' }တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 5),
@@ -626,7 +625,7 @@ class _TOverviewState extends State<TOverview> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 7),
-              Text(result!['address']),
+              Text(result!['address'] ?? '-'),
               SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),

@@ -15,6 +15,7 @@ class CpForm13Building extends StatefulWidget {
 
 class _CpForm13BuildingState extends State<CpForm13Building> {
   int? formId;
+  bool edit =false;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
@@ -42,6 +43,11 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -438,6 +444,9 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/overview',
         arguments: {'form_id': formId});
@@ -445,6 +454,7 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+    }
   }
 
   void goToBack() {

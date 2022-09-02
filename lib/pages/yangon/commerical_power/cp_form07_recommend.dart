@@ -15,6 +15,7 @@ class CpForm07Recommend extends StatefulWidget {
 
 class _CpForm07RecommendState extends State<CpForm07Recommend> {
   int? formId;
+  bool edit = false;
   bool isLoading = false;
   File? frontFile;
   bool frontFileError = false;
@@ -45,6 +46,11 @@ class _CpForm07RecommendState extends State<CpForm07Recommend> {
     setState(() {
       formId = data['form_id'];
     });
+    if(data['edit'] != null){
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -424,13 +430,17 @@ class _CpForm07RecommendState extends State<CpForm07Recommend> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
+     if (edit) {
+      goToBack();
+    }else{
+  final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form08_ownership',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+    }
   }
 
   void goToBack() {

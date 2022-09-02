@@ -16,6 +16,7 @@ class RpForm10CurrentMeter extends StatefulWidget {
 class _RpForm10CurrentMeterState extends State<RpForm10CurrentMeter> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
@@ -43,6 +44,11 @@ class _RpForm10CurrentMeterState extends State<RpForm10CurrentMeter> {
     setState(() {
       formId = data['form_id'];
     });
+     if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -438,6 +444,9 @@ class _RpForm10CurrentMeterState extends State<RpForm10CurrentMeter> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(
         context, '/yangon/residential_power/rp_form11_farm_land',
         arguments: {'form_id': formId});
@@ -445,6 +454,7 @@ class _RpForm10CurrentMeterState extends State<RpForm10CurrentMeter> {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {
