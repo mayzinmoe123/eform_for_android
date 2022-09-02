@@ -20,6 +20,8 @@ class _CForm12MeterBillMdyState extends State<CForm12MeterBillMdy> {
   bool frontFileError = false;
   FilePickerResult? result;
 
+  bool edit = false;
+
   final subTitle = const Text(
     "နောက်ဆုံးပေးဆောင်ထားသော (မီတာ/ယာယီမီတာ) ချလံ(မူရင်း)",
     style: TextStyle(
@@ -43,6 +45,11 @@ class _CForm12MeterBillMdyState extends State<CForm12MeterBillMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -399,12 +406,16 @@ class _CForm12MeterBillMdyState extends State<CForm12MeterBillMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_c_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_c_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

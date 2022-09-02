@@ -19,6 +19,8 @@ class _C08OwnershipState extends State<C08Ownership> {
   List frontFiles = [];
   bool frontFilesError = false;
 
+  bool edit = false;
+
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ ပိုင်ဆိုင်မှုအထောက်အထားဓါတ်ပုံ(မူရင်း)",
     style: TextStyle(
@@ -43,6 +45,11 @@ class _C08OwnershipState extends State<C08Ownership> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -445,12 +452,16 @@ class _C08OwnershipState extends State<C08Ownership> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_c09_allow',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_c09_allow',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

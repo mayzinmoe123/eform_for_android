@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/application_form_model.dart';
 import '../../../utils/helper/num_translate.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,10 +21,31 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
   int? formId;
   bool isLoading = false;
 
+  bool edit = false;
+  ApplicationFormModel? appForm;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: applicationBar(), body: isLoading ? loading() : body());
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+        selectedValue = data['pole_type'];
+      });
+    }
+    return WillPopScope(
+      child: Scaffold(
+          appBar: applicationBar(), body: isLoading ? loading() : body()),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+    );
   }
 
   AppBar applicationBar() {
@@ -177,7 +199,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
         (index) => SingleChildScrollView(
               child: Column(
                 children: [
-                  _getDetailDataHeader2("အကြောင်းအရာများ",
+                  _getDetailDataHeader2("ct အကြောင်းအရာများ",
                       "၁၁/၀.၄ ကေဗွီ ထရန်စဖော်မာ Rating အလိုက် ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
                   _getDetailDataHeader(
                       "အမျိုးအစား (ကေဗွီအေ)",
@@ -365,7 +387,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
       decoration: BoxDecoration(border: Border.all(color: Colors.black38)),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );
@@ -378,7 +400,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
       padding: EdgeInsets.all(14),
       child: Text(
         name,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 14),
         textAlign: TextAlign.center,
       ),
     );
@@ -521,12 +543,16 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_t_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

@@ -18,6 +18,7 @@ class _TForm08OwnershipState extends State<TForm08Ownership> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ ပိုင်ဆိုင်မှုအထောက်အထားဓါတ်ပုံ(မူရင်း)",
@@ -42,6 +43,11 @@ class _TForm08OwnershipState extends State<TForm08Ownership> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -445,12 +451,16 @@ class _TForm08OwnershipState extends State<TForm08Ownership> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form09_lincense',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'ygn_t_form09_lincense',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

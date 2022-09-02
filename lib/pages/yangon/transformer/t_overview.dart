@@ -55,7 +55,7 @@ class _TOverviewState extends State<TOverview> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var apiPath = prefs.getString('api_path');
-    var url = Uri.parse('${apiPath}api/ygn_tr_show');
+    var url = Uri.parse('${apiPath}api/ygn_t_show');
     try {
       var response = await http
           .post(url, body: {'token': token, 'form_id': formId.toString()});
@@ -73,7 +73,7 @@ class _TOverviewState extends State<TOverview> {
           state = data['state'];
           result = data;
         });
-
+        print('files $files');
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -194,13 +194,15 @@ class _TOverviewState extends State<TOverview> {
             mainTitle("လျှောက်ထားသည့်\nမီတာအမျိုးအစား ", showMoneyCheck,
                 moneyToggleButton, () async {
               startLoading();
-              final result = await Navigator.pushNamed(
-                  context, 'ygn_t_form03_money_type',
-                  arguments: {
-                    'form_id': formId,
-                    'edit': true,
-                    'pole_type': form!['pole_type'],
-                  });
+              String navName = form!['apply_tsf_type'] == 2
+                  ? 'ygn_ct_form03_money_type'
+                  : 'ygn_t_form03_money_type';
+              final result =
+                  await Navigator.pushNamed(context, navName, arguments: {
+                'form_id': formId,
+                'edit': true,
+                'pole_type': form!['pole_type'],
+              });
               setState(() {
                 formId = (result ?? 0) as int;
               });
@@ -403,7 +405,7 @@ class _TOverviewState extends State<TOverview> {
               height: 20,
             ),
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
           ],
         ),
@@ -440,11 +442,23 @@ class _TOverviewState extends State<TOverview> {
       child: RichText(
         text: TextSpan(
           children: <TextSpan>[
-            new TextSpan(text: txt1),
             new TextSpan(
-                text: txt2,
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              text: txt1,
+              style: new TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
+            new TextSpan(
+              text: txt2,
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
           ],
         ),
       ),
@@ -466,7 +480,7 @@ class _TOverviewState extends State<TOverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send' && chkSend == true
+            child: state != 'send' || chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
@@ -524,8 +538,10 @@ class _TOverviewState extends State<TOverview> {
       return "One Pole Type";
     } else if (type == 2) {
       return "Two Poles Type";
-    } else {
+    } else if (type == 3) {
       return 'Package Type';
+    } else {
+      return '';
     }
   }
 
@@ -539,7 +555,7 @@ class _TOverviewState extends State<TOverview> {
           decoration: BoxDecoration(
             color: Colors.lightBlue,
           ),
-          child: Text(getPoleType(form!['pole_type']),
+          child: Text(getPoleType(form!['pole_type'] ?? 0),
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
         SizedBox(
@@ -553,15 +569,17 @@ class _TOverviewState extends State<TOverview> {
           children: [
             _getTableHeader("အကြောင်းအရာများ", [
               "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
-              "${result!['fee']['name']} KVA"
+              "${result!['fee']['name'] ?? '-'} KVA"
             ]),
-            getTableBodyDetail("မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee']),
-            getTableBodyDetail("အာမခံစဘော်ငွေ", result!['fee']['deposit_fee']),
             getTableBodyDetail(
-                "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee']),
-            getTableBodyDetail("မီးဆက်ခ", result!['fee']['service_fee']),
+                "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
+            getTableBodyDetail(
+                "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
+            getTableBodyDetail(
+                "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
+            getTableBodyDetail("မီးဆက်ခ", result!['fee']['service_fee'] ?? '-'),
             getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-                result!['fee']['registration_fee']),
+                result!['fee']['registration_fee'] ?? '-'),
             getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
           ],
         ),
@@ -570,18 +588,27 @@ class _TOverviewState extends State<TOverview> {
   }
 
   Widget showForm() {
+    String tsfType;
+    if (form!['apply_tsf_type'] != null) {
+      tsfType = form!['apply_tsf_type'] == 2
+          ? 'လုပ်ငန်းသုံးထရန်စဖော်မာ'
+          : 'အိမ်သုံးထရန်စဖော်မာ';
+    } else {
+      tsfType = 'ထရန်စဖော်မာ';
+    }
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
         children: [
           Text(
-            "အိမ်သုံးထရန်စဖော်မာလျှောက်လွှာပုံစံ",
+            "$tsfType လျှောက်လွှာပုံစံ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(height: 15),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [textSpan("အမှတ်စဥ် -", form!['serial_code']?? '-' )]),
+
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,17 +619,18 @@ class _TOverviewState extends State<TOverview> {
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
               Text("  ${result!['township_name'] ?? '-' }"),
+
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ${result!['date'] ?? '-' }",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
           SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             textSpan("အကြောင်းအရာ။   ။",
-                "(50 KVA) ထရန်စဖေါ်မာတစ်လုံးတည်ဆောက်တပ်ဆင်ခွင့်ပြုပါရန်လျှောက်ထားခြင်း။")
+                "(${result!['fee']['name']} KVA) ထရန်စဖေါ်မာတစ်လုံးတည်ဆောက်တပ်ဆင်ခွင့်ပြုပါရန်လျှောက်ထားခြင်း။")
           ]),
           SizedBox(
             height: 10,
@@ -732,6 +760,7 @@ class _TOverviewState extends State<TOverview> {
     }
   }
 
+//
   Widget imageWidget(String? url, String title) {
     try {
       return Card(
@@ -980,6 +1009,7 @@ class _TOverviewState extends State<TOverview> {
   }
 
   void sendFile() async {
+    startLoading();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
@@ -998,6 +1028,13 @@ class _TOverviewState extends State<TOverview> {
         setState(() {
           formId = data['form']['id'];
         });
+        setState(() {
+          chkSend = false;
+          state = 'send';
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
+          formId = data['form']['id'];
+        });
+        showSnackBar(context, msg);
         refreshToken(data['token']);
         Navigator.pop(context);
         goToNextPage();
@@ -1015,6 +1052,21 @@ class _TOverviewState extends State<TOverview> {
           context);
       print('check token error $e');
     }
+  }
+
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
   }
 
   Widget logoutButton() {

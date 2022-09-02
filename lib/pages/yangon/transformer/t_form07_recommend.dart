@@ -21,6 +21,7 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
   File? backFile;
   bool backFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ ထောက်ခံစာဓါတ်ပုံ(မူရင်း)",
@@ -45,6 +46,11 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -446,12 +452,17 @@ class _TForm07RecommendState extends State<TForm07Recommend> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'ygn_t_form08_ownership',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, 'ygn_t_form08_ownership',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

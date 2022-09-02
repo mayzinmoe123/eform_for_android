@@ -19,6 +19,7 @@ class _CForm09AllowMdyState extends State<CForm09AllowMdy> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "ဆောက်လုပ်ခွင့် အထောက်အထားဓါတ်ပုံ(မူရင်း)",
@@ -43,6 +44,11 @@ class _CForm09AllowMdyState extends State<CForm09AllowMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -399,12 +405,16 @@ class _CForm09AllowMdyState extends State<CForm09AllowMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_c_form10_live',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_c_form10_live',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {
