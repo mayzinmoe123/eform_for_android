@@ -611,7 +611,7 @@ class _ROverviewState extends State<ROverview> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -626,7 +626,7 @@ class _ROverviewState extends State<ROverview> {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ${result!['date']}",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
           SizedBox(
@@ -658,9 +658,7 @@ class _ROverviewState extends State<ROverview> {
                 height: 7,
               ),
               Text(result!['address'] ?? '-'),
-              SizedBox(
-                height: 14,
-              ),
+              SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class RpOverview extends StatefulWidget {
   const RpOverview({Key? key}) : super(key: key);
 
@@ -18,14 +20,68 @@ class _RpOverviewState extends State<RpOverview> {
   bool showMoneyCheck = false;
   bool showNRCCheck = false;
   bool showHouseholdCheck = false;
-  bool isLoading = false;
   bool showRecommendCheck = false;
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
   bool showBuildingCheck = false;
   bool showPowerCheck = false;
   bool showCurrentMeterCheck = false;
-  
+
+    Map? form;
+  List files = [];
+  List? colName;
+  List? feeName;
+  bool chkSend = true;
+  bool isLoading =true;
+
+  String? townshipName;
+  String? date;
+  String? address;
+  Map? result;
+  String msg = '';
+
+ @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getFormData();
+  } 
+
+  void getFormData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/ygn_rp_show');
+    try {
+      var response = await http
+          .post(url, body: {'token': token, 'form_id': formId.toString()});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+        print(data);
+        setState(() {
+          form = data['form'];
+          files = data['files'];
+          colName = data['tbl_col_name'];
+          feeName = data['fee_names'];
+          chkSend = data['chk_send'];
+          msg = data['msg'];
+          result = data;
+        });
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,11 +151,38 @@ class _RpOverviewState extends State<RpOverview> {
           children: [
             title(),
             // showForm(),
+             SizedBox(height: 20),
+            Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(20),
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
-
             //ကိုယ်ရေးအချက်အလက်
-            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton),
-            SizedBox(
+           mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential_power/rp_form04_info',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    'appForm': ApplicationFormModel.mapToObject(form!),
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
+
+             SizedBox(
               height: 10,
             ),
             showFormCheck == true ? showForm() : Container(),
@@ -108,8 +191,17 @@ class _RpOverviewState extends State<RpOverview> {
             ),
 
             //မီတာအမျိုးအစား
-            hideEditmainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
-                moneyToggleButton),
+            mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
+                moneyToggleButton,()async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential_power/rp_form03_money',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
@@ -119,37 +211,75 @@ class _RpOverviewState extends State<RpOverview> {
             ),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
-            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton),
+            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,   () async {
+              startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential_power/rp_form05_n_r_c',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
-            showNRCCheck == true
-                ?showSingleImage("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)","မှတ်ပုံတင်နောက်ဖက် (မူရင်း)")
-       : Container(),
+           showNRCCheck == true
+                ? singleTwo(
+                    files,
+                    'nrc_copy_front',
+                    'မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)',
+                    'nrc_copy_back',
+                    'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
+                : Container(),
              SizedBox(
               height: 20,
             ),
+
             //အိမ်ထောင်စုစာရင်း
             mainTitle(
-                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton),
+                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
-            showHouseholdCheck == true
-                ? showMultiImages("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)","အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)")
+           showHouseholdCheck == true
+                ? multiTwo(
+                    files,
+                    'form_10_front',
+                    'အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)',
+                    'form_10_back',
+                    'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
                  SizedBox(
               height: 20,
             ),
             //ထောက်ခံစာ 
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton),
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
             showRecommendCheck == true
-                ? showSingleImage("နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)","ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)"
-                    )
+                ? singleTwo(
+                    files,
+                    'occupy_letter',
+                    'နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ',
+                    'no_invade_letter',
+                    'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
                 : Container(),
                  SizedBox(
               height: 20,
@@ -157,12 +287,20 @@ class _RpOverviewState extends State<RpOverview> {
             
              //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle(
-                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton),
+                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
-            showOwernshipCheck == true
-                ? multiImageFront("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)")
+           showOwernshipCheck == true
+                ? multiOne(
+                    files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
                  SizedBox(
               height: 20,
@@ -170,12 +308,19 @@ class _RpOverviewState extends State<RpOverview> {
 
             //အသုံးပြုမည့် ဝန်အားစာရင်း 
              mainTitle(
-                "အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)", showPowerCheck, powerToggleButton),
+                "အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)", showPowerCheck, powerToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
             showPowerCheck == true
-                ? multiImageFront("အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)")
+                ? multiOne(files,'electric_power',"အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)")
                 : Container(),
                  SizedBox(
               height: 20,
@@ -183,12 +328,19 @@ class _RpOverviewState extends State<RpOverview> {
 
             //လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ 
             mainTitle(
-                "လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)", showCurrentMeterCheck, currentMeterToggleButton),
+                "လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)", showCurrentMeterCheck, currentMeterToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
             showCurrentMeterCheck == true
-                ? singleImageFront("လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)")
+                ? singleOne(files,'prev_bill',"လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)")
                 : Container(),
                  SizedBox(
               height: 20,
@@ -200,12 +352,19 @@ class _RpOverviewState extends State<RpOverview> {
                child: Text("လယ်ယာပိုင်မြေဖြစ်ပါက လယ်ယာပိုင်မြေအား အခြားနည်းဖြင့်သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)"),
              ),
             mainTitle(
-                "သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)", showFarmLandCheck, farmlandToggleButton),
+                "သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)", showFarmLandCheck, farmlandToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
             showFarmLandCheck == true
-                ? multiImageFront("ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)")
+                ? multiOne(files,'farmland',"ခွင့်ပြုချက်ဓါတ်ပုံ (မူရင်း)")
                 : Container(),
                  SizedBox(
               height: 20,
@@ -213,16 +372,24 @@ class _RpOverviewState extends State<RpOverview> {
 
              //အဆောက်အဦးဓါတ်ပုံ
              mainTitle(
-                "အဆောက်အဦးဓါတ်ပုံ", showBuildingCheck, buildingToggleButton),
+                "အဆောက်အဦးဓါတ်ပုံ", showBuildingCheck, buildingToggleButton,  () async {
+              final result = await Navigator.pushNamed(
+                  context, '/yangon/residential/r07_recommend',
+                  arguments: {'form_id': formId, 'edit': true});
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+            }),
             SizedBox(
               height: 10,
             ),
             showBuildingCheck == true
-                ? multiImageFront("အဆောက်အဦးဓါတ်ပုံ")
+                ? singleOne(files,'building',"အဆောက်အဦးဓါတ်ပုံ")
                 : Container(),
                  SizedBox(
               height: 20,
             ),
+
 
             actionButton(context),
             SizedBox(height: 20),
@@ -232,6 +399,117 @@ class _RpOverviewState extends State<RpOverview> {
         ),
       ),
     );
+  }
+
+ Widget multiOne(List files, String column, String title) {
+    return Column(
+        children: files.map((e) {
+      return Column(
+        children: [
+          imagesWidget(e[column], title),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget multiTwo(List files, String column1, String title1, String column2,
+      String title2) {
+    return Column(
+        children: files.map((file) {
+      return Column(
+        children: [
+          imagesWidget(file[column1], title1),
+          imagesWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget singleOne(List files, String column, String title) {
+    return Column(
+        children: files.map((e) {
+      return Column(
+        children: [
+          imageWidget(e[column], title),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget singleTwo(List files, String column1, String title1, String column2,
+      String title2) {
+    return Column(
+        children: files.map((file) {
+      return Column(
+        children: [
+          imageWidget(file[column1], title1),
+          imageWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
+  }
+
+  Widget imagesWidget(String? urls, String title) {
+    if (urls != null && urls != '') {
+      List urlList = urls.split(",");
+      int count = 1;
+      return Column(
+          children: urlList.map((url) {
+        return Column(
+          children: [
+            imageWidget(url, '$title (${count++})'),
+          ],
+        );
+      }).toList());
+    } else {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                  style: TextStyle(), textAlign: TextAlign.center),
+            ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    }
+  }
+
+  Widget imageWidget(String? url, String title) {
+    try {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            url != null && url != ''
+                ? Image.network(
+                    result!['path'] + url,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                : Container(
+                    width: double.infinity,
+                    child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                        style: TextStyle(), textAlign: TextAlign.center),
+                  ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    } catch (e) {
+      return Container(
+        width: double.infinity,
+        child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+            style: TextStyle(), textAlign: TextAlign.center),
+      );
+    }
   }
 
 
@@ -265,11 +543,11 @@ class _RpOverviewState extends State<RpOverview> {
       child: RichText(
         text: TextSpan(
           children: <TextSpan>[
-            new TextSpan(text: txt1),
+            new TextSpan(text: txt1,style: TextStyle(color: Colors.black,fontFamily: 'Pyidaungsu')),
             new TextSpan(
                 text: txt2,
                 style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 13,color: Colors.black,fontFamily: 'Pyidaungsu')),
           ],
         ),
       ),
@@ -277,7 +555,7 @@ class _RpOverviewState extends State<RpOverview> {
   }
 
 
-  Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
+ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallback editLink) {
     var mSize = MediaQuery.of(context).size;
     return ElevatedButton(
       child: InkWell(
@@ -291,7 +569,7 @@ class _RpOverviewState extends State<RpOverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           InkWell(
-              onTap: () {},
+              onTap: editLink,
               child: Container(
                   padding: EdgeInsets.all(8),
                   child: Text("ပြင်ဆင်ရန်",
@@ -347,14 +625,15 @@ class _RpOverviewState extends State<RpOverview> {
         color: Colors.grey,
       ),
       children: [
-        _getTableHeader(
-            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "၁၀ ကီလိုဝပ်"]),
-        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "၈၀၀,၀၀၀"),
-        getTableBodyDetail("အာမခံစဘော်ငွေ", "၄,၀၀၀"),
-        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "၂,၀၀၀"),
-        getTableBodyDetail("မီးဆက်ခ", "၂,၀၀၀"),
-        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၁,၀၀၀"),
-        getTableFooter("စုစုပေါင်း", "၈၅၂,၀၀၀"),
+       _getTableHeader(
+            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "${result!['fee']['name']} ကီလိုဝပ်"]),
+        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "${result!['fee']['assign_fee']}"),
+        getTableBodyDetail("အာမခံစဘော်ငွေ", "${result!['fee']['deposit_fee']}"),
+        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "${result!['fee']['string_fee']}"),
+        getTableBodyDetail("မီးဆက်ခ", "${result!['fee']['service_fee']}"),
+        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "${result!['fee']['registration_fee']}"),
+        getTableBodyDetail("composit box", "${result!['fee']['composit_box']}"),
+        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
@@ -373,7 +652,7 @@ class _RpOverviewState extends State<RpOverview> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", "YGN-1661485206")]),
+             children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),   
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,12 +662,12 @@ class _RpOverviewState extends State<RpOverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  မင်္ဂလာတောင်ညွှန့်မြို့နယ်"),
+              Text(" ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ၂၆-၀၈-၂၀၂၂",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
           SizedBox(
@@ -405,7 +684,7 @@ class _RpOverviewState extends State<RpOverview> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ Innwa၊ 6 block၊ မင်္ဂလာတောင်ညွှန့်မြို့နယ်၊ရန်ကုန်အရှေ့ပိုင်းခရိုင်၊ရန်ကုန်တိုင်းဒေသကြီး၊နေကျွန်တေ  ာ်/ကျွန်မ၏80x80 တွငအိမ်သုံးပါဝါမီတာ (၁၀) ကီလိုဝပ်တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍${result!['address'] ?? '-'}ကျွန်တော်/ကျွန်မ၏${form!['building_type'] ?? '-'} တွင်အိမ်သုံးပါဝါမီတာ ${result!['fee']['name'] ?? '-'} ကီလိုဝပ်တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(
@@ -426,7 +705,7 @@ class _RpOverviewState extends State<RpOverview> {
                 height: 7,
               ),
               Text(
-                  "အမှတ် (142)၊ Innwa၊ 6 block၊မင်္ဂလာတောင်ညွှန့်မြို့နယ်၊ ရန်ကုန်အရှေ့ပိုင်းခရိုင်၊ ရန်ကုန်တိုင်းဒေသကြီး၊"),
+                  "${result!['address'] ?? '-' }"),
               SizedBox(
                 height: 14,
               ),
@@ -444,9 +723,9 @@ class _RpOverviewState extends State<RpOverview> {
                 children: [
                   Align(
                       alignment: Alignment.centerRight,
-                      child: Container(child: Text(" Si Thu Myo"))),
-                  Text("  ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
-                  Text("  09123456789"),
+                      child: Container(child: Text(form!['fullname'] ?? '-'))),
+                  Text("  ${form!['nrc'] ?? '-'}"),
+                  Text("  ${form!['applied_phone'] ?? '-'}"),
                 ],
               ),
             ],
@@ -792,6 +1071,21 @@ TableRow _getTableHeader(String d1, List d2) {
         });
   }
 
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }
+
   void showAlertDialog(String title, String content, BuildContext context) {
     showDialog(
         context: context,
@@ -828,8 +1122,11 @@ TableRow _getTableHeader(String d1, List d2) {
       if (data['success']) {
         stopLoading();
         setState(() {
+          chkSend = false;
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });
+        showSnackBar(context, msg);
         refreshToken(data['token']);
         Navigator.pop(context);
         goToNextPage();

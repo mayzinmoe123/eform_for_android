@@ -16,6 +16,7 @@ class RpForm09Power extends StatefulWidget {
 class _RpForm09PowerState extends State<RpForm09Power> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -42,6 +43,11 @@ class _RpForm09PowerState extends State<RpForm09Power> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -440,13 +446,17 @@ class _RpForm09PowerState extends State<RpForm09Power> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/residential_power/rp_form10_meter',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, '/yangon/residential_power/rp_form10_meter',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

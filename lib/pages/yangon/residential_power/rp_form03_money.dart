@@ -14,9 +14,21 @@ class RpForm03Money extends StatefulWidget {
 
 class _RpForm03MoneyState extends State<RpForm03Money> {
   int? formId;
+  bool edit = false;
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -269,7 +281,7 @@ class _RpForm03MoneyState extends State<RpForm03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -280,6 +292,9 @@ class _RpForm03MoneyState extends State<RpForm03Money> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(
         context, '/yangon/residential_power/rp_form04_info',
         arguments: {'form_id': formId});
@@ -287,6 +302,7 @@ class _RpForm03MoneyState extends State<RpForm03Money> {
       formId = (result ?? 0) as int;
     });
     print('money form id is $formId');
+  }
   }
 
   void goToHomePage(BuildContext context) {
