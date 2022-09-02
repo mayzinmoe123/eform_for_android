@@ -17,14 +17,83 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
   int selectedValue = 0;
   bool selectedValueError = false;
   int? formId;
-  bool isLoading = false;
+  bool isLoading = true;
+  bool edit = false;
+  List fees = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getMeterCost();
+  }
+
+  void getMeterCost() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/mdy_t_money');
+    try {
+      var response = await http
+          .post(url, body: {'token': token, 'form_id': formId.toString()});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+        setState(() {
+          fees = data['fees'];
+        });
+        print('fees $fees');
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: applicationBar(), body: body());
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
+    );
   }
 
   AppBar applicationBar() {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return AppBar(
       centerTitle: true,
       title: Text("ကောက်ခံမည့်နှုန်းများ", style: TextStyle(fontSize: 18.0)),
@@ -49,7 +118,20 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
     );
   }
 
-  Widget body() {
+  Widget loading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child: CircularProgressIndicator()),
+        SizedBox(
+          height: 10,
+        ),
+        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+      ],
+    );
+  }
+
+  Widget body(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 17),
@@ -96,6 +178,22 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
     );
   }
 
+  Widget meterCostsWidget() {
+    return Column(
+        children: fees.map((fee) {
+      return _getDetailData(
+          fee["type"].toString(),
+          fee["name"],
+          fee["assign_fee"],
+          fee["deposit_fee"],
+          fee["string_fee"],
+          fee["service_fee"],
+          fee["registration_fee"],
+          fee["building_fee"],
+          fee["total"]);
+    }).toList());
+  }
+
   List<Widget> _buildRows(int count) {
     return List.generate(
         count,
@@ -114,206 +212,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
                     "တည်ဆောက်စရိတ်",
                     "စုစုပေါင်း",
                   ),
-                  _getDetailData(
-                      "1",
-                      "၅၀",
-                      "၁,၈၀၀,၀၀၀/-",
-                      "၃၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၂,၁၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "2",
-                      "၁၀၀",
-                      "၂,၁၀၀,၀၀၀/-",
-                      "၆၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၂,၇၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "23",
-                      "၁၆၀",
-                      "၂,၄၀၀,၀၀၀/-",
-                      "၉၆၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၃,၇၉၅,၅၀၀/-"),
-                  _getDetailData(
-                      "5",
-                      "၂၀၀",
-                      "၂,၇၀၀,၀၀၀/-",
-                      "၁,၂၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၄,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "6",
-                      "၂၅၀",
-                      "၃,၀၀၀,၀၀၀/-",
-                      "၁,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၄,၉၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "8",
-                      "၃၁၅",
-                      "၃,၃၀၀,၀၀၀/-",
-                      "၁,၈၉၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၅,၆၂၅,၅၀၀/-"),
-                  _getDetailData(
-                      "9",
-                      "၄၀၀",
-                      "၃,၉၀၀,၀၀၀/-",
-                      "၂,၄၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၀၀/-",
-                      "၆,၇၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "11",
-                      "၅၀၀",
-                      "၄,၅၀၀,၀၀၀/-",
-                      "၃,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၈,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "12",
-                      "၆၃၀",
-                      "၅,၈၀၀,၀၀၀/-",
-                      "၃,၇၈၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၀,၁၁၅,၅၀၀/-"),
-                  _getDetailData(
-                      "13",
-                      "၇၅၀",
-                      "၆,၃၀၀,၀၀၀/-",
-                      "၄,၅၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၁,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "14",
-                      "၈၀၀",
-                      "၆,၈၀၀,၀၀၀/-	",
-                      "၄,၈၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၂,၁၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "15",
-                      "၁၀၀၀",
-                      "၇,၈၀၀,၀၀၀/-",
-                      "၆,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၁၄,၃၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "17",
-                      "၁၂၅၀",
-                      "၉,၃၀၀,၀၀၀/-",
-                      "၇,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၀၀၀,၀၀၀/-",
-                      "၁၇,၈၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "18",
-                      "၁၅၀၀",
-                      "၁၈,၀၀၀,၀၀၀/-",
-                      "၉,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၀၀၀,၀၀၀/-",
-                      "၂၈,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "20",
-                      "၃၀၀၀",
-                      "၂၅,၀၀၀,၀၀၀/-",
-                      "၁၈,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၂၀၀,၀၀၀/-",
-                      "၄၄,၂၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "21",
-                      "၅၀၀၀",
-                      "၅၀,၀၀၀,၀၀၀/-",
-                      "၃၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၆၀၀,၀၀၀/-",
-                      "၈၁,၆၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "22",
-                      "၁၀၀၀၀",
-                      "၁၀၀,၀၀၀,၀၀၀/-",
-                      "၆၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၁,၆၀၀,၀၀၀/-",
-                      "၁၆၁,၆၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "24",
-                      "၂၀၀၀၀",
-                      "၂၀၀,၀၀၀,၀၀၀/-",
-                      "၁၂၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၂၅,၀၀၀,၀၀၀/-",
-                      "၃၄၅,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "25",
-                      "၂၅၀၀၀",
-                      "၂၅၀,၀၀၀,၀၀၀/-",
-                      "၁၅၀,၀၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၃၀,၀၀၀,၀၀၀/-",
-                      "၄၃၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "26",
-                      "၃၀၀၀၀",
-                      "၃၀၀,၀၀၀,၀၀၀/-",
-                      "၁၈၀,၀၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၅၀၀,၀၀၀/-",
-                      "၄၈၀,၀၃၅,၅၀၀/-"),
+                  meterCostsWidget(),
                 ],
               ),
             ));
@@ -553,7 +452,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -564,12 +463,16 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_t_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

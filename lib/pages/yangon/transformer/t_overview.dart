@@ -618,7 +618,7 @@ class _TOverviewState extends State<TOverview> {
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
+              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
               Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),
@@ -639,7 +639,7 @@ class _TOverviewState extends State<TOverview> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'} နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင် ${result!['tsf_type'] ?? '-'}တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'} နေကျွန်တော်/ကျွန်မ၏ ${form!['applied_building_type'] ?? '-'} တွင် ${result!['tsf_type'] ?? '-'}တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 5),

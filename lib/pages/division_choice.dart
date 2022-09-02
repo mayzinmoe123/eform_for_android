@@ -217,6 +217,11 @@ class _DivisionChoiceState extends State<DivisionChoice> {
     String date = form['date_f'] != null ? form['date_f'] : '-';
     String state = form['state'] != null ? form['state'] : '-';
 
+    // ygn = 1, mdy = 3,other=2
+    String div = form['apply_division'].toString();
+    // R = 1, RP = 2, CP = 3, T=4, C=5
+    String type = form['apply_type'].toString();
+
     return GestureDetector(
       child: Card(
         child: Container(
@@ -231,6 +236,8 @@ class _DivisionChoiceState extends State<DivisionChoice> {
               formAddress(address),
               formDate(date),
               formState(state),
+              formState(getRouteName(div, type)),
+              Text('div $div type $type'),
             ],
           ),
         ),
@@ -382,7 +389,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           routeName = 'ygn_t_overview';
           break;
         default:
-          routeName = 'mdy_t_overview';
+          routeName = 'ygn_t_overview';
       }
     } else if (div == '3') {
       switch (type) {

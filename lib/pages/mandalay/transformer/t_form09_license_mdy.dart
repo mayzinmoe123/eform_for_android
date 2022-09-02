@@ -18,6 +18,7 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)",
@@ -43,6 +44,11 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -479,12 +485,16 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_form10_live',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_t_form10_live',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

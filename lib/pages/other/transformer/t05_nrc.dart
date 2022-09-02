@@ -22,6 +22,8 @@ class _TForm05NRCState extends State<TForm05NRC> {
   bool backFileError = false;
   FilePickerResult? result;
 
+  bool edit = false;
+
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ မှတ်ပုံတင်/သာသနာရေးကတ် (မူရင်း)",
     style: TextStyle(
@@ -46,6 +48,11 @@ class _TForm05NRCState extends State<TForm05NRC> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -435,12 +442,16 @@ class _TForm05NRCState extends State<TForm05NRC> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_t06_household',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_t06_household',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

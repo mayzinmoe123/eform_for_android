@@ -64,7 +64,6 @@ class _ROverviewState extends State<ROverview> {
           form = data['form'];
           files = data['files'];
           colName = data['tbl_col_name'];
-          feeName = data['fee_names'];
           chkSend = data['chk_send'];
           msg = data['msg'];
           state = data['state'];
@@ -622,7 +621,7 @@ class _ROverviewState extends State<ROverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
               Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
-              Text('  ${result!['township_name']}'),
+              Text(result!['township_name'] ?? '-'),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -642,7 +641,7 @@ class _ROverviewState extends State<ROverview> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address']}နေကျွန်တော်/ကျွန်မ၏ ${form!['building_type'] ?? '-'} တွင်(အိမ်သုံး)မီတာတစ်လုံး တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန် လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'} နေကျွန်တော်/ကျွန်မ၏ ${form!['applied_building_type'] ?? '-'} တွင်(အိမ်သုံး)မီတာတစ်လုံး တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန် လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 5),
@@ -658,7 +657,7 @@ class _ROverviewState extends State<ROverview> {
               SizedBox(
                 height: 7,
               ),
-              Text(result!['address']),
+              Text(result!['address'] ?? '-'),
               SizedBox(
                 height: 14,
               ),
@@ -1067,7 +1066,7 @@ class _ROverviewState extends State<ROverview> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_send_form");
+    var url = Uri.parse("${apiPath}api/send_form");
     try {
       var response = await http.post(url, body: {
         'token': token,

@@ -658,7 +658,7 @@ class _COverviewState extends State<COverview> {
               'ရုံးသို့ပို့ရန် သေချာပါက ပေးပို့မည်ကိုနှိပ်ပါ။', context);
         },
         style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7)),
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
         child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
   }
 

@@ -19,6 +19,7 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   File? frontFile;
   bool frontFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "စည်ပင်ထောက်ခံစာ ပုံတင်ရန်(မူရင်း)",
@@ -44,6 +45,11 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -416,12 +422,16 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_t_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_t_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

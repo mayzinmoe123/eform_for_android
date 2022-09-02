@@ -19,10 +19,47 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
   int selectedValue = 0;
   bool selectedValueError = false;
   int? formId;
-  bool isLoading = false;
+  bool isLoading = true;
+  List fees = [];
 
   bool edit = false;
   ApplicationFormModel? appForm;
+
+  @override
+  void initState() {
+    super.initState();
+    getMeterCost();
+  }
+
+  void getMeterCost() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/ygn_t_money');
+    try {
+      var response = await http
+          .post(url, body: {'token': token, 'form_id': formId.toString()});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+        setState(() {
+          fees = data['fees'];
+        });
+        print('fees $fees');
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +77,9 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
     }
     return WillPopScope(
       child: Scaffold(
-          appBar: applicationBar(), body: isLoading ? loading() : body()),
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(),
+      ),
       onWillPop: () async {
         goToBack();
         return true;
@@ -188,9 +227,24 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
         child: Text(
             replaceFarsiNumber(
                 "${index == 0 || index == -1 || index == 1 ? '' : (index++) - 1}"),
-            style: TextStyle(fontSize: 16)),
+            style: TextStyle(fontSize: 14)),
       ),
     );
+  }
+
+  Widget meterCostsWidget() {
+    return Column(
+        children: fees.map((fee) {
+      return _getDetailData(
+          fee["type"].toString(),
+          fee["name"],
+          fee["assign_fee"],
+          fee["deposit_fee"],
+          fee["string_fee"],
+          fee["service_fee"],
+          fee["registration_fee"],
+          fee["total"]);
+    }).toList());
   }
 
   List<Widget> _buildRows(int count) {
@@ -199,7 +253,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
         (index) => SingleChildScrollView(
               child: Column(
                 children: [
-                  _getDetailDataHeader2("ct အကြောင်းအရာများ",
+                  _getDetailDataHeader2("အကြောင်းအရာများ",
                       "၁၁/၀.၄ ကေဗွီ ထရန်စဖော်မာ Rating အလိုက် ကောက်ခံရမည့်နှုန်းထား (ကျပ်)"),
                   _getDetailDataHeader(
                       "အမျိုးအစား (ကေဗွီအေ)",
@@ -209,86 +263,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
                       "မီးဆက်ခ",
                       "မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
                       "စုစုပေါင်း"),
-                  _getDetailData("1", "၅၀", "၁,၈၀၀,၀၀၀/-", "၃၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၂,၁၃၅,၅၀၀/-"),
-                  _getDetailData("2", "၁၀၀", "၂,၁၀၀,၀၀၀/-", "၆၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၂,၇၃၅,၅၀၀/-"),
-                  _getDetailData("4", "၁၅၀", "၂,၄၀၀,၀၀၀/-", "၉၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၃,၃၃၅,၅၀၀/-"),
-                  _getDetailData("23", "၁၆၀", "၁,၈၀၀,၀၀၀/-", "၉၆၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၃,၃၉၅,၅၀၀/-"),
-                  _getDetailData("5", "၂၀၀", "၂,၇၀၀,၀၀၀/-", "၁,၂၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၃,၉၃၅,၅၀၀/-"),
-                  _getDetailData("6", "၂၅၀", "၃,၀၀၀,၀၀၀/-", "၁,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၄,၅၃၅,၅၀၀/-"),
-                  _getDetailData("7", "၃၀၀", "၃,၃၀၀,၀၀၀/-", "၁,၈၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၅,၁၃၅,၅၀၀/-"),
-                  _getDetailData("8", "၃၁၅", "၃,၃၀၀,၀၀၀/-", "၁,၈၉၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၅,၂၂၅,၅၀၀/-"),
-                  _getDetailData("9", "၄၀၀", "၃,၉၀၀,၀၀၀/-", "၂,၄၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၆,၃၃၅,၅၀၀/-"),
-                  _getDetailData("10", "၄၅၀", "၄,၂၀၀,၀၀၀/-", "၂,၇၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၆,၉၃၅,၅၀၀/-"),
-                  _getDetailData("11", "၅၀၀", "၄,၅၀၀,၀၀၀/-", "၃,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၇,၅၃၅,၅၀၀/-"),
-                  _getDetailData("24", "၇၀၀", "၅,၈၀၀,၀၀၀/-", "၄,၂၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData("24", "၇၅၀", "၆,၃၀၀,၀၀၀/-", "၄,၅၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၀,၈၃၅,၅၀၀/-"),
-                  _getDetailData("25", "၉၀၀", "၆,၈၀၀,၀၀၀/-	", "၅,၄၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၂,၂၃၅,၅၀၀/-"),
-                  _getDetailData("15", "၁၀၀၀", "၇,၈၀၀,၀၀၀/-", "၆,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၃,၈၃၅,၅၀၀/-"),
-                  _getDetailData("16", "၁၁၀၀", "၈,၃၀၀,၀၀၀/-", "၆,၆၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၄,၉၃၅,၅၀၀/-"),
-                  _getDetailData("17", "၁၂၅၀", "၉,၃၀၀,၀၀၀/-", "၇,၅၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၆,၈၃၅,၅၀၀/-"),
-                  _getDetailData("26", "၂၀၀၀", "၁၈,၀၀၀,၀၀၀/-", "၁၂,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၃၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData("26", "၂၅၀၀", "၂၁,၀၀၀,၀၀၀/-", "၁၅,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၂၃၆,၀၃၅,၅၀၀/-"),
-                  _getDetailData("20", "၃၀၀၀", "၂၅,၀၀၀,၀၀၀/-", "၁၈,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၄၃,၀၃၅,၅၀၀/-"),
-                  _getDetailData("20", "၅၀၀၀", "၅၀,၀၀၀,၀၀၀/-", "၃၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၈၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData("22", "၁၀၀၀၀", "၁၀၀,၀၀၀,၀၀၀/-", "၆၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-", "၂,၀၀၀/-", "၂၀,၀၀၀/-", "၁၆၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "23",
-                      "၁၅၀၀၀",
-                      "၁၅၀,၀၀၀,၀၀၀/-",
-                      "၉၀,၀၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၂၄၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "24",
-                      "၂၀၀၀၀",
-                      "၂၀၀,၀၀၀,၀၀၀/-",
-                      "၁၂၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၃၂၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "25",
-                      "၂၅၀၀၀",
-                      "၂၅၀,၀၀၀,၀၀၀/-",
-                      "၁၅၀,၀၀၇,၅၀၀/-",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၀၀,၀၃၅,၅၀၀/-"),
-                  _getDetailData(
-                      "25",
-                      "၃၀၀၀၀",
-                      "၃၀၀,၀၀၀,၀၀၀/-",
-                      "၁၈၀,၀၀၇,၅၀၀/-	",
-                      "၆,၀၀၀/-",
-                      "၂,၀၀၀/-",
-                      "၂၀,၀၀၀/-",
-                      "၄၈၀,၀၃၅,၅၀၀/-"),
+                  meterCostsWidget(),
                 ],
               ),
             ));
@@ -532,7 +507,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {

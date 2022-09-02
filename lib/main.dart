@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/auth/reset_password.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
       '/': (context) => Login(),
       '/login': (context) => Login(),
       '/register': (context) => Register(),
+      '/reset_password': (context) => ResetPassword(),
       '/division_choice': (context) => DivisionChoice(),
     };
     allLink.addAll(initialLink);

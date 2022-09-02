@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
 
+import '../../utils/verify_resend_dialog.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -152,10 +154,7 @@ class _LoginState extends State<Login> {
       style: ElevatedButton.styleFrom(
           shape: StadiumBorder(), primary: Colors.orange),
       onPressed: () {
-        if (_loginFormKey.currentState!.validate()) {
-          startLoading();
-          login(context, emailController.text, passwordController.text);
-        }
+        goToRegister();
       },
       child: const Text(
         'အကောင့်သစ်ဖွင့်မည်',
@@ -193,12 +192,34 @@ class _LoginState extends State<Login> {
             username(),
             const SizedBox(height: 20),
             password(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
+            resetPassword(),
+            const SizedBox(height: 10),
             loginButton(context),
             registerButton(context),
           ],
         ),
       ),
+    );
+  }
+
+  Widget resetPassword() {
+    return GestureDetector(
+      child: const Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Text(
+          'စကားဝှက်မေ့နေပါသလား?',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      ),
+      onTap: () {
+        goToResetPassword();
+      },
     );
   }
 
@@ -225,8 +246,12 @@ class _LoginState extends State<Login> {
         loginSuccess(data);
       } else {
         stopLoading();
-        // print('data is $data');
-        showAlertDialog(data['title'], data['message'], context);
+        if (data['title'] == 'Verify Your Email!') {
+          showVerifyDialog(data['title'], data['message'], context);
+        } else {
+          // print('data is $data');
+          showAlertDialog(data['title'], data['message'], context);
+        }
       }
     } on SocketException catch (e) {
       print('http error $e');
@@ -253,6 +278,14 @@ class _LoginState extends State<Login> {
     Navigator.pushReplacementNamed(context, '/division_choice');
   }
 
+  void goToRegister() async {
+    await Navigator.pushNamed(context, '/register');
+  }
+
+  void goToResetPassword() async {
+    await Navigator.pushNamed(context, '/reset_password');
+  }
+
   void stopLoading() {
     setState(() {
       isLoading = false;
@@ -263,6 +296,15 @@ class _LoginState extends State<Login> {
     setState(() {
       isLoading = true;
     });
+  }
+
+  void showVerifyDialog(String title, String content, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return VerifyResendDialog(
+              title, content, emailController.text, passwordController.text);
+        });
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
