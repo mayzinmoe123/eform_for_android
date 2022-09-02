@@ -524,7 +524,7 @@ class _ROverviewState extends State<ROverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send' && chkSend == true
+            child: state != 'send' || chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
