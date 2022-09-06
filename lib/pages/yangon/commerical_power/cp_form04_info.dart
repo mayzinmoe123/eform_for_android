@@ -146,7 +146,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     setState(() {
       formId = data['form_id'];
     });
-  if (data['edit'] != null) {
+  if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];

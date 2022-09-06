@@ -18,6 +18,7 @@ class _Cp10DcState extends State<Cp10Dc> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "စည်ပင်သာယာလိုင်စင် ဓါတ်ပုံ",
@@ -43,6 +44,12 @@ class _Cp10DcState extends State<Cp10Dc> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
+
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -438,12 +445,16 @@ class _Cp10DcState extends State<Cp10Dc> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_cp_form11_gov_allow',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

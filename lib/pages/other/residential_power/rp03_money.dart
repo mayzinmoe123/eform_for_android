@@ -15,6 +15,8 @@ class Rp03Money extends StatefulWidget {
 class _Rp03MoneyState extends State<Rp03Money> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +160,7 @@ class _Rp03MoneyState extends State<Rp03Money> {
     ]);
   }
 
-  Widget _makeChooseBtn(int type) {
+   Widget _makeChooseBtn(int type) {
     return Container(
       margin: EdgeInsets.all(14),
       child: ElevatedButton(
@@ -171,9 +173,10 @@ class _Rp03MoneyState extends State<Rp03Money> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         ),
-        child: Text(
-          "ရွေးချယ်မည်",
-          style: TextStyle(fontSize: 8),
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+          size: 20,
         ),
       ),
     );
@@ -276,12 +279,16 @@ class _Rp03MoneyState extends State<Rp03Money> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_rp04_info',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('money form id is $formId');
+  }
   }
 
   void goToHomePage(BuildContext context) {

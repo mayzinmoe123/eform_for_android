@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class RpForm04InfoMdy extends StatefulWidget {
   const RpForm04InfoMdy({Key? key}) : super(key: key);
 
@@ -16,10 +18,16 @@ class RpForm04InfoMdy extends StatefulWidget {
 class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   int? formId;
   bool isLoading = true;
+   bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? selectedJob;
   bool jobError = false;
   List<Map> jobs = [
+    {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
     {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
@@ -74,7 +82,7 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
     String token = prefs.getString('token').toString();
     String apiPath = prefs.getString('api_path').toString();
     String division =
-        '2'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
+        '3'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
 
     try {
       var url = Uri.parse(
@@ -84,10 +92,23 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
       print('response is $response');
       Map data = jsonDecode(response.body);
       if (data['success']) {
+        stopLoading();
         setState(() {
           townshipList = data['townships'];
         });
-        print('township list is $townshipList');
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
       } else {
         showAlertDialog(
             'Connection Failed!',
@@ -104,14 +125,61 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
     }
   }
 
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
+  }
+
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+     if (data['edit'] != null && appForm == null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (selectedJob == null) {
+          selectedJob = nullCheck(appForm!.jobType.toString());
+        }
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -349,6 +417,7 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+        value: selectedJob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -581,6 +650,9 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_rp_form05_n_r_c',
         arguments: {'form_id': formId});
     setState(() {
@@ -588,6 +660,7 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
     });
     stopLoading();
     print('info-nrc-page form id is $formId');
+  }
   }
 
   void goToBack() {

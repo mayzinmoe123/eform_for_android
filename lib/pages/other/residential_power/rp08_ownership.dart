@@ -16,6 +16,7 @@ class Rp08Ownership extends StatefulWidget {
 class _Rp08OwnershipState extends State<Rp08Ownership> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -43,6 +44,11 @@ class _Rp08OwnershipState extends State<Rp08Ownership> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -447,12 +453,16 @@ class _Rp08OwnershipState extends State<Rp08Ownership> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_rp_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_rp_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

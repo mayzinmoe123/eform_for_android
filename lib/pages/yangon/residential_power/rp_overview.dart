@@ -33,6 +33,7 @@ class _RpOverviewState extends State<RpOverview> {
   List? feeName;
   bool chkSend = true;
   bool isLoading =true;
+  String state = 'send';
 
   String? townshipName;
   String? date;
@@ -67,6 +68,7 @@ class _RpOverviewState extends State<RpOverview> {
           feeName = data['fee_names'];
           chkSend = data['chk_send'];
           msg = data['msg'];
+          state = data['state'];
           result = data;
         });
       } else {
@@ -239,12 +241,14 @@ class _RpOverviewState extends State<RpOverview> {
             //အိမ်ထောင်စုစာရင်း
             mainTitle(
                 "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form06_household',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -263,12 +267,14 @@ class _RpOverviewState extends State<RpOverview> {
             //ထောက်ခံစာ 
             mainTitle(
                 "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form07_recommend',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -288,8 +294,9 @@ class _RpOverviewState extends State<RpOverview> {
              //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle(
                 "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form08_ownership',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
@@ -309,12 +316,14 @@ class _RpOverviewState extends State<RpOverview> {
             //အသုံးပြုမည့် ဝန်အားစာရင်း 
              mainTitle(
                 "အသုံးပြုမည့် ဝန်အားစာရင်း (မူရင်း)", showPowerCheck, powerToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form09_power',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -329,12 +338,14 @@ class _RpOverviewState extends State<RpOverview> {
             //လက်ရှိတပ်ဆင်ထားသောမီတာရှိပါက မီတာချလံ 
             mainTitle(
                 "လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)", showCurrentMeterCheck, currentMeterToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form10_meter',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -353,12 +364,14 @@ class _RpOverviewState extends State<RpOverview> {
              ),
             mainTitle(
                 "သုံးဆွဲရန်ခွင့်ပြုချက် (မူရင်း)", showFarmLandCheck, farmlandToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form11_farm_land',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -373,12 +386,14 @@ class _RpOverviewState extends State<RpOverview> {
              //အဆောက်အဦးဓါတ်ပုံ
              mainTitle(
                 "အဆောက်အဦးဓါတ်ပုံ", showBuildingCheck, buildingToggleButton,  () async {
+                  startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/yangon/residential/r07_recommend',
+                  context, '/yangon/residential_power/rp_form12_building',
                   arguments: {'form_id': formId, 'edit': true});
               setState(() {
                 formId = (result ?? 0) as int;
               });
+               getFormData();
             }),
             SizedBox(
               height: 10,
@@ -391,7 +406,7 @@ class _RpOverviewState extends State<RpOverview> {
             ),
 
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
 
            
@@ -568,12 +583,16 @@ class _RpOverviewState extends State<RpOverview> {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: editLink,
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -1038,7 +1057,7 @@ TableRow _getTableHeader(String d1, List d2) {
     });
   }
 
-  void sendDialog(String title, String content, BuildContext context) {
+   void sendDialog(String title, String content, BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1123,6 +1142,7 @@ TableRow _getTableHeader(String d1, List d2) {
         stopLoading();
         setState(() {
           chkSend = false;
+          state = 'send';
           msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });

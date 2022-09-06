@@ -18,6 +18,7 @@ class _Cp11GovAllowState extends State<Cp11GovAllow> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "သက်ဆိုင်ရာဝန်ကြီးဌာန ခွင့်ပြုမိန့်",
@@ -43,6 +44,11 @@ class _Cp11GovAllowState extends State<Cp11GovAllow> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -439,12 +445,16 @@ class _Cp11GovAllowState extends State<Cp11GovAllow> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_cp_overview',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

@@ -16,6 +16,7 @@ class RpForm07RecommendMdy extends StatefulWidget {
 class _RpForm07RecommendMdyState extends State<RpForm07RecommendMdy> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   File? backFile;
@@ -45,6 +46,11 @@ class _RpForm07RecommendMdyState extends State<RpForm07RecommendMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -424,12 +430,16 @@ class _RpForm07RecommendMdyState extends State<RpForm07RecommendMdy> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_rp_form08_ownership',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

@@ -16,6 +16,7 @@ class CpForm09LicenseMdy extends StatefulWidget {
 class _CpForm09LicenseMdyState extends State<CpForm09LicenseMdy> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -42,6 +43,12 @@ class _CpForm09LicenseMdyState extends State<CpForm09LicenseMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
+
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -439,12 +446,16 @@ class _CpForm09LicenseMdyState extends State<CpForm09LicenseMdy> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_cp_form10_y_c_d_c',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

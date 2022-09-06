@@ -147,7 +147,7 @@ class _RpForm04InfoState extends State<RpForm04Info> {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-     if (data['edit'] != null) {
+     if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -417,6 +417,7 @@ class _RpForm04InfoState extends State<RpForm04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+        value: selectedJob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),

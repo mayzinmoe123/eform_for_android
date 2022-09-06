@@ -14,8 +14,20 @@ class Cp03Money extends StatefulWidget {
 class _Cp03MoneyState extends State<Cp03Money> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -162,6 +174,7 @@ class _Cp03MoneyState extends State<Cp03Money> {
       margin: EdgeInsets.all(14),
       child: ElevatedButton(
         onPressed: () {
+          startLoading();
           meterTypeSave(type);
         },
         // style: OutlinedBorder(),
@@ -169,7 +182,11 @@ class _Cp03MoneyState extends State<Cp03Money> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         ),
-        child: Icon(Icons.check, color: Colors.white, size: 20),
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
     );
   }
@@ -271,12 +288,16 @@ class _Cp03MoneyState extends State<Cp03Money> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_cp04_info',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('money form id is $formId');
+  }
   }
 
   void goToHomePage(BuildContext context) {

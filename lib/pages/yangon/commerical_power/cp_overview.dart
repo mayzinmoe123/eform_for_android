@@ -34,6 +34,7 @@ class _CpOverviewState extends State<CpOverview> {
   List? feeName;
   bool chkSend = true;
   bool isLoading = true;
+  String state = 'send';
 
   String? townshipName;
   String? date;
@@ -68,6 +69,7 @@ class _CpOverviewState extends State<CpOverview> {
           feeName = data['fee_names'];
           chkSend = data['chk_send'];
           msg = data['msg'];
+          state = data['state'];
           result = data;
         });
         print(result);
@@ -433,7 +435,7 @@ class _CpOverviewState extends State<CpOverview> {
               height: 20,
             ),
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
           ],
         ),
@@ -612,12 +614,16 @@ class _CpOverviewState extends State<CpOverview> {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: editLink,
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -1177,10 +1183,11 @@ class _CpOverviewState extends State<CpOverview> {
 
       if (data['success']) {
         stopLoading();
-        setState(() {
+         setState(() {
           chkSend = false;
-          formId = data['form']['id'];
+          state = 'send';
           msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
+          formId = data['form']['id'];
         });
         showSnackBar(context, msg);
         refreshToken(data['token']);

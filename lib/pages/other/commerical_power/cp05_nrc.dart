@@ -21,6 +21,7 @@ class _Cp05NrcState extends State<Cp05Nrc> {
   File? backFile;
   bool backFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
@@ -45,7 +46,12 @@ class _Cp05NrcState extends State<Cp05Nrc> {
     setState(() {
       formId = data['form_id'];
     });
-    print('form_id is $formId');
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -425,12 +431,16 @@ class _Cp05NrcState extends State<Cp05Nrc> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_cp06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

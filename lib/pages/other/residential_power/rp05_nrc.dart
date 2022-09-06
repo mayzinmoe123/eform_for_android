@@ -21,6 +21,7 @@ class _Rp05NrcState extends State<Rp05Nrc> {
   File? backFile;
   bool backFileError = false;
   FilePickerResult? result;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ မှတ်ပုံတင်ဓါတ်ပုံ (မူရင်း)",
@@ -40,11 +41,17 @@ class _Rp05NrcState extends State<Rp05Nrc> {
 
   @override
   Widget build(BuildContext context) {
-    final data = (ModalRoute.of(context)!.settings.arguments ??
+   final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -426,12 +433,16 @@ class _Rp05NrcState extends State<Rp05Nrc> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_rp06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {
