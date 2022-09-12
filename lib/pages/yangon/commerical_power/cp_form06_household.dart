@@ -15,6 +15,7 @@ class CpForm06Household extends StatefulWidget {
 
 class _CpForm06HouseholdState extends State<CpForm06Household> {
   int? formId;
+  bool edit = false;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
@@ -44,6 +45,11 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -460,13 +466,17 @@ class _CpForm06HouseholdState extends State<CpForm06Household> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_power/cp_form07_recommend',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    }else{
+      final result = await Navigator.pushNamed(
+          context, '/yangon/commerical_power/cp_form07_recommend',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

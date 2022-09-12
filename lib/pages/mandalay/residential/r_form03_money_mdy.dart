@@ -15,6 +15,7 @@ class RForm03MoneyMdy extends StatefulWidget {
 class _RForm03MoneyMdyState extends State<RForm03MoneyMdy> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,11 @@ class _RForm03MoneyMdyState extends State<RForm03MoneyMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -274,7 +280,7 @@ class _RForm03MoneyMdyState extends State<RForm03MoneyMdy> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -285,12 +291,16 @@ class _RForm03MoneyMdyState extends State<RForm03MoneyMdy> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'mdy_r_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'mdy_r_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

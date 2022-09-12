@@ -15,6 +15,7 @@ class CpForm08Ownership extends StatefulWidget {
 
 class _CpForm08OwnershipState extends State<CpForm08Ownership> {
   int? formId;
+  bool edit = false;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
@@ -42,6 +43,11 @@ class _CpForm08OwnershipState extends State<CpForm08Ownership> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -445,13 +451,17 @@ class _CpForm08OwnershipState extends State<CpForm08Ownership> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_power/cp_form09_license',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(
+          context, '/yangon/commerical_power/cp_form09_license',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

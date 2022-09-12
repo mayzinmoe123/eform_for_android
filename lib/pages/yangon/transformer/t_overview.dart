@@ -73,9 +73,7 @@ class _TOverviewState extends State<TOverview> {
           state = data['state'];
           result = data;
         });
-
         print('files $files');
-        print('fee data ${data["fee"]}');
       } else {
         stopLoading();
         showAlertDialog(data['title'], data['message'], context);
@@ -141,9 +139,7 @@ class _TOverviewState extends State<TOverview> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 10),
         Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
       ],
     );
@@ -609,7 +605,7 @@ class _TOverviewState extends State<TOverview> {
           SizedBox(height: 15),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် - ", form?['serial_code'] ?? '-')]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,7 +614,7 @@ class _TOverviewState extends State<TOverview> {
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
+              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
               Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),

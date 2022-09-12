@@ -236,8 +236,6 @@ class _DivisionChoiceState extends State<DivisionChoice> {
               formAddress(address),
               formDate(date),
               formState(state),
-              formState(getRouteName(div, type)),
-              Text('div $div type $type'),
             ],
           ),
         ),

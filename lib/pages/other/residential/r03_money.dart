@@ -15,6 +15,7 @@ class R03Money extends StatefulWidget {
 class _R03MoneyState extends State<R03Money> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,11 @@ class _R03MoneyState extends State<R03Money> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -271,7 +277,7 @@ class _R03MoneyState extends State<R03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -282,12 +288,16 @@ class _R03MoneyState extends State<R03Money> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(context, 'other_r04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
+    if (edit) {
+      goToBack();
+    } else {
+      final result = await Navigator.pushNamed(context, 'other_r04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

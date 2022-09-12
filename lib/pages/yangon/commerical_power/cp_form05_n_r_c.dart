@@ -16,6 +16,7 @@ class CpForm05NRC extends StatefulWidget {
 class _CpForm05NRCState extends State<CpForm05NRC> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   File? backFile;
@@ -45,6 +46,11 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -339,9 +345,9 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
       request.files.add(pic2);
       var response = await request.send();
 
-      if (response.statusCode == 200) {
-        stopLoading();
-        print('Uploaded Success!');
+      // if (response.statusCode == 200) {
+      //   stopLoading();
+      //   print('Uploaded Success!');
 
         //Get the response from the server
         var responseData = await response.stream.toBytes();
@@ -357,11 +363,12 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
           showAlertDialog(
               responseMap['title'], responseMap['message'], context);
         }
-      } else {
-        stopLoading();
-        showAlertDialog('Connection Failed',
-            'Please check you internet connection', context);
-      }
+      // } 
+      // else {
+      //   stopLoading();
+      //   showAlertDialog('Connection Failed',
+      //       'Please check you internet connection', context);
+      // }
     } on SocketException catch (e) {
       stopLoading();
       showAlertDialog('Connection timeout!',
@@ -425,13 +432,17 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
+    if (edit) {
+      goToBack();
+    }else{
+ final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+    }
   }
 
   void goToBack() {

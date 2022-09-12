@@ -352,7 +352,7 @@ class _TForm13PowerState extends State<TForm13Power> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_power");
+    var url = Uri.parse("${apiPath}api/power");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;

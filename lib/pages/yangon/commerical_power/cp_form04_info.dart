@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class CpForm04Info extends StatefulWidget {
   const CpForm04Info({Key? key}) : super(key: key);
 
@@ -15,11 +17,17 @@ class CpForm04Info extends StatefulWidget {
 
 class _CpForm04InfoState extends State<CpForm04Info> {
   int? formId;
-  bool isLoading = true;
+  bool isLoading = false;
+   bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
   List<Map> jobs = [
+     {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
     {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
@@ -80,14 +88,27 @@ class _CpForm04InfoState extends State<CpForm04Info> {
       var url = Uri.parse(
           '${apiPath}api/township_dropdown?token=$token&division_id=$division');
       print('wanting townships list $url');
-      var response = await http.get(url);
+     var response = await http.get(url);
       print('response is $response');
       Map data = jsonDecode(response.body);
       if (data['success']) {
+        stopLoading();
         setState(() {
           townshipList = data['townships'];
         });
-        print('township list is $townshipList');
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
       } else {
         showAlertDialog(
             'Connection Failed!',
@@ -104,6 +125,20 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     }
   }
 
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
@@ -111,7 +146,39 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     setState(() {
       formId = data['form_id'];
     });
-    print('info form_id is $formId');
+  if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (_selectedjob == null) {
+          _selectedjob = nullCheck(appForm!.jobType.toString());
+        }
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(formId),
@@ -356,6 +423,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+        value: _selectedjob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -495,6 +563,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
       // http resonse {success: false, validate: {applied_home_no: [The applied home no field is required.], applied_street: [The applied street field is required.], township_id: [The township id field is required.], district: [The district field is required.], region: [The region field is required.]}}
 
       Map data = jsonDecode(response.body);
+      print('http resonse $data');
       if (data['success']) {
         stopLoading();
         setState(() {
@@ -586,6 +655,9 @@ class _CpForm04InfoState extends State<CpForm04Info> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form05_n_r_c',
         arguments: {'form_id': formId});
@@ -594,6 +666,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     });
     stopLoading();
     print('info-nrc-page form id is $formId');
+  }
   }
 
   void goToBack() {

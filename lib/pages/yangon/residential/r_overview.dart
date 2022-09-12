@@ -524,7 +524,7 @@ class _ROverviewState extends State<ROverview> {
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
           Flexible(
-            child: state != 'send' && chkSend == true
+            child: state != 'send' || chkSend == true
                 ? InkWell(
                     onTap: editLink,
                     child: Container(
@@ -606,12 +606,10 @@ class _ROverviewState extends State<ROverview> {
             "အိမ်သုံးမီတာလျှောက်လွှာပုံစံ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
-          SizedBox(
-            height: 15,
-          ),
+          SizedBox(height: 15),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'])]),
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -619,19 +617,17 @@ class _ROverviewState extends State<ROverview> {
               Align(
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
-              Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
-              Text(result!['township_name'] ?? '-'),
+              Text("  မြို့နယ်လျှပ်စစ်မှူး/မြို့နယ်လျှပ်စစ်အင်ဂျင်နီယာ"),
+              Text("  လျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်း"),
+              Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ${result!['date']}",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             textSpan("အကြောင်းအရာ။   ။",
                 "အိမ်သုံးမီတာတပ်ဆင်ခွင့်ပြုပါရန်လျှောက်ထားခြင်း။")
@@ -654,13 +650,9 @@ class _ROverviewState extends State<ROverview> {
                 "တပ်ဆင်သုံးစွဲလိုသည့် လိပ်စာ",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 7,
-              ),
+              SizedBox(height: 7),
               Text(result!['address'] ?? '-'),
-              SizedBox(
-                height: 14,
-              ),
+              SizedBox(height: 14),
               Container(
                 margin: EdgeInsets.only(right: 40),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -684,162 +676,6 @@ class _ROverviewState extends State<ROverview> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget singleImageFront(String title, String? url) {
-    return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                'http://192.168.99.124/eform/public/storage/user_attachments/1607/JUve53_1661754400.jpg',
-                width: 300,
-                height: 200,
-              ),
-              // Container(
-              //   width: 300,
-              //   height: 200,
-              // ),
-              Text(title),
-            ],
-          ),
-        )),
-        SizedBox(
-          height: 10,
-        ),
-      ],
-    );
-  }
-
-  Widget singleImageBack(String title, String url) {
-    return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                'http://192.168.99.124/eform/public/storage/user_attachments/1607/JUve53_1661754400.jpg',
-                width: 300,
-                height: 200,
-              ),
-              // Container(
-              //   width: 300,
-              //   height: 200,
-              // ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
-  }
-
-  Widget showSingleImage(
-      String frontTitle, String frontUrl, String backTitle, String backUrl) {
-    return Column(
-      children: [
-        singleImageFront(frontTitle, frontUrl),
-        SizedBox(height: 10),
-        singleImageBack(backTitle, backUrl),
-      ],
-    );
-  }
-
-  Widget multiImageFront(title) {
-    return Column(
-      children: [
-        Card(
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Image.network(
-                    "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Image.network(
-                    "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Image.network(
-                    "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                ],
-              ),
-            )),
-      ],
-    );
-  }
-
-  Widget multiImageBack(title) {
-    return Column(
-      children: [
-        Card(
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Image.network(
-                    "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Image.network(
-                    "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Image.network(
-                    "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                    width: 300,
-                    height: 200,
-                  ),
-                  Text(title),
-                ],
-              ),
-            )),
-      ],
-    );
-  }
-
-  Widget showMultiImages(frontTitle, backTitle) {
-    return Column(
-      children: [
-        multiImageFront(frontTitle),
-        SizedBox(
-          height: 10,
-        ),
-        multiImageBack(backTitle),
-      ],
     );
   }
 
@@ -1080,6 +916,7 @@ class _ROverviewState extends State<ROverview> {
         stopLoading();
         setState(() {
           chkSend = false;
+          state = 'send';
           msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });

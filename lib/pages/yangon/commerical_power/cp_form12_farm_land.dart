@@ -16,6 +16,7 @@ class CpForm12FarmLand extends StatefulWidget {
 class _CpForm12FarmLandState extends State<CpForm12FarmLand> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -42,6 +43,11 @@ class _CpForm12FarmLandState extends State<CpForm12FarmLand> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -465,13 +471,17 @@ class _CpForm12FarmLandState extends State<CpForm12FarmLand> {
   }
 
   void goToNextPage() async {
-    final result = await Navigator.pushNamed(
+    if (edit) {
+      goToBack();
+    } else {
+final result = await Navigator.pushNamed(
         context, '/yangon/commerical_power/cp_form13_building',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+    }
   }
 
   void goToBack() {

@@ -24,6 +24,10 @@ class _R04InfoState extends State<R04Info> {
   bool jobError = false;
   List<Map> jobs = [
     {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
+    {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
     },
@@ -125,11 +129,18 @@ class _R04InfoState extends State<R04Info> {
     return value;
   }
 
-  int? nullCheckNum(value) {
+  int nullCheckNum(value) {
     if (value == null || value == '' || value == 'null') {
-      return null;
+      return 0;
     }
     return int.parse(value);
+  }
+
+  bool nullCheckBool(value) {
+    if (value == null || value == '' || value == 'null') {
+      return false;
+    }
+    return int.parse(value) > 0 ? true : false;
   }
 
   @override
@@ -139,16 +150,14 @@ class _R04InfoState extends State<R04Info> {
     setState(() {
       formId = data['form_id'];
     });
-    if (data['edit'] != null) {
+    if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
         nameController.text = nullCheck(appForm!.fullname);
         nrcController.text = nullCheck(appForm!.nrc);
         phoneController.text = nullCheck(appForm!.appliedPhone);
-        if (_selectedjob == null) {
-          _selectedjob = nullCheck(appForm!.jobType.toString());
-        }
+        _selectedjob = nullCheck(appForm!.jobType.toString());
         positionController.text = nullCheck(appForm!.position);
         departmentController.text = nullCheck(appForm!.department);
         otherController.text = nullCheck(appForm!.businessName);
@@ -161,15 +170,9 @@ class _R04InfoState extends State<R04Info> {
         quarterController.text = nullCheck(appForm!.appliedQuarter);
         townController.text = nullCheck(appForm!.appliedTown);
 
-        if (townshipId == null) {
-          townshipId = nullCheckNum(appForm!.townshipId);
-        }
-        if (districtId == null) {
-          districtId = nullCheckNum(appForm!.districtId);
-        }
-        if (divisionId == null) {
-          divisionId = nullCheckNum(appForm!.divStateId);
-        }
+        townshipId = nullCheckNum(appForm!.townshipId);
+        districtId = nullCheckNum(appForm!.districtId);
+        divisionId = nullCheckNum(appForm!.divStateId);
       });
     }
     print('info form_id is $formId');
