@@ -17,7 +17,7 @@ class Rp04Info extends StatefulWidget {
 
 class _Rp04InfoState extends State<Rp04Info> {
   int? formId;
- bool isLoading = false;
+  bool isLoading = false;
   // bool isLoading = true;
   bool edit = false;
   ApplicationFormModel? appForm;
@@ -95,13 +95,13 @@ class _Rp04InfoState extends State<Rp04Info> {
       if (data['success']) {
         stopLoading();
         setState(() {
-          townshipList = data['townships'];   
+          townshipList = data['townships'];
         });
         for (var i = 0; i < townshipList.length; i++) {
           if (townshipList[i]['id'] == townshipId) {
             setState(() {
               _selectedTownship = townshipList[i];
-        print('township list is $townshipList');
+              print('township list is $townshipList');
               townshipId = _selectedTownship['id'];
               districtId = _selectedTownship['district_id'];
               divisionId = _selectedTownship['division_state_id'];
@@ -156,11 +156,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     setState(() {
       formId = data['form_id'];
     });
-<<<<<<< HEAD
-    if (data['edit'] != null) {
-=======
-    if (data['edit'] != null && appForm == null ) {
->>>>>>> b92223b06721fbf30737822225f96fd39efce82a
+    if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -194,7 +190,6 @@ class _Rp04InfoState extends State<Rp04Info> {
       });
     }
 
-    
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -365,9 +360,6 @@ class _Rp04InfoState extends State<Rp04Info> {
     );
   }
 
-  
-  
-
   Widget _getFormRequiredReadonly(
       String name, TextEditingController textController, BuildContext context,
       [hintTxt]) {
@@ -436,7 +428,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
-        value: selectedJob,
+          value: selectedJob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -669,17 +661,17 @@ class _Rp04InfoState extends State<Rp04Info> {
   }
 
   void goToNextPage() async {
-     if (edit) {
+    if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'other_rp05_nrc',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'other_rp05_nrc',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {
