@@ -16,7 +16,7 @@ class RpOverview extends StatefulWidget {
 
 class _RpOverviewState extends State<RpOverview> {
   int? formId;
-  bool showFormCheck = true;
+   bool showFormCheck = true;
   bool showMoneyCheck = false;
   bool showNRCCheck = false;
   bool showHouseholdCheck = false;
@@ -24,12 +24,13 @@ class _RpOverviewState extends State<RpOverview> {
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
 
-  Map? form;
+
+Map? form;
   List files = [];
   List? colName;
   List? feeName;
   bool chkSend = true;
-  bool isLoading = true;
+  bool isLoading =true;
   String state = 'send';
 
   String? townshipName;
@@ -43,13 +44,13 @@ class _RpOverviewState extends State<RpOverview> {
     // TODO: implement initState
     super.initState();
     getFormData();
-  }
+  } 
 
   void getFormData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var apiPath = prefs.getString('api_path');
-    var url = Uri.parse('${apiPath}api/mdy_rp_show');
+    var url = Uri.parse('${apiPath}api/other_rp_show');
     try {
       var response = await http
           .post(url, body: {'token': token, 'form_id': formId.toString()});
@@ -57,7 +58,7 @@ class _RpOverviewState extends State<RpOverview> {
       if (data['success']) {
         stopLoading();
         refreshToken(data['token']);
-        print('data files ${data["files"]}');
+        print(data);
         setState(() {
           form = data['form'];
           files = data['files'];
@@ -82,9 +83,10 @@ class _RpOverviewState extends State<RpOverview> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final data = (ModalRoute.of(context)!.settings.arguments ??
+     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
@@ -150,7 +152,7 @@ class _RpOverviewState extends State<RpOverview> {
           children: [
             title(),
             // showForm(),
-            SizedBox(height: 20),
+             SizedBox(height: 20),
             Container(
               color: Colors.amber,
               padding: EdgeInsets.all(20),
@@ -166,9 +168,8 @@ class _RpOverviewState extends State<RpOverview> {
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
-            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
-                () async {
-              startLoading();
+            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton, () async {
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form04_info',
                   arguments: {
@@ -181,122 +182,410 @@ class _RpOverviewState extends State<RpOverview> {
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showFormCheck == true ? showForm() : Container(),
-            SizedBox(height: 20),
+            SizedBox(
+              height: 20,
+            ),
 
             //မီတာအမျိုးအစား
             mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
                 moneyToggleButton, () async {
-              startLoading();
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form03_money',
-                  arguments: {'form_id': formId, 'edit': true});
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    
+                  });
               setState(() {
                 formId = (result ?? 0) as int;
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showMoneyCheck == true ? showMoneyTable() : Container(),
-            SizedBox(height: 20),
+            SizedBox(
+              height: 20,
+            ),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
-            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
-                () async {
-              startLoading();
+            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton, () async {
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form05_n_r_c',
-                  arguments: {'form_id': formId, 'edit': true});
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    
+                  });
               setState(() {
                 formId = (result ?? 0) as int;
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showNRCCheck == true
-                ? singleTwo(
+                ?singleTwo(
                     files,
                     'nrc_copy_front',
                     'မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)',
                     'nrc_copy_back',
                     'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
                 : Container(),
-            SizedBox(height: 20),
-
+             SizedBox(
+              height: 20,
+            ),
             //အိမ်ထောင်စုစာရင်း
-            mainTitle("အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck,
-                householdToggleButton, () async {
-              startLoading();
+            mainTitle(
+                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton, () async {
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form06_household',
-                  arguments: {'form_id': formId, 'edit': true});
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    
+                  });
               setState(() {
                 formId = (result ?? 0) as int;
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showHouseholdCheck == true
-                ? multiTwo(
+                ? singleTwo(
                     files,
                     'form_10_front',
                     'အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)',
                     'form_10_back',
                     'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
-            SizedBox(height: 20),
-
-            //ထောက်ခံစာ
+                 SizedBox(
+              height: 20,
+            ),
+            //ထောက်ခံစာ 
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck, recommendToggleButton,
-                () async {
-              startLoading();
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton, () async {
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form07_recommend',
-                  arguments: {'form_id': formId, 'edit': true});
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    
+                  });
               setState(() {
                 formId = (result ?? 0) as int;
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showRecommendCheck == true
                 ? singleTwo(
                     files,
                     'occupy_letter',
-                    'နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ',
+                    'နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)',
                     'no_invade_letter',
-                    'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
+                    'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)')
                 : Container(),
-            SizedBox(height: 20),
-
-            //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
-            mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
-                ownershipToggleButton, () async {
-              startLoading();
+                 SizedBox(
+              height: 20,
+            ),
+            
+             //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
+            mainTitle(
+                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton, () async {
+             startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form08_ownership',
-                  arguments: {'form_id': formId, 'edit': true});
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    
+                  });
               setState(() {
                 formId = (result ?? 0) as int;
               });
               getFormData();
             }),
-            SizedBox(height: 10),
+            SizedBox(
+              height: 10,
+            ),
             showOwernshipCheck == true
                 ? multiOne(
                     files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
+                 SizedBox(
+              height: 20,
+            ),
+
+
+             chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
 
-            chkSend ? actionButton(context) : SizedBox(),
-            SizedBox(height: 20),
+           
           ],
         ),
       ),
     );
   }
+
+  Widget title() {
+    return Center(
+      child: Text(
+        'လျှောက်ထားသူ၏ အချက်အလက်အပြည့်အစုံ',
+        style: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
+  }
+
+  Widget actionButton(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {
+          sendDialog('ရုံးသို့ပို့ရန် သေချာပါသလား?',
+              'ရုံးသို့ပို့ရန် သေချာပါက ပေးပို့မည်ကိုနှိပ်ပါ။', context);
+        },
+        style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
+        child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
+  }
+
+   void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }
+
+  Widget textSpan(txt1, txt2) {
+    return Flexible(
+      child: RichText(
+        text: TextSpan(
+          children: <TextSpan>[
+            new TextSpan(
+              text: txt1,
+              style: new TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
+            new TextSpan(
+              text: txt2,
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallback editLink) {
+    var mSize = MediaQuery.of(context).size;
+    return ElevatedButton(
+      child: InkWell(
+        onTap: checkState,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 15, color: Colors.blueAccent),
+              )),
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
+        ]),
+      ),
+      style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ))),
+      onPressed: () {
+        checkVal;
+      },
+    );
+  }
+
+  Widget hideEditmainTitle(
+      String title, bool checkVal, VoidCallback checkState) {
+    var mSize = MediaQuery.of(context).size;
+    return ElevatedButton(
+      child: InkWell(
+        onTap: checkState,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 15, color: Colors.blueAccent),
+              )),
+        ]),
+      ),
+      style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ))),
+      onPressed: () {
+        checkVal;
+      },
+    );
+  }
+  
+  Widget showMoneyTable() {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      border: TableBorder.all(
+        color: Colors.grey,
+      ),
+      children: [
+
+         _getTableHeader("အကြောင်းအရာများ", [
+              "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+              "${result!['fee']['name'] ?? '-'} KVA"
+            ]),
+            getTableBodyDetail(
+                "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
+            getTableBodyDetail(
+                "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
+            getTableBodyDetail(
+                "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
+            getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+                result!['fee']['registration_fee'] ?? '-'),
+                getTableBodyDetail("composit box", result!['fee']['composit_box'] ?? '-'),
+            getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
+      ],
+    );
+  }
+
+   Widget showForm() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Column(
+        children: [
+          Text(
+            "လျှောက်လွှာပုံစံ",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          SizedBox(height: 15),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
+          SizedBox(height: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(child: Text("သို့"))),
+              Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
+              Text("  မန္တလေးလျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
+              Text("  ${result!['township_name'] ?? '-'}"),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Text(
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
+            ),
+          ]),
+          SizedBox(height: 10),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            textSpan("အကြောင်းအရာ။   ။",
+                "အိမ်သုံးပါ၀ါမီတာ တပ်ဆင်ခွင့်ပြုပါရန် လျှောက်ထားခြင်း။")
+          ]),
+          SizedBox(
+            height: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'} နေကျွန်တော်/ကျွန်မ၏ ${form!['applied_building_type'] ?? '-'} တွင် အိမ်သုံးပါဝါမီတာ ${result!['fee']['name'] ?? '-'} ကီလိုဝပ် တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန် လျှောက်ထားအပ်ပါသည်။",
+                textAlign: TextAlign.justify,
+              ),
+              SizedBox(height: 5),
+              Text(
+                "    တပ်ဆင်သုံးစွဲခွင့်ပြုပါကလျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်းမှသတ်မှတ်ထားသောအခွန်အခများကိုအကြေပေးဆောင်မည့်အပြင်တည်ဆဲဥပဒေများအတိုင်းလိုက်နာဆောင်ရွက်မည်ဖြစ်ပါကြောင်းနှင့်အိမ်တွင်းဝါယာသွယ်တန်းခြင်းလုပ်ငန်းများကိုလျှပ်စစ်ကျွမ်းကျင်လက်မှတ်ရှိသူများနှင့်သာဆောင်ရွက်မည်ဖြစ်ကြောင်းဝန်ခံကတိပြုလျှောက်ထားအပ်ပါသည်။",
+                textAlign: TextAlign.justify,
+              ),
+              SizedBox(height: 10),
+              Text(
+                "တပ်ဆင်သုံးစွဲလိုသည့် လိပ်စာ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 7),
+              Text(result!['address'] ?? '-'),
+              SizedBox(height: 14),
+              Container(
+                margin: EdgeInsets.only(right: 40),
+                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  Text(
+                    "လေးစားစွာဖြင့်",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ]),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(child: Text(form!['fullname'] ?? '-'))),
+                  Text("  ${form!['nrc'] ?? '-'}"),
+                  Text("  ${form!['applied_phone'] ?? '-'}"),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget multiOne(List files, String column, String title) {
     return Column(
@@ -377,6 +666,7 @@ class _RpOverviewState extends State<RpOverview> {
     }
   }
 
+//
   Widget imageWidget(String? url, String title) {
     try {
       return Card(
@@ -409,234 +699,7 @@ class _RpOverviewState extends State<RpOverview> {
     }
   }
 
-  Widget title() {
-    return Center(
-      child: Text(
-        'လျှောက်ထားသူ၏ အချက်အလက်အပြည့်အစုံ',
-        style: TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-    );
-  }
-
-  Widget actionButton(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () {
-          sendDialog('ရုံးသို့ပို့ရန် သေချာပါသလား?',
-              'ရုံးသို့ပို့ရန် သေချာပါက ပေးပို့မည်ကိုနှိပ်ပါ။', context);
-        },
-        style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
-        child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
-  }
-
-  Widget textSpan(txt1, txt2) {
-    return Flexible(
-      child: RichText(
-        text: TextSpan(
-          children: <TextSpan>[
-            new TextSpan(
-                text: txt1,
-                style:
-                    TextStyle(color: Colors.black, fontFamily: 'Pyidaungsu')),
-            new TextSpan(
-                text: txt2,
-                style: new TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.black,
-                    fontFamily: 'Pyidaungsu')),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget mainTitle(String title, bool checkVal, VoidCallback checkState,
-      VoidCallback editLink) {
-    var mSize = MediaQuery.of(context).size;
-    return ElevatedButton(
-      child: InkWell(
-        onTap: checkState,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Container(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 15, color: Colors.blueAccent),
-              )),
-          InkWell(
-              onTap: editLink,
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
-        ]),
-      ),
-      style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ))),
-      onPressed: () {
-        checkVal;
-      },
-    );
-  }
-
-  Widget hideEditmainTitle(
-      String title, bool checkVal, VoidCallback checkState) {
-    var mSize = MediaQuery.of(context).size;
-    return ElevatedButton(
-      child: InkWell(
-        onTap: checkState,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Container(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 15, color: Colors.blueAccent),
-              )),
-        ]),
-      ),
-      style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ))),
-      onPressed: () {
-        checkVal;
-      },
-    );
-  }
-
-  Widget showMoneyTable() {
-    return Table(
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      border: TableBorder.all(
-        color: Colors.grey,
-      ),
-      children: [
-        _getTableHeader(
-            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "Type Three"]),
-        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "၈၀,၀၀၀"),
-        getTableBodyDetail("အာမခံစဘော်ငွေ", "၄,၀၀၀"),
-        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "၂,၀၀၀"),
-        getTableBodyDetail("မီးဆက်ခ", "၂,၀၀၀"),
-        getTableBodyDetail("ကြီးကြပ်ခ", "၁,၀၀၀"),
-        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၁,၀၀၀"),
-        getTableFooter("စုစုပေါင်း", "၉၀,၀၀၀"),
-      ],
-    );
-  }
-
-  Widget showForm() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      child: Column(
-        children: [
-          Text(
-            "အိမ်သုံးပါ၀ါမီတာလျှောက်လွှာပုံစံ",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", "YGN-1661485206")]),
-          SizedBox(height: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(child: Text("သို့"))),
-              Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  မင်္ဂလာတောင်ညွှန့်မြို့နယ်"),
-            ],
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Text(
-              "ရက်စွဲ။   ။ ၂၆-၀၈-၂၀၂၂",
-            ),
-          ]),
-          SizedBox(
-            height: 10,
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            textSpan("အကြောင်းအရာ။   ။",
-                "အိမ်သုံးမီတာတပ်ဆင်ခွင့်ပြုပါရန်လျှောက်ထားခြင်း။")
-          ]),
-          SizedBox(
-            height: 10,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ Innwa၊ 6 block၊ ချမ်းအေးသာစံမြို့နယ်၊ မန္တလေးခရိုင်၊ မန္တလေးတိုင်းဒေသကြီး၊နေကျွန်တေ  ာ်/ကျွန်မ၏80x80 တွင်80x80 တွင် အိမ်သုံးပါဝါမီတာ (၁၀) ကီလိုဝပ်တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
-                textAlign: TextAlign.justify,
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                "    တပ်ဆင်သုံးစွဲခွင့်ပြုပါကလျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်းမှသတ်မှတ်ထားသောအခွန်အခများကိုအကြေပေးဆောင်မည့်အပြင်တည်ဆဲဥပဒေများအတိုင်းလိုက်နာဆောင်ရွက်မည်ဖြစ်ပါကြောင်းနှင့်အိမ်တွင်းဝါယာသွယ်တန်းခြင်းလုပ်ငန်းများကိုလျှပ်စစ်ကျွမ်းကျင်လက်မှတ်ရှိသူများနှင့်သာဆောင်ရွက်မည်ဖြစ်ကြောင်းဝန်ခံကတိပြုလျှောက်ထားအပ်ပါသည်။",
-                textAlign: TextAlign.justify,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "တပ်ဆင်သုံးစွဲလိုသည့် လိပ်စာ",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 7,
-              ),
-              Text(
-                  "အမှတ် (142)၊ Innwa၊ 6 block၊ မဟာအောင်မြေမြို့နယ်၊ မန္တလေးခရိုင်၊ မန္တလေးတိုင်းဒေသကြီး၊"),
-              SizedBox(
-                height: 14,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 40),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text(
-                    "လေးစားစွာဖြင့်",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ]),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(child: Text(" Si Thu Myo"))),
-                  Text("  ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
-                  Text("  09123456789"),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  TableRow _getTableHeader(String d1, List d2) {
+TableRow _getTableHeader(String d1, List d2) {
     return TableRow(children: [
       Container(
         padding: EdgeInsets.all(10),
@@ -762,18 +825,19 @@ class _RpOverviewState extends State<RpOverview> {
       showRecommendCheck = !showRecommendCheck;
     });
   }
-
-  ownershipToggleButton() {
+  
+   ownershipToggleButton() {
     setState(() {
       showOwernshipCheck = !showOwernshipCheck;
     });
   }
-
+  
   farmlandToggleButton() {
     setState(() {
       showFarmLandCheck = !showFarmLandCheck;
     });
   }
+  
 
   void sendDialog(String title, String content, BuildContext context) {
     showDialog(
@@ -828,7 +892,6 @@ class _RpOverviewState extends State<RpOverview> {
   }
 
   void sendFile() async {
-    startLoading();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
@@ -868,21 +931,6 @@ class _RpOverviewState extends State<RpOverview> {
           context);
       print('check token error $e');
     }
-  }
-
-  void showSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        text,
-        style: TextStyle(fontFamily: "Pyidaungsu"),
-      ),
-      action: SnackBarAction(
-        label: "ပိတ်မည်",
-        onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
-      ),
-    ));
   }
 
   Widget logoutButton() {

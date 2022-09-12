@@ -20,6 +20,7 @@ class _Cp06HouseholdState extends State<Cp06Household> {
   bool frontFilesError = false;
   List backFiles = [];
   bool backFilesError = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "လျှောက်ထားသူ၏ အိမ်ထောင်စုစာရင်းဓါတ်ပုံ (မူရင်း)",
@@ -44,6 +45,12 @@ class _Cp06HouseholdState extends State<Cp06Household> {
     setState(() {
       formId = data['form_id'];
     });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -460,12 +467,16 @@ class _Cp06HouseholdState extends State<Cp06Household> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_cp07_recommend',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

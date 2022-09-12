@@ -156,7 +156,11 @@ class _Rp04InfoState extends State<Rp04Info> {
     setState(() {
       formId = data['form_id'];
     });
+<<<<<<< HEAD
     if (data['edit'] != null) {
+=======
+    if (data['edit'] != null && appForm == null ) {
+>>>>>>> b92223b06721fbf30737822225f96fd39efce82a
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -665,6 +669,9 @@ class _Rp04InfoState extends State<Rp04Info> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_rp05_nrc',
         arguments: {'form_id': formId});
     setState(() {
@@ -672,6 +679,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     });
     stopLoading();
     print('info-nrc-page form id is $formId');
+  }
   }
 
   void goToBack() {

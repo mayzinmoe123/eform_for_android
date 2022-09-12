@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class RpOverview extends StatefulWidget {
   const RpOverview({Key? key}) : super(key: key);
 
@@ -22,7 +24,63 @@ class _RpOverviewState extends State<RpOverview> {
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
 
-  bool isLoading = false;
+     Map? form;
+  List files = [];
+  List? colName;
+  List? feeName;
+  bool chkSend = true;
+  bool isLoading =true;
+  String state = 'send';
+
+  String? townshipName;
+  String? date;
+  String? address;
+  Map? result;
+  String msg = '';
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getFormData();
+  } 
+
+  void getFormData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/other_rp_show');
+    try {
+      var response = await http
+          .post(url, body: {'token': token, 'form_id': formId.toString()});
+      Map data = jsonDecode(response.body);
+      if (data['success']) {
+        stopLoading();
+        refreshToken(data['token']);
+        print(data);
+        setState(() {
+          form = data['form'];
+          files = data['files'];
+          colName = data['tbl_col_name'];
+          feeName = data['fee_names'];
+          chkSend = data['chk_send'];
+          msg = data['msg'];
+          state = data['state'];
+          result = data;
+        });
+      } else {
+        stopLoading();
+        showAlertDialog(data['title'], data['message'], context);
+      }
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +153,21 @@ class _RpOverviewState extends State<RpOverview> {
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
-            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton),
+            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp04_info',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                    'appForm': ApplicationFormModel.mapToObject(form!),
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
@@ -106,7 +178,20 @@ class _RpOverviewState extends State<RpOverview> {
 
             //မီတာအမျိုးအစား
             mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
-                moneyToggleButton),
+                moneyToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp03_money',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
@@ -116,37 +201,90 @@ class _RpOverviewState extends State<RpOverview> {
             ),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
-            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton),
+            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp05_nrc',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
             showNRCCheck == true
-                ?showSingleImage("မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)","မှတ်ပုံတင်နောက်ဖက် (မူရင်း)")
-       : Container(),
+                ?singleTwo(
+                    files,
+                    'nrc_copy_front',
+                    'မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)',
+                    'nrc_copy_back',
+                    'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
+                : Container(),
              SizedBox(
               height: 20,
             ),
             //အိမ်ထောင်စုစာရင်း
             mainTitle(
-                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton),
+                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp06_household',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
             showHouseholdCheck == true
-                ? showSingleImage("အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)","အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)")
+                ? multiTwo(
+                    files,
+                    'form_10_front',
+                    'အိမ်ထောင်စုစာရင်းရှေ့ဖက် (မူရင်း)',
+                    'form_10_back',
+                    'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
                  SizedBox(
               height: 20,
             ),
             //ထောက်ခံစာ 
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton),
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp07_recommend',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
             showRecommendCheck == true
-                ? showSingleImage("နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)","ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)"
-                    )
+                ? singleTwo(
+                    files,
+                    'occupy_letter',
+                    'နေထိုင်မှုမှန်ကန်ကြောင်း ရပ်ကွက်ထောက်ခံစာ',
+                    'no_invade_letter',
+                    'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
                 : Container(),
                  SizedBox(
               height: 20,
@@ -154,18 +292,32 @@ class _RpOverviewState extends State<RpOverview> {
             
              //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle(
-                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton),
+                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton,
+                () async {
+             startLoading();
+              final result = await Navigator.pushNamed(
+                  context, '/other_rp08_ownership',
+                  arguments: {
+                    'form_id': formId,
+                    'edit': true,
+                  });
+              setState(() {
+                formId = (result ?? 0) as int;
+              });
+              getFormData();
+            }),
             SizedBox(
               height: 10,
             ),
             showOwernshipCheck == true
-                ? multiImageFront("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)")
+                ? multiOne(
+                    files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
                  SizedBox(
               height: 20,
             ),
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
 
            
@@ -205,18 +357,30 @@ class _RpOverviewState extends State<RpOverview> {
       child: RichText(
         text: TextSpan(
           children: <TextSpan>[
-            new TextSpan(text: txt1),
             new TextSpan(
-                text: txt2,
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              text: txt1,
+              style: new TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
+            new TextSpan(
+              text: txt2,
+              style: new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: Colors.black,
+                fontFamily: "Pyidaungsu",
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
+Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallback editLink) {
     var mSize = MediaQuery.of(context).size;
     return ElevatedButton(
       child: InkWell(
@@ -229,12 +393,16 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: () {},
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -286,15 +454,14 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
         color: Colors.grey,
       ),
       children: [
-        _getTableHeader(
-            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "Type Three"]),
-        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "၈၀,၀၀၀"),
-        getTableBodyDetail("အာမခံစဘော်ငွေ", "၄,၀၀၀"),
-        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "၂,၀၀၀"),
-        getTableBodyDetail("မီးဆက်ခ", "၂,၀၀၀"),
-        getTableBodyDetail("ကြီးကြပ်ခ", "၁,၀၀၀"),
-        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "၁,၀၀၀"),
-        getTableFooter("စုစုပေါင်း", "၉၀,၀၀၀"),
+       _getTableHeader(
+            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "${result!['fee']['name']} ကီလိုဝပ်"]),
+        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "${result!['fee']['assign_fee']}"),
+        getTableBodyDetail("အာမခံစဘော်ငွေ", "${result!['fee']['deposit_fee']}"),
+        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "${result!['fee']['string_fee']}"),
+        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "${result!['fee']['registration_fee']}"),
+        getTableBodyDetail("composit box", "${result!['fee']['composit_box']}"),
+        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
@@ -313,7 +480,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [textSpan("အမှတ်စဥ် -", "YGN-1661485206")]),
+             children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),   
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,14 +488,14 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
               Align(
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
-              Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
-              Text("  မင်္ဂလာတောင်ညွှန့်မြို့နယ်"),
+              Text("  မြို့နယ်လျှပ်စစ်မှူး/မြို့နယ်လျှပ်စစ်အင်ဂျင်နီယာ"),
+              Text("  လျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်း"),
+              Text(" ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              "ရက်စွဲ။   ။ ၂၆-၀၈-၂၀၂၂",
+              "ရက်စွဲ။   ။ ${result!['date'] ?? '-'}",
             ),
           ]),
           SizedBox(
@@ -345,7 +512,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍အမှတ် (142)၊ Innwa၊ 6 block၊ ချမ်းအေးသာစံမြို့နယ်၊ မန္တလေးခရိုင်၊ မန္တလေးတိုင်းဒေသကြီး၊နေကျွန်တေ  ာ်/ကျွန်မ၏80x80 တွင်(အိမ်သုံး)မီတာတစ်လုံးတပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
+                "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍${result!['address'] ?? '-'}ကျွန်တော်/ကျွန်မ၏${form!['applied_building_type'] ?? '-'} တွင်အိမ်သုံးပါဝါမီတာ ${result!['fee']['name'] ?? '-'} ကီလိုဝပ်တပ်ဆင်သုံးစွဲခွင့်ပြုပါရန်လျှောက်ထားအပ်ပါသည်။",
                 textAlign: TextAlign.justify,
               ),
               SizedBox(
@@ -366,7 +533,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 height: 7,
               ),
               Text(
-                  "အမှတ် (142)၊ Innwa၊ 6 block မဟာအောင်မြေမြို့နယ်၊ မန္တလေးခရိုင်၊ မန္တလေးတိုင်းဒေသကြီး၊၊"),
+                  "${result!['address'] ?? '-' }"),
               SizedBox(
                 height: 14,
               ),
@@ -384,9 +551,9 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
                 children: [
                   Align(
                       alignment: Alignment.centerRight,
-                      child: Container(child: Text(" Si Thu Myo"))),
-                  Text("  ၁၂/အစန(နိုင်)၁၂၃၄၅၆"),
-                  Text("  09123456789"),
+                      child: Container(child: Text(form!['fullname'] ?? '-'))),
+                  Text("  ${form!['nrc'] ?? '-'}"),
+                  Text("  ${form!['applied_phone'] ?? '-'}"),
                 ],
               ),
             ],
@@ -396,150 +563,115 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState) {
     );
   }
 
-  Widget singleImageFront(title) {
+  Widget multiOne(List files, String column, String title) {
     return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-        SizedBox(
-              height: 10,
-            ),
-      ],
-    );
+        children: files.map((e) {
+      return Column(
+        children: [
+          imagesWidget(e[column], title),
+        ],
+      );
+    }).toList());
   }
 
-  Widget singleImageBack(title) {
+  Widget multiTwo(List files, String column1, String title1, String column2,
+      String title2) {
     return Column(
-      children: [
-        Card(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
+        children: files.map((file) {
+      return Column(
+        children: [
+          imagesWidget(file[column1], title1),
+          imagesWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
   }
 
-    Widget showSingleImage(frontTitle,backTitle){
+  Widget singleOne(List files, String column, String title) {
     return Column(
-      children: [
-        singleImageFront(frontTitle),
-        SizedBox(height: 10,),
-        singleImageBack(backTitle),
-      ],
-    );
+        children: files.map((e) {
+      return Column(
+        children: [
+          imageWidget(e[column], title),
+        ],
+      );
+    }).toList());
   }
 
-
-  Widget multiImageFront(title) {
+  Widget singleTwo(List files, String column1, String title1, String column2,
+      String title2) {
     return Column(
-      children: [
-        Card(
-	elevation: 10,
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
+        children: files.map((file) {
+      return Column(
+        children: [
+          imageWidget(file[column1], title1),
+          imageWidget(file[column2], title2),
+        ],
+      );
+    }).toList());
   }
 
-  Widget multiImageBack(title) {
-    return Column(
-      children: [
-        Card(
-	elevation: 10,
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.network(
-                "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
+  Widget imagesWidget(String? urls, String title) {
+    if (urls != null && urls != '') {
+      List urlList = urls.split(",");
+      int count = 1;
+      return Column(
+          children: urlList.map((url) {
+        return Column(
+          children: [
+            imageWidget(url, '$title (${count++})'),
+          ],
+        );
+      }).toList());
+    } else {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                  style: TextStyle(), textAlign: TextAlign.center),
             ),
-              Image.network(
-                "https://images.pexels.com/photos/2899097/pexels-photo-2899097.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-              SizedBox(
-              height: 10,
-            ),
-              Image.network(
-                "https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&dpr=1",
-                width: 300,
-                height: 200,
-              ),
-              Text(title),
-            ],
-          ),
-        )),
-      ],
-    );
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    }
   }
 
-   Widget showMultiImages(frontTitle,backTitle){
-    return Column(
-      children: [
-        multiImageFront(frontTitle),
-        SizedBox(height: 10,),
-         multiImageBack(backTitle),
-      ],
-    );
+  Widget imageWidget(String? url, String title) {
+    try {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            url != null && url != ''
+                ? Image.network(
+                    result!['path'] + url,
+                    width: double.infinity,
+                    height: 200,
+                  )
+                : Container(
+                    width: double.infinity,
+                    child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+                        style: TextStyle(), textAlign: TextAlign.center),
+                  ),
+            SizedBox(height: 10.0),
+            Text(title),
+          ],
+        ),
+      ));
+    } catch (e) {
+      return Container(
+        width: double.infinity,
+        child: Text('ပုံတင်ထားခြင်းမရှိပါ။',
+            style: TextStyle(), textAlign: TextAlign.center),
+      );
+    }
   }
 
 TableRow _getTableHeader(String d1, List d2) {
@@ -714,6 +846,22 @@ TableRow _getTableHeader(String d1, List d2) {
         });
   }
 
+  void showSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(fontFamily: "Pyidaungsu"),
+      ),
+      action: SnackBarAction(
+        label: "ပိတ်မည်",
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }
+
+
   void showAlertDialog(String title, String content, BuildContext context) {
     showDialog(
         context: context,
@@ -750,8 +898,12 @@ TableRow _getTableHeader(String d1, List d2) {
       if (data['success']) {
         stopLoading();
         setState(() {
+          chkSend = false;
+          state = 'send';
+          msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
           formId = data['form']['id'];
         });
+        showSnackBar(context, msg);
         refreshToken(data['token']);
         Navigator.pop(context);
         goToNextPage();

@@ -14,8 +14,20 @@ class CpForm03MoneyMdy extends StatefulWidget {
 class _CpForm03MoneyMdyState extends State<CpForm03MoneyMdy> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
@@ -260,7 +272,7 @@ class _CpForm03MoneyMdyState extends State<CpForm03MoneyMdy> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {

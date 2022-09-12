@@ -16,6 +16,7 @@ class CpForm05NRCMdy extends StatefulWidget {
 class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
   int? formId;
   bool isLoading = false;
+   bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   File? backFile;
@@ -45,6 +46,11 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -425,12 +431,16 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_cp_form06_household',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

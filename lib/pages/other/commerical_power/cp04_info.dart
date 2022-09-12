@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../models/application_form_model.dart';
+
 class Cp04Info extends StatefulWidget {
   const Cp04Info({Key? key}) : super(key: key);
 
@@ -16,10 +18,16 @@ class Cp04Info extends StatefulWidget {
 class _Cp04InfoState extends State<Cp04Info> {
   int? formId;
   bool isLoading = true;
+   bool edit = false;
+  ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
-  List<Map> jobs = [
+ List<Map> jobs = [
+    {
+      "key": "",
+      "value": "ရွေးချယ်ရန်",
+    },
     {
       "key": "gstaff",
       "value": "အစိုးရဝန်ထမ်း",
@@ -87,6 +95,19 @@ class _Cp04InfoState extends State<Cp04Info> {
         setState(() {
           townshipList = data['townships'];
         });
+        for (var i = 0; i < townshipList.length; i++) {
+          if (townshipList[i]['id'] == townshipId) {
+            setState(() {
+              _selectedTownship = townshipList[i];
+              townshipId = _selectedTownship['id'];
+              districtId = _selectedTownship['district_id'];
+              divisionId = _selectedTownship['division_state_id'];
+              districtController.text = _selectedTownship['district_name'];
+              divisionController.text =
+                  _selectedTownship['division_states_name'];
+            });
+          }
+        }
         print('township list is $townshipList');
       } else {
         showAlertDialog(
@@ -104,17 +125,64 @@ class _Cp04InfoState extends State<Cp04Info> {
     }
   }
 
+  String nullCheck(String? value) {
+    if (value == null || value == '' || value == 'null') {
+      return '';
+    }
+    return value;
+  }
+
+  int? nullCheckNum(value) {
+    if (value == null || value == '' || value == 'null') {
+      return null;
+    }
+    return int.parse(value);
+  }
+
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
+     if (data['edit'] != null && appForm == null) {
+      setState(() {
+        edit = data['edit'];
+        appForm = data['appForm'];
+        nameController.text = nullCheck(appForm!.fullname);
+        nrcController.text = nullCheck(appForm!.nrc);
+        phoneController.text = nullCheck(appForm!.appliedPhone);
+        if (_selectedjob == null) {
+          _selectedjob = nullCheck(appForm!.jobType.toString());
+        }
+        positionController.text = nullCheck(appForm!.position);
+        departmentController.text = nullCheck(appForm!.department);
+        otherController.text = nullCheck(appForm!.businessName);
+        salaryController.text = nullCheck(appForm!.salary.toString());
+        buildingTypeController.text = nullCheck(appForm!.appliedBuildingType);
+        homeNoController.text = nullCheck(appForm!.appliedHomeNo);
+        apartmentController.text = nullCheck(appForm!.appliedBuilding);
+        streetController.text = nullCheck(appForm!.appliedStreet);
+        laneController.text = nullCheck(appForm!.appliedLane);
+        quarterController.text = nullCheck(appForm!.appliedQuarter);
+        townController.text = nullCheck(appForm!.appliedTown);
+
+        if (townshipId == null) {
+          townshipId = nullCheckNum(appForm!.townshipId);
+        }
+        if (districtId == null) {
+          districtId = nullCheckNum(appForm!.districtId);
+        }
+        if (divisionId == null) {
+          divisionId = nullCheckNum(appForm!.divStateId);
+        }
+      });
+    }
     return WillPopScope(
       child: Scaffold(
-        appBar: applicationBar(formId),
+        appBar: applicationBar(),
         body: isLoading ? loading() : body(context),
       ),
       onWillPop: () async {
@@ -124,7 +192,7 @@ class _Cp04InfoState extends State<Cp04Info> {
     );
   }
 
-  AppBar applicationBar(formId) {
+  AppBar applicationBar() {
     return AppBar(
       centerTitle: true,
       title: Text("ကိုယ်တိုင်ရေးလျှောက်လွှာပုံစံ",
@@ -356,6 +424,7 @@ class _Cp04InfoState extends State<Cp04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
+        value: _selectedjob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -586,6 +655,9 @@ class _Cp04InfoState extends State<Cp04Info> {
   }
 
   void goToNextPage() async {
+     if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'other_cp05_nrc',
         arguments: {'form_id': formId});
     setState(() {
@@ -593,6 +665,7 @@ class _Cp04InfoState extends State<Cp04Info> {
     });
     stopLoading();
     print('info-nrc-page form id is $formId');
+  }
   }
 
   void goToBack() {

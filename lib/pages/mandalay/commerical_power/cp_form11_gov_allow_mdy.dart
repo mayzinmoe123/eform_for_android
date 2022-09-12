@@ -16,6 +16,7 @@ class CpForm11GovAllowMdy extends StatefulWidget {
 class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
   int? formId;
   bool isLoading = false;
+   bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -42,6 +43,11 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
     setState(() {
       formId = data['form_id'];
     });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     print('info form_id is $formId');
     return WillPopScope(
       child: Scaffold(
@@ -439,12 +445,16 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_cp_overview',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('form id is $formId');
+  }
   }
 
   void goToBack() {

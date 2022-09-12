@@ -34,6 +34,7 @@ class _CpOverviewState extends State<CpOverview> {
   List? feeName;
   bool chkSend = true;
   bool isLoading = true;
+  String state = 'send';
 
   String? townshipName;
   String? date;
@@ -68,6 +69,7 @@ class _CpOverviewState extends State<CpOverview> {
           feeName = data['fee_names'];
           chkSend = data['chk_send'];
           msg = data['msg'];
+          state = data['state'];
           result = data;
         });
         print(result);
@@ -194,7 +196,7 @@ class _CpOverviewState extends State<CpOverview> {
 
             //မီတာအမျိုးအစား
             mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
-                moneyToggleButton,()async {
+                moneyToggleButton, () async {
               startLoading();
               final result = await Navigator.pushNamed(
                   context, '/yangon/commerical_power/cp_form03_money',
@@ -374,7 +376,7 @@ class _CpOverviewState extends State<CpOverview> {
             }),
             SizedBox(
               height: 10,
-          ),
+            ),
             showCurrentMeterCheck == true
                 ? singleOne(files, 'prev_bill',
                     "လက်ရှိတပ်ဆင်ထားသောမီတာ\nရှိပါကမီတာချလံ (မူရင်း)")
@@ -433,7 +435,7 @@ class _CpOverviewState extends State<CpOverview> {
               height: 20,
             ),
 
-            actionButton(context),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
           ],
         ),
@@ -612,12 +614,16 @@ class _CpOverviewState extends State<CpOverview> {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          InkWell(
-              onTap: editLink,
-              child: Container(
-                  padding: EdgeInsets.all(8),
-                  child: Text("ပြင်ဆင်ရန်",
-                      style: TextStyle(fontSize: 15, color: Colors.red)))),
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
+                    onTap: editLink,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text("ပြင်ဆင်ရန်",
+                            style: TextStyle(fontSize: 15, color: Colors.red))))
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -673,15 +679,17 @@ class _CpOverviewState extends State<CpOverview> {
           "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
           "${result!['fee']['name'] ?? '-'} ကီလိုဝပ်"
         ]),
-        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
-        getTableBodyDetail("အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
+        getTableBodyDetail(
+            "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
+        getTableBodyDetail(
+            "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
         getTableBodyDetail(
             "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
         getTableBodyDetail(
             "ကြီးကြပ်ခ", result!['fee']['registration_fee'] ?? '-'),
         getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
             result!['fee']['composit_box'] ?? '-'),
-        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString() ),
+        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
@@ -1179,8 +1187,9 @@ class _CpOverviewState extends State<CpOverview> {
         stopLoading();
         setState(() {
           chkSend = false;
-          formId = data['form']['id'];
+          state = 'send';
           msg = 'သင့်လျှောက်လွှာအား ရုံးသို့ပေးပို့ပြီးဖြစ်ပါသည်။';
+          formId = data['form']['id'];
         });
         showSnackBar(context, msg);
         refreshToken(data['token']);

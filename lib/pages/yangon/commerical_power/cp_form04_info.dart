@@ -18,13 +18,13 @@ class CpForm04Info extends StatefulWidget {
 class _CpForm04InfoState extends State<CpForm04Info> {
   int? formId;
   bool isLoading = false;
-   bool edit = false;
+  bool edit = false;
   ApplicationFormModel? appForm;
 
   String? _selectedjob;
   bool jobError = false;
   List<Map> jobs = [
-     {
+    {
       "key": "",
       "value": "ရွေးချယ်ရန်",
     },
@@ -88,7 +88,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
       var url = Uri.parse(
           '${apiPath}api/township_dropdown?token=$token&division_id=$division');
       print('wanting townships list $url');
-     var response = await http.get(url);
+      var response = await http.get(url);
       print('response is $response');
       Map data = jsonDecode(response.body);
       if (data['success']) {
@@ -146,7 +146,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     setState(() {
       formId = data['form_id'];
     });
-  if (data['edit'] != null) {
+    if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -423,7 +423,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
-        value: _selectedjob,
+          value: _selectedjob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -658,15 +658,15 @@ class _CpForm04InfoState extends State<CpForm04Info> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_power/cp_form05_n_r_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
-  }
+      final result = await Navigator.pushNamed(
+          context, '/yangon/commerical_power/cp_form05_n_r_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {

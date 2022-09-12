@@ -15,12 +15,30 @@ class RpForm03MoneyMdy extends StatefulWidget {
 class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
   int? formId;
   bool isLoading = false;
+  bool edit = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: applicationBar(),
-      body: isLoading ? loading() : body(),
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    print('info form_id is $formId');
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
+    return WillPopScope(
+      child: Scaffold(
+        appBar: applicationBar(),
+        body: isLoading ? loading() : body(context),
+      ),
+      onWillPop: () async {
+        goToBack();
+        return true;
+      },
     );
   }
 
@@ -62,7 +80,7 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
     );
   }
 
-  Widget body() {
+  Widget body(context) {
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 17),
@@ -171,9 +189,10 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         ),
-        child: Text(
-          "ရွေးချယ်မည်",
-          style: TextStyle(fontSize: 8),
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+          size: 20,
         ),
       ),
     );
@@ -265,7 +284,7 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -276,12 +295,16 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
   }
 
   void goToNextPage() async {
+    if (edit) {
+      goToBack();
+    } else {
     final result = await Navigator.pushNamed(context, 'mdy_rp_form04_info',
         arguments: {'form_id': formId});
     setState(() {
       formId = (result ?? 0) as int;
     });
     print('money form id is $formId');
+  }
   }
 
   void goToHomePage(BuildContext context) {
