@@ -346,6 +346,7 @@ class _R05NrcState extends State<R05Nrc> {
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
     var url = Uri.parse("${apiPath}api/nrc");
+    print('url $url');
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -356,6 +357,9 @@ class _R05NrcState extends State<R05Nrc> {
       request.files.add(pic2);
       var response = await request.send();
 
+      print('front file ${frontFile!.path}');
+      print('back file ${backFile!.path}');
+
       // if (response.statusCode == 200) {
       // stopLoading();
       // print('Uploaded Success!');
@@ -363,6 +367,7 @@ class _R05NrcState extends State<R05Nrc> {
       //Get the response from the server
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
+      print('responseString $responseString');
       var responseMap = jsonDecode(responseString);
 
       if (responseMap['success'] == true) {

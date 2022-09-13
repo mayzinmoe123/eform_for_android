@@ -41,6 +41,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
 
     try {
       var response = await http.post(url, body: {'token': token});
+      print('response.body ${response.body}');
       Map data = jsonDecode(response.body);
       print('data $data');
       if (data['success'] == true) {
@@ -185,12 +186,21 @@ class _DivisionChoiceState extends State<DivisionChoice> {
 
   Widget processWidget() {
     return Container(
-      child: ListView.builder(
-        itemCount: forms.length,
-        itemBuilder: (context, index) {
-          return swipListItem(context, forms[index]);
-        },
-      ),
+      child: forms.length > 0
+          ? ListView.builder(
+              itemCount: forms.length,
+              itemBuilder: (context, index) {
+                return swipListItem(context, forms[index]);
+              },
+            )
+          : Container(
+              color: Colors.orange,
+              padding: EdgeInsets.all(30),
+              child: Text(
+                'သင်မီတာလျှောက်လွှာများ မလျှောက်ထားရသေးပါ။ လျှောက်လွှာပုံစံများတွင် တိုင်းဒေသကြီးရွေး၍ လျှောက်ထားနိုင်ပါသည်။',
+                style: TextStyle(fontSize: 14.0, color: Colors.white),
+              ),
+            ),
     );
   }
 
@@ -370,65 +380,83 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   String getRouteName(div, type) {
     String routeName = '';
     if (div == '1') {
-      switch (type) {
-        case '1':
-          routeName = '/yangon/residential/overview';
-          break;
-        case '2':
-          routeName = '/yangon/residential_power/overview';
-          break;
-        case '3':
-          routeName = '/yangon/commerical_power/overview';
-          break;
-        case '5':
-          routeName = 'ygn_c_overview';
-          break;
-        case '4':
-          routeName = 'ygn_t_overview';
-          break;
-        default:
-          routeName = 'ygn_t_overview';
-      }
+      routeName = yangonRoute(type);
     } else if (div == '3') {
-      switch (type) {
-        case '1':
-          routeName = 'mdy_r_overview';
-          break;
-        case '2':
-          routeName = 'mdy_rp_overview';
-          break;
-        case '3':
-          routeName = 'mdy_cp_overview';
-          break;
-        case '5':
-          routeName = 'mdy_c_overview';
-          break;
-        case '4':
-          routeName = 'mdy_t_overview';
-          break;
-        default:
-          routeName = 'mdy_t_overview';
-      }
+      routeName = mandalayRoute(type);
     } else if (div == '2') {
-      switch (type) {
-        case '1':
-          routeName = 'other_r_overview';
-          break;
-        case '2':
-          routeName = 'other_rp_overview';
-          break;
-        case '3':
-          routeName = 'other_cp_overview';
-          break;
-        case '5':
-          routeName = 'other_c_overview';
-          break;
-        case '4':
-          routeName = 'other_t_overview';
-          break;
-        default:
-          routeName = 'other_t_overview';
-      }
+      routeName = otherRoute(type);
+    }
+    return routeName;
+  }
+
+  String yangonRoute(String type) {
+    String routeName = '';
+    switch (type) {
+      case '1':
+        routeName = '/yangon/residential/overview';
+        break;
+      case '2':
+        routeName = '/yangon/residential_power/overview';
+        break;
+      case '3':
+        routeName = '/yangon/commerical_power/overview';
+        break;
+      case '5':
+        routeName = 'ygn_c_overview';
+        break;
+      case '4':
+        routeName = 'ygn_t_overview';
+        break;
+      default:
+        routeName = 'ygn_t_overview';
+    }
+    return routeName;
+  }
+
+  String mandalayRoute(String type) {
+    String routeName = '';
+    switch (type) {
+      case '1':
+        routeName = 'mdy_r_overview';
+        break;
+      case '2':
+        routeName = 'mdy_rp_overview';
+        break;
+      case '3':
+        routeName = 'mdy_cp_overview';
+        break;
+      case '5':
+        routeName = 'mdy_c_overview';
+        break;
+      case '4':
+        routeName = 'mdy_t_overview';
+        break;
+      default:
+        routeName = 'mdy_t_overview';
+    }
+    return routeName;
+  }
+
+  String otherRoute(String type) {
+    String routeName = '';
+    switch (type) {
+      case '1':
+        routeName = 'other_r_overview';
+        break;
+      case '2':
+        routeName = 'other_rp_overview';
+        break;
+      case '3':
+        routeName = 'other_cp_overview';
+        break;
+      case '5':
+        routeName = 'other_c_overview';
+        break;
+      case '4':
+        routeName = 'other_t_overview';
+        break;
+      default:
+        routeName = 'other_t_overview';
     }
     return routeName;
   }

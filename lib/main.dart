@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/auth/reset_password.dart';
-
+import 'package:flutter_application_1/utils/global.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Authentication
@@ -15,6 +19,7 @@ import 'mandalay.dart';
 import 'other.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -33,8 +38,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   initializePrefs() async {
-    // String apiPath = "http://localhost/eform/public/";
-    String apiPath = "http://192.168.99.248/eform/public/";
+    String apiPath = "http://192.168.99.134/eform/public/";
+
+    var url =
+        Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
+    var response = await http.post(url, body: {});
+    Map data = jsonDecode(response.body);
+
+    if (data['success'] == true) {
+      apiPath = data['path'];
+    } else {
+      apiPath = 'https://eform.moee.gov.mm/';
+    }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setString('api_path', apiPath);
@@ -78,5 +94,14 @@ class _MyAppState extends State<MyApp> {
       routes: allLinks,
       theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Pyidaungsu'),
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
