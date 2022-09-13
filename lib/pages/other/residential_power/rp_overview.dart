@@ -24,12 +24,12 @@ class _RpOverviewState extends State<RpOverview> {
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
 
-     Map? form;
+  Map? form;
   List files = [];
   List? colName;
   List? feeName;
   bool chkSend = true;
-  bool isLoading =true;
+  bool isLoading = true;
   String state = 'send';
 
   String? townshipName;
@@ -38,12 +38,12 @@ class _RpOverviewState extends State<RpOverview> {
   Map? result;
   String msg = '';
 
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getFormData();
-  } 
+  }
 
   void getFormData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -141,7 +141,7 @@ class _RpOverviewState extends State<RpOverview> {
     );
   }
 
- Widget body(BuildContext context) {
+  Widget body(BuildContext context) {
     var mSize = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Container(
@@ -149,15 +149,27 @@ class _RpOverviewState extends State<RpOverview> {
         child: Column(
           children: [
             title(),
-            // showForm(),
+            SizedBox(height: 20),
+            Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(20),
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
             mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
                 () async {
-             startLoading();
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_rp04_info',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -178,11 +190,10 @@ class _RpOverviewState extends State<RpOverview> {
 
             //မီတာအမျိုးအစား
             mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
-                moneyToggleButton,
-                () async {
-             startLoading();
+                moneyToggleButton, () async {
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp03_money',
+                  context, 'other_rp03_money',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -203,9 +214,9 @@ class _RpOverviewState extends State<RpOverview> {
             //မှတ်ပုံတင်ရှေ့ဖက်
             mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
                 () async {
-             startLoading();
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp05_nrc',
+                  context, 'other_rp05_nrc',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -219,23 +230,22 @@ class _RpOverviewState extends State<RpOverview> {
               height: 10,
             ),
             showNRCCheck == true
-                ?singleTwo(
+                ? singleTwo(
                     files,
                     'nrc_copy_front',
                     'မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)',
                     'nrc_copy_back',
                     'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
                 : Container(),
-             SizedBox(
+            SizedBox(
               height: 20,
             ),
             //အိမ်ထောင်စုစာရင်း
-            mainTitle(
-                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton,
-                () async {
-             startLoading();
+            mainTitle("အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck,
+                householdToggleButton, () async {
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp06_household',
+                  context, 'other_rp06_household',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -256,16 +266,16 @@ class _RpOverviewState extends State<RpOverview> {
                     'form_10_back',
                     'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
-            //ထောက်ခံစာ 
+            //ထောက်ခံစာ
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton,
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck, recommendToggleButton,
                 () async {
-             startLoading();
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp07_recommend',
+                  context, 'other_rp07_recommend',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -286,17 +296,16 @@ class _RpOverviewState extends State<RpOverview> {
                     'no_invade_letter',
                     'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
-            
-             //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
-            mainTitle(
-                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton,
-                () async {
-             startLoading();
+
+            //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
+            mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
+                ownershipToggleButton, () async {
+              startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp08_ownership',
+                  context, 'other_rp08_ownership',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -313,20 +322,17 @@ class _RpOverviewState extends State<RpOverview> {
                 ? multiOne(
                     files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
 
             chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
-
-           
           ],
         ),
       ),
     );
   }
-
 
   Widget title() {
     return Center(
@@ -380,7 +386,8 @@ class _RpOverviewState extends State<RpOverview> {
     );
   }
 
-Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallback editLink) {
+  Widget mainTitle(String title, bool checkVal, VoidCallback checkState,
+      VoidCallback editLink) {
     var mSize = MediaQuery.of(context).size;
     return ElevatedButton(
       child: InkWell(
@@ -446,7 +453,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
       },
     );
   }
-  
+
   Widget showMoneyTable() {
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -454,19 +461,24 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
         color: Colors.grey,
       ),
       children: [
-       _getTableHeader(
-            "အကြောင်းအရာများ", ["ကောက်ခံရမည့်နှုန်းထား (ကျပ်)", "${result!['fee']['name']} ကီလိုဝပ်"]),
-        getTableBodyDetail("မီတာသတ်မှတ်ကြေး", "${result!['fee']['assign_fee']}"),
+        _getTableHeader("အကြောင်းအရာများ", [
+          "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+          "${result!['fee']['name']} ကီလိုဝပ်"
+        ]),
+        getTableBodyDetail(
+            "မီတာသတ်မှတ်ကြေး", "${result!['fee']['assign_fee']}"),
         getTableBodyDetail("အာမခံစဘော်ငွေ", "${result!['fee']['deposit_fee']}"),
-        getTableBodyDetail("လိုင်းကြိုး (ဆက်သွယ်ခ)", "${result!['fee']['string_fee']}"),
-        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး", "${result!['fee']['registration_fee']}"),
+        getTableBodyDetail(
+            "လိုင်းကြိုး (ဆက်သွယ်ခ)", "${result!['fee']['string_fee']}"),
+        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+            "${result!['fee']['registration_fee']}"),
         getTableBodyDetail("composit box", "${result!['fee']['composit_box']}"),
         getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
 
-   Widget showForm() {
+  Widget showForm() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
@@ -480,7 +492,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.end,
-             children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),   
+              children: [textSpan("အမှတ်စဥ် -", form!['serial_code'] ?? '-')]),
           SizedBox(height: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -490,7 +502,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မှူး/မြို့နယ်လျှပ်စစ်အင်ဂျင်နီယာ"),
               Text("  လျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်း"),
-              Text(" ${result!['township_name'] ?? '-'}"),
+              Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -532,8 +544,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
               SizedBox(
                 height: 7,
               ),
-              Text(
-                  "${result!['address'] ?? '-' }"),
+              Text("${result!['address'] ?? '-'}"),
               SizedBox(
                 height: 14,
               ),
@@ -674,7 +685,7 @@ Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallba
     }
   }
 
-TableRow _getTableHeader(String d1, List d2) {
+  TableRow _getTableHeader(String d1, List d2) {
     return TableRow(children: [
       Container(
         padding: EdgeInsets.all(10),
@@ -800,13 +811,13 @@ TableRow _getTableHeader(String d1, List d2) {
       showRecommendCheck = !showRecommendCheck;
     });
   }
-  
-   ownershipToggleButton() {
+
+  ownershipToggleButton() {
     setState(() {
       showOwernshipCheck = !showOwernshipCheck;
     });
   }
-  
+
   farmlandToggleButton() {
     setState(() {
       showFarmLandCheck = !showFarmLandCheck;
@@ -860,7 +871,6 @@ TableRow _getTableHeader(String d1, List d2) {
       ),
     ));
   }
-
 
   void showAlertDialog(String title, String content, BuildContext context) {
     showDialog(

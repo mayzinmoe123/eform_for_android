@@ -368,8 +368,9 @@ class _R08OwnershipState extends State<R08Ownership> {
         var file =
             await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
         frontMultiFiles.add(file);
+        request.files.add(file);
       }
-      request.files.addAll(frontMultiFiles);
+      // request.files.addAll(frontMultiFiles);
 
       var response = await request.send();
 

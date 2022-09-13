@@ -16,10 +16,19 @@ class _Rp03MoneyState extends State<Rp03Money> {
   int? formId;
   bool isLoading = false;
   bool edit = false;
-  
 
   @override
   Widget build(BuildContext context) {
+    final data = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    setState(() {
+      formId = data['form_id'];
+    });
+    if (data['edit'] != null) {
+      setState(() {
+        edit = data['edit'];
+      });
+    }
     return Scaffold(
       appBar: applicationBar(),
       body: isLoading ? loading() : body(),
@@ -160,7 +169,7 @@ class _Rp03MoneyState extends State<Rp03Money> {
     ]);
   }
 
-   Widget _makeChooseBtn(int type) {
+  Widget _makeChooseBtn(int type) {
     return Container(
       margin: EdgeInsets.all(14),
       child: ElevatedButton(
@@ -268,7 +277,7 @@ class _Rp03MoneyState extends State<Rp03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -282,13 +291,13 @@ class _Rp03MoneyState extends State<Rp03Money> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'other_rp04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'other_rp04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

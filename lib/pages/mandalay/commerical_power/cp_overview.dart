@@ -152,7 +152,7 @@ class _CpOverviewState extends State<CpOverview> {
         child: Column(
           children: [
             title(),
-            // showForm(),
+            SizedBox(height: 20),
             Container(
               color: Colors.amber,
               padding: EdgeInsets.all(20),
@@ -348,9 +348,8 @@ class _CpOverviewState extends State<CpOverview> {
               height: 10,
             ),
             showLicenseCheck == true
-                ? 
-                multiOne(
-                    files, 'transaction_licence', 'လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)')
+                ? multiOne(files, 'transaction_licence',
+                    'လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)')
                 : Container(),
             SizedBox(
               height: 20,
@@ -375,9 +374,7 @@ class _CpOverviewState extends State<CpOverview> {
               height: 10,
             ),
             showYCDCCheck == true
-                ? 
-                multiOne(
-                    files, 'city_license', 'စည်ပင်သာယာလိုင်စင်')
+                ? multiOne(files, 'city_license', 'စည်ပင်သာယာလိုင်စင်')
                 : Container(),
             SizedBox(
               height: 20,
@@ -402,9 +399,8 @@ class _CpOverviewState extends State<CpOverview> {
               height: 10,
             ),
             showGovAllowCheck == true
-                ?
-                multiOne(
-                    files, 'ministry_permit', 'သက်ဆိုင်ရာဝန်ကြီးဌာန ခွင့်ပြုမိန့်')
+                ? multiOne(files, 'ministry_permit',
+                    'သက်ဆိုင်ရာဝန်ကြီးဌာန ခွင့်ပြုမိန့်')
                 : Container(),
             SizedBox(
               height: 20,
@@ -417,7 +413,6 @@ class _CpOverviewState extends State<CpOverview> {
       ),
     );
   }
-  
 
   Widget title() {
     return Center(
@@ -443,7 +438,7 @@ class _CpOverviewState extends State<CpOverview> {
         child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
   }
 
- Widget textSpan(txt1, txt2) {
+  Widget textSpan(txt1, txt2) {
     return Flexible(
       child: RichText(
         text: TextSpan(
@@ -547,30 +542,31 @@ class _CpOverviewState extends State<CpOverview> {
       ),
       children: [
         _getTableHeader("အကြောင်းအရာများ", [
-              "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
-              "${result!['fee']['name'] ?? '-'} KVA"
-            ]),
-            getTableBodyDetail(
-                "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
-            getTableBodyDetail(
-                "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
-            getTableBodyDetail(
-                "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
-            getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-                result!['fee']['registration_fee'] ?? '-'),
-                getTableBodyDetail("composit box", result!['fee']['composit_box'] ?? '-'),
-            getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
+          "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+          "${result!['fee']['name'] ?? '-'} KVA"
+        ]),
+        getTableBodyDetail(
+            "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
+        getTableBodyDetail(
+            "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
+        getTableBodyDetail(
+            "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
+        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+            result!['fee']['registration_fee'] ?? '-'),
+        getTableBodyDetail(
+            "composit box", result!['fee']['composit_box'] ?? '-'),
+        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
 
- Widget showForm() {
+  Widget showForm() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
         children: [
           Text(
-            "လျှောက်လွှာပုံစံ",
+            "စက်မှုသုံးပါဝါမီတာလျှောက်လွှာပုံစံ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(height: 15),
@@ -648,8 +644,7 @@ class _CpOverviewState extends State<CpOverview> {
     );
   }
 
-  
-Widget multiOne(List files, String column, String title) {
+  Widget multiOne(List files, String column, String title) {
     return Column(
         children: files.map((e) {
       return Column(
@@ -659,6 +654,7 @@ Widget multiOne(List files, String column, String title) {
       );
     }).toList());
   }
+
   Widget multiTwo(List files, String column1, String title1, String column2,
       String title2) {
     return Column(
@@ -671,6 +667,7 @@ Widget multiOne(List files, String column, String title) {
       );
     }).toList());
   }
+
   Widget singleOne(List files, String column, String title) {
     return Column(
         children: files.map((e) {
@@ -681,6 +678,7 @@ Widget multiOne(List files, String column, String title) {
       );
     }).toList());
   }
+
   Widget singleTwo(List files, String column1, String title1, String column2,
       String title2) {
     return Column(
@@ -693,6 +691,7 @@ Widget multiOne(List files, String column, String title) {
       );
     }).toList());
   }
+
   Widget imagesWidget(String? urls, String title) {
     if (urls != null && urls != '') {
       List urlList = urls.split(",");
@@ -723,6 +722,7 @@ Widget multiOne(List files, String column, String title) {
       ));
     }
   }
+
   Widget imageWidget(String? url, String title) {
     try {
       return Card(
@@ -993,7 +993,7 @@ Widget multiOne(List files, String column, String title) {
       Map data = jsonDecode(response.body);
       print('http resonse $data');
 
-       if (data['success']) {
+      if (data['success']) {
         stopLoading();
         setState(() {
           chkSend = false;

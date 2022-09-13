@@ -83,7 +83,7 @@ class _Rp04InfoState extends State<Rp04Info> {
     String token = prefs.getString('token').toString();
     String apiPath = prefs.getString('api_path').toString();
     String division =
-        '2'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
+        '1'; // yangon = 2, mandalay = 3, other = 1/4/5/..(expect 2/3)
 
     try {
       var url = Uri.parse(

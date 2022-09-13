@@ -339,6 +339,10 @@ class _TForm10DcState extends State<TForm10Dc> {
       if (frontFile != null) {
         var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
         request.files.add(pic1);
+
+        var defaultPic =
+            await http.MultipartFile.fromPath('front', frontFile!.path);
+        request.files.add(defaultPic);
       }
       var response = await request.send();
 

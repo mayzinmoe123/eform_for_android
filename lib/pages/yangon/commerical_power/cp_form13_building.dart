@@ -15,7 +15,7 @@ class CpForm13Building extends StatefulWidget {
 
 class _CpForm13BuildingState extends State<CpForm13Building> {
   int? formId;
-  bool edit =false;
+  bool edit = false;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
@@ -350,7 +350,7 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String apiPath = prefs.getString('api_path').toString();
     String token = prefs.getString('token').toString();
-    var url = Uri.parse("${apiPath}api/yangon/residential_building");
+    var url = Uri.parse("${apiPath}api/building");
     try {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
@@ -444,16 +444,16 @@ class _CpForm13BuildingState extends State<CpForm13Building> {
   }
 
   void goToNextPage() async {
-     if (edit) {
+    if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(
-        context, '/yangon/commerical_power/overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
+      final result = await Navigator.pushNamed(
+          context, '/yangon/commerical_power/overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
     }
   }
 

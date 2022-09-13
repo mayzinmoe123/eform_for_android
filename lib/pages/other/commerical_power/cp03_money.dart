@@ -277,7 +277,7 @@ class _Cp03MoneyState extends State<Cp03Money> {
   }
 
   void goToBack() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(formId);
   }
 
   void refreshToken(String token) async {
@@ -291,13 +291,13 @@ class _Cp03MoneyState extends State<Cp03Money> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'other_cp04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'other_cp04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

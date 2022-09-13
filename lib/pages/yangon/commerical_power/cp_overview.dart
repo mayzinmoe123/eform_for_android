@@ -154,7 +154,6 @@ class _CpOverviewState extends State<CpOverview> {
         child: Column(
           children: [
             title(),
-            // showForm(),
             SizedBox(height: 20),
             Container(
               color: Colors.amber,
@@ -327,6 +326,7 @@ class _CpOverviewState extends State<CpOverview> {
               setState(() {
                 formId = (result ?? 0) as int;
               });
+              getFormData();
             }),
             SizedBox(
               height: 10,
@@ -685,10 +685,10 @@ class _CpOverviewState extends State<CpOverview> {
             "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
         getTableBodyDetail(
             "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
-        getTableBodyDetail(
-            "ကြီးကြပ်ခ", result!['fee']['registration_fee'] ?? '-'),
         getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-            result!['fee']['composit_box'] ?? '-'),
+            result!['fee']['registration_fee'] ?? '-'),
+        getTableBodyDetail(
+            "composit box", result!['fee']['composit_box'] ?? '-'),
         getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );

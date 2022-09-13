@@ -149,7 +149,19 @@ class _CpOverviewState extends State<CpOverview> {
         child: Column(
           children: [
             title(),
-            // showForm(),
+            SizedBox(height: 20),
+            Container(
+              color: Colors.amber,
+              padding: EdgeInsets.all(20),
+              child: Text(
+                msg,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
@@ -157,7 +169,7 @@ class _CpOverviewState extends State<CpOverview> {
                 () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp04_info',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -168,20 +180,16 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showFormCheck == true ? showForm() : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //မီတာအမျိုးအစား
-            hideEditmainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
-                () async {
+            mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
+                moneyToggleButton, () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp03_money',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -192,20 +200,16 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showMoneyCheck == true ? showMoneyTable() : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
             mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
                 () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp05_nrc',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -216,9 +220,7 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showNRCCheck == true
                 ? singleTwo(
                     files,
@@ -227,15 +229,14 @@ class _CpOverviewState extends State<CpOverview> {
                     'nrc_copy_back',
                     'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
                 : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
+
             //အိမ်ထောင်စုစာရင်း
             mainTitle("အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck,
                 householdToggleButton, () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp06_household',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -246,9 +247,7 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showHouseholdCheck == true
                 ? multiTwo(
                     files,
@@ -257,16 +256,15 @@ class _CpOverviewState extends State<CpOverview> {
                     'form_10_back',
                     'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
+
             //ထောက်ခံစာ
             mainTitle(
                 "ထောက်ခံစာ (မူရင်း)", showRecommendCheck, recommendToggleButton,
                 () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp07_recommend',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -277,9 +275,7 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showRecommendCheck == true
                 ? singleTwo(
                     files,
@@ -288,16 +284,14 @@ class _CpOverviewState extends State<CpOverview> {
                     'no_invade_letter',
                     'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ')
                 : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
             mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
                 ownershipToggleButton, () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp08_ownership',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -308,9 +302,7 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showOwernshipCheck == true
                 ? multiOne(
                     files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
@@ -324,7 +316,7 @@ class _CpOverviewState extends State<CpOverview> {
                 licenseToggleButton, () async {
               startLoading();
               final result = await Navigator.pushNamed(
-                  context, '/other_rp04_info',
+                  context, 'other_cp09_license',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
@@ -335,16 +327,12 @@ class _CpOverviewState extends State<CpOverview> {
               });
               getFormData();
             }),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             showLicenseCheck == true
                 ? multiOne(files, 'transaction_licence',
                     'လုပ်ငန်းလိုင်စင်(သက်တမ်းရှိ/မူရင်း)')
                 : Container(),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
 
             chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
@@ -405,6 +393,7 @@ class _CpOverviewState extends State<CpOverview> {
       ),
     );
   }
+
   Widget multiOne(List files, String column, String title) {
     return Column(
         children: files.map((e) {
@@ -530,23 +519,16 @@ class _CpOverviewState extends State<CpOverview> {
                 title,
                 style: TextStyle(fontSize: 15, color: Colors.blueAccent),
               )),
-          // Flexible(
-          //   child: state != 'send' || chkSend == true
-          //       ? InkWell(
-          //           onTap: editLink,
-          //           child: Container(
-          //               padding: EdgeInsets.all(8),
-          //               child: Text("ပြင်ဆင်ရန်",
-          //                   style: TextStyle(fontSize: 15, color: Colors.red))))
-          //       : SizedBox(),
-          // )
-          InkWell(
+          Flexible(
+            child: state != 'send' || chkSend == true
+                ? InkWell(
                     onTap: editLink,
                     child: Container(
                         padding: EdgeInsets.all(8),
                         child: Text("ပြင်ဆင်ရန်",
                             style: TextStyle(fontSize: 15, color: Colors.red))))
-                
+                : SizedBox(),
+          )
         ]),
       ),
       style: ButtonStyle(
@@ -622,7 +604,7 @@ class _CpOverviewState extends State<CpOverview> {
       child: Column(
         children: [
           Text(
-            "အိမ်သုံးပါ၀ါမီတာလျှောက်လွှာပုံစံ",
+            "စက်မှုသုံးပါဝါမီတာလျှောက်လွှာပုံစံ",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
@@ -640,7 +622,7 @@ class _CpOverviewState extends State<CpOverview> {
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မှူး/မြို့နယ်လျှပ်စစ်အင်ဂျင်နီယာ"),
               Text("  လျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်း"),
-              Text(" ${result!['township_name'] ?? '-'}"),
+              Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [

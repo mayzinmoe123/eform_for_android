@@ -16,7 +16,7 @@ class RpOverview extends StatefulWidget {
 
 class _RpOverviewState extends State<RpOverview> {
   int? formId;
-   bool showFormCheck = true;
+  bool showFormCheck = true;
   bool showMoneyCheck = false;
   bool showNRCCheck = false;
   bool showHouseholdCheck = false;
@@ -24,13 +24,12 @@ class _RpOverviewState extends State<RpOverview> {
   bool showOwernshipCheck = false;
   bool showFarmLandCheck = false;
 
-
-Map? form;
+  Map? form;
   List files = [];
   List? colName;
   List? feeName;
   bool chkSend = true;
-  bool isLoading =true;
+  bool isLoading = true;
   String state = 'send';
 
   String? townshipName;
@@ -44,7 +43,7 @@ Map? form;
     // TODO: implement initState
     super.initState();
     getFormData();
-  } 
+  }
 
   void getFormData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,10 +82,9 @@ Map? form;
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-     final data = (ModalRoute.of(context)!.settings.arguments ??
+    final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
@@ -151,8 +149,7 @@ Map? form;
         child: Column(
           children: [
             title(),
-            // showForm(),
-             SizedBox(height: 20),
+            SizedBox(height: 20),
             Container(
               color: Colors.amber,
               padding: EdgeInsets.all(20),
@@ -168,8 +165,9 @@ Map? form;
             SizedBox(height: 20),
 
             //ကိုယ်ရေးအချက်အလက်
-            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton, () async {
-             startLoading();
+            mainTitle("ကိုယ်ရေးအချက်အလက်", showFormCheck, formToggleButton,
+                () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form04_info',
                   arguments: {
@@ -193,13 +191,12 @@ Map? form;
             //မီတာအမျိုးအစား
             mainTitle("လျှောက်ထားသည့် မီတာအမျိုးအစား ", showMoneyCheck,
                 moneyToggleButton, () async {
-             startLoading();
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form03_money',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
-                    
                   });
               setState(() {
                 formId = (result ?? 0) as int;
@@ -215,14 +212,14 @@ Map? form;
             ),
 
             //မှတ်ပုံတင်ရှေ့ဖက်
-            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton, () async {
-             startLoading();
+            mainTitle("မှတ်ပုံတင်အမှတ်", showNRCCheck, nrcToggleButton,
+                () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form05_n_r_c',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
-                    
                   });
               setState(() {
                 formId = (result ?? 0) as int;
@@ -233,26 +230,25 @@ Map? form;
               height: 10,
             ),
             showNRCCheck == true
-                ?singleTwo(
+                ? singleTwo(
                     files,
                     'nrc_copy_front',
                     'မှတ်ပုံတင်ရှေ့ဖက် (မူရင်း)',
                     'nrc_copy_back',
                     'မှတ်ပုံတင်နောက်ဖက် (မူရင်း)')
                 : Container(),
-             SizedBox(
+            SizedBox(
               height: 20,
             ),
             //အိမ်ထောင်စုစာရင်း
-            mainTitle(
-                "အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck, householdToggleButton, () async {
-             startLoading();
+            mainTitle("အိမ်ထောင်စုစာရင်း (မူရင်း)", showHouseholdCheck,
+                householdToggleButton, () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form06_household',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
-                    
                   });
               setState(() {
                 formId = (result ?? 0) as int;
@@ -270,19 +266,19 @@ Map? form;
                     'form_10_back',
                     'အိမ်ထောင်စုစာရင်းနောက်ဖက် (မူရင်း)')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
-            //ထောက်ခံစာ 
+            //ထောက်ခံစာ
             mainTitle(
-                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck , recommendToggleButton, () async {
-             startLoading();
+                "ထောက်ခံစာ (မူရင်း)", showRecommendCheck, recommendToggleButton,
+                () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form07_recommend',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
-                    
                   });
               setState(() {
                 formId = (result ?? 0) as int;
@@ -300,20 +296,19 @@ Map? form;
                     'no_invade_letter',
                     'ကျူးကျော်မဟုတ်ကြောင်း ရပ်ကွက်ထောက်ခံစာ (မူရင်း)')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
-            
-             //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
-            mainTitle(
-                "ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck, ownershipToggleButton, () async {
-             startLoading();
+
+            //ပိုင်ဆိုင်မှုစာရွက်စာတမ်း
+            mainTitle("ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)", showOwernshipCheck,
+                ownershipToggleButton, () async {
+              startLoading();
               final result = await Navigator.pushNamed(
                   context, 'mdy_rp_form08_ownership',
                   arguments: {
                     'form_id': formId,
                     'edit': true,
-                    
                   });
               setState(() {
                 formId = (result ?? 0) as int;
@@ -327,15 +322,12 @@ Map? form;
                 ? multiOne(
                     files, 'ownership', 'ပိုင်ဆိုင်မှုစာရွက်စာတမ်း (မူရင်း)')
                 : Container(),
-                 SizedBox(
+            SizedBox(
               height: 20,
             ),
 
-
-             chkSend ? actionButton(context) : SizedBox(),
+            chkSend ? actionButton(context) : SizedBox(),
             SizedBox(height: 20),
-
-           
           ],
         ),
       ),
@@ -366,7 +358,7 @@ Map? form;
         child: Text("ပေးပို့မည်", style: TextStyle(fontSize: 15)));
   }
 
-   void showSnackBar(BuildContext context, String text) {
+  void showSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
         text,
@@ -409,7 +401,8 @@ Map? form;
     );
   }
 
- Widget mainTitle(String title, bool checkVal, VoidCallback checkState,VoidCallback editLink) {
+  Widget mainTitle(String title, bool checkVal, VoidCallback checkState,
+      VoidCallback editLink) {
     var mSize = MediaQuery.of(context).size;
     return ElevatedButton(
       child: InkWell(
@@ -475,7 +468,7 @@ Map? form;
       },
     );
   }
-  
+
   Widget showMoneyTable() {
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -483,26 +476,26 @@ Map? form;
         color: Colors.grey,
       ),
       children: [
-
-         _getTableHeader("အကြောင်းအရာများ", [
-              "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
-              "${result!['fee']['name'] ?? '-'} KVA"
-            ]),
-            getTableBodyDetail(
-                "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
-            getTableBodyDetail(
-                "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
-            getTableBodyDetail(
-                "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
-            getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
-                result!['fee']['registration_fee'] ?? '-'),
-                getTableBodyDetail("composit box", result!['fee']['composit_box'] ?? '-'),
-            getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
+        _getTableHeader("အကြောင်းအရာများ", [
+          "ကောက်ခံရမည့်နှုန်းထား (ကျပ်)",
+          "${result!['fee']['name'] ?? '-'} KVA"
+        ]),
+        getTableBodyDetail(
+            "မီတာသတ်မှတ်ကြေး", result!['fee']['assign_fee'] ?? '-'),
+        getTableBodyDetail(
+            "အာမခံစဘော်ငွေ", result!['fee']['deposit_fee'] ?? '-'),
+        getTableBodyDetail(
+            "လိုင်းကြိုး (ဆက်သွယ်ခ)", result!['fee']['string_fee'] ?? '-'),
+        getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
+            result!['fee']['registration_fee'] ?? '-'),
+        getTableBodyDetail(
+            "composit box", result!['fee']['composit_box'] ?? '-'),
+        getTableFooter("စုစုပေါင်း", result!['fee']['total'].toString()),
       ],
     );
   }
 
-   Widget showForm() {
+  Widget showForm() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Column(
@@ -585,7 +578,6 @@ Map? form;
       ),
     );
   }
-
 
   Widget multiOne(List files, String column, String title) {
     return Column(
@@ -699,7 +691,7 @@ Map? form;
     }
   }
 
-TableRow _getTableHeader(String d1, List d2) {
+  TableRow _getTableHeader(String d1, List d2) {
     return TableRow(children: [
       Container(
         padding: EdgeInsets.all(10),
@@ -825,19 +817,18 @@ TableRow _getTableHeader(String d1, List d2) {
       showRecommendCheck = !showRecommendCheck;
     });
   }
-  
-   ownershipToggleButton() {
+
+  ownershipToggleButton() {
     setState(() {
       showOwernshipCheck = !showOwernshipCheck;
     });
   }
-  
+
   farmlandToggleButton() {
     setState(() {
       showFarmLandCheck = !showFarmLandCheck;
     });
   }
-  
 
   void sendDialog(String title, String content, BuildContext context) {
     showDialog(

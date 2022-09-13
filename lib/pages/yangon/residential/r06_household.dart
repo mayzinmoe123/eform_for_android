@@ -385,9 +385,8 @@ class _R06HouseHoldState extends State<R06HouseHold> {
       request.fields["form_id"] = formId.toString();
 
       // Headers
-      request.headers.addAll({
-        'Accept': 'application/json',
-      });
+      request.headers.addAll(
+          {'Content-type': 'application/json', 'Accept': 'application/json'});
 
       List<http.MultipartFile> frontMultiFiles = [];
       for (int i = 0; i < frontFiles.length; i++) {
@@ -395,18 +394,20 @@ class _R06HouseHoldState extends State<R06HouseHold> {
             await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
         frontMultiFiles.add(file);
       }
-      print('frontMultiFiles $frontMultiFiles');
       request.files.addAll(frontMultiFiles);
 
-      // List<http.MultipartFile> backMultiFiles = [];
-      // for (int i = 0; i < backFiles.length; i++) {
-      //   var file =
-      //       await http.MultipartFile.fromPath('back[]', backFiles[i].path);
-      //   backMultiFiles.add(file);
-      // }
-      // request.files.addAll(backMultiFiles);
+      List<http.MultipartFile> backMultiFiles = [];
+      for (int i = 0; i < backFiles.length; i++) {
+        var file =
+            await http.MultipartFile.fromPath('back[]', backFiles[i].path);
+        backMultiFiles.add(file);
+      }
+      request.files.addAll(backMultiFiles);
 
       var response = await request.send();
+
+      print('request $request');
+      print('response $response');
 
       //Get the response from the server
       var responseData = await response.stream.toBytes();

@@ -399,6 +399,10 @@ class _TForm06HouseholdState extends State<TForm06Household> {
         var file =
             await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
         frontMultiFiles.add(file);
+
+        var defaultPic =
+            await http.MultipartFile.fromPath('front2[]', frontFiles[i].path);
+        frontMultiFiles.add(defaultPic);
       }
       request.files.addAll(frontMultiFiles);
 
