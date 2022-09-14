@@ -16,7 +16,7 @@ class CpForm11GovAllowMdy extends StatefulWidget {
 class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
   int? formId;
   bool isLoading = false;
-   bool edit = false;
+  bool edit = false;
   List frontFiles = [];
   bool frontFilesError = false;
 
@@ -354,6 +354,11 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
     var url = Uri.parse("${apiPath}api/ministry_permit");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 
@@ -448,13 +453,13 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_cp_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'mdy_cp_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

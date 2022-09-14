@@ -565,7 +565,7 @@ class _COverviewState extends State<COverview> {
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မှူး/မြို့နယ်လျှပ်စစ်အင်ဂျင်နီယာ"),
-              Text("  လျှပ်စစ်ဓာတ်အားဖြန့်ဖြူးရေးလုပ်ငန်း"),
+              Text("  မန္တလေးလျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
               Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),

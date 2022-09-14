@@ -464,7 +464,7 @@ class _ROverviewState extends State<ROverview> {
                   alignment: Alignment.centerLeft,
                   child: Container(child: Text("သို့"))),
               Text("  မြို့နယ်လျှပ်စစ်မန်နေဂျာ"),
-              Text("  ရန်ကုန်လျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်"),
+              Text("  မန္တလေးလျှပ်စစ်ဓာတ်အားပေးရေးကော်ပိုရေးရှင်း"),
               Text("  ${result!['township_name'] ?? '-'}"),
             ],
           ),

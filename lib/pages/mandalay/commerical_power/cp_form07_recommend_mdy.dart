@@ -16,7 +16,7 @@ class CpForm07RecommendMdy extends StatefulWidget {
 class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
   int? formId;
   bool isLoading = false;
-   bool edit = false;
+  bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   File? backFile;
@@ -46,8 +46,8 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
     setState(() {
       formId = data['form_id'];
     });
-    
-if (data['edit'] != null) {
+
+    if (data['edit'] != null) {
       setState(() {
         edit = data['edit'];
       });
@@ -347,6 +347,11 @@ if (data['edit'] != null) {
     var url = Uri.parse("${apiPath}api/recommanded");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
       var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
@@ -434,13 +439,14 @@ if (data['edit'] != null) {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_cp_form08_ownership',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(
+          context, 'mdy_cp_form08_ownership',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

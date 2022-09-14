@@ -16,7 +16,7 @@ class CpForm05NRCMdy extends StatefulWidget {
 class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
   int? formId;
   bool isLoading = false;
-   bool edit = false;
+  bool edit = false;
   File? frontFile;
   bool frontFileError = false;
   File? backFile;
@@ -337,6 +337,11 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
     var url = Uri.parse("${apiPath}api/nrc");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
       var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
@@ -434,13 +439,14 @@ class _CpForm05NRCMdyState extends State<CpForm05NRCMdy> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_cp_form06_household',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(
+          context, 'mdy_cp_form06_household',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

@@ -394,6 +394,11 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
     var url = Uri.parse("${apiPath}api/license");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 

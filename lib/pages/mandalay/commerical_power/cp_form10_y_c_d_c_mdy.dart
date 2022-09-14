@@ -18,7 +18,7 @@ class _CpForm10YCDCMdyState extends State<CpForm10YCDCMdy> {
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
-   bool edit = false;
+  bool edit = false;
 
   final subTitle = const Text(
     "စည်ပင်သာယာလိုင်စင် ဓါတ်ပုံ",
@@ -353,6 +353,11 @@ class _CpForm10YCDCMdyState extends State<CpForm10YCDCMdy> {
     var url = Uri.parse("${apiPath}api/city_license");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 
@@ -447,13 +452,14 @@ class _CpForm10YCDCMdyState extends State<CpForm10YCDCMdy> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_cp_form11_gov_allow',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(
+          context, 'mdy_cp_form11_gov_allow',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

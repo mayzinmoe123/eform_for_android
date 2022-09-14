@@ -390,6 +390,11 @@ class _TForm06HouseholdMdyState extends State<TForm06HouseholdMdy> {
     var url = Uri.parse("${apiPath}api/form10");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 

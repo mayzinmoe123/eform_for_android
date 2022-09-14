@@ -323,6 +323,11 @@ class _CForm11YCDCMdyState extends State<CForm11YCDCMdy> {
     var url = Uri.parse("${apiPath}api/dc");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
       var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);

@@ -346,6 +346,11 @@ class _RForm07RecommendMdyState extends State<RForm07RecommendMdy> {
     var url = Uri.parse("${apiPath}api/recommanded");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
       var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);

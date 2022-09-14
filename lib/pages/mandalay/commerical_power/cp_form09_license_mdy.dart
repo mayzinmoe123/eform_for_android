@@ -355,6 +355,11 @@ class _CpForm09LicenseMdyState extends State<CpForm09LicenseMdy> {
     var url = Uri.parse("${apiPath}api/license");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 
@@ -449,13 +454,13 @@ class _CpForm09LicenseMdyState extends State<CpForm09LicenseMdy> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_cp_form10_y_c_d_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'mdy_cp_form10_y_c_d_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {

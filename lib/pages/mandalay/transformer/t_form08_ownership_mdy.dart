@@ -361,6 +361,11 @@ class _TForm08OwnershipMdyState extends State<TForm08OwnershipMdy> {
     var url = Uri.parse("${apiPath}api/ownership");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 

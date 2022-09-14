@@ -15,7 +15,7 @@ class RpForm08OwnershipMdy extends StatefulWidget {
 
 class _RpForm08OwnershipMdyState extends State<RpForm08OwnershipMdy> {
   int? formId;
-  bool edit =false;
+  bool edit = false;
   bool isLoading = false;
   List frontFiles = [];
   bool frontFilesError = false;
@@ -360,6 +360,11 @@ class _RpForm08OwnershipMdyState extends State<RpForm08OwnershipMdy> {
     var url = Uri.parse("${apiPath}api/ownership");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 
@@ -451,16 +456,16 @@ class _RpForm08OwnershipMdyState extends State<RpForm08OwnershipMdy> {
   }
 
   void goToNextPage() async {
-     if (edit) {
+    if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_rp_overview',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'mdy_rp_overview',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('form id is $formId');
+    }
   }
 
   void goToBack() {
