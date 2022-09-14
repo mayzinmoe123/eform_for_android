@@ -417,15 +417,19 @@ class _CForm08OwnershipState extends State<CForm08Ownership> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

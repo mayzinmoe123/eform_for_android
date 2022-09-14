@@ -435,15 +435,19 @@ class _TForm09LicenseState extends State<TForm09License> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

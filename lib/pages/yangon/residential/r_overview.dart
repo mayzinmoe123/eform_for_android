@@ -763,16 +763,20 @@ class _ROverviewState extends State<ROverview> {
     ]);
   }
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+ void stopLoading() {
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   formToggleButton() {

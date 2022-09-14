@@ -250,15 +250,19 @@ class _R02PromiseState extends State<R02Promise> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void goToNextPage(BuildContext context) {

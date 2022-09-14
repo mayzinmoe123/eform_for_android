@@ -397,16 +397,20 @@ class _RpForm07RecommendState extends State<RpForm07Recommend> {
     }
   }
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+ void stopLoading() {
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

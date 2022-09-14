@@ -411,16 +411,20 @@ class _TForm13PowerState extends State<TForm13Power> {
     }
   }
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+ void stopLoading() {
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

@@ -246,16 +246,20 @@ class _CForm02PromiseState extends State<CForm02Promise> {
         context, '/', (Route<dynamic> route) => false);
   }
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+ void stopLoading() {
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void goToNextPage(BuildContext context) {

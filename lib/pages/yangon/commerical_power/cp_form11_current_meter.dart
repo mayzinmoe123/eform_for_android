@@ -410,15 +410,19 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
