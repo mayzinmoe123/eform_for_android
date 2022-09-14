@@ -391,6 +391,11 @@ class _TForm06HouseholdState extends State<TForm06Household> {
     var url = Uri.parse("${apiPath}api/form10");
     try {
       var request = await http.MultipartRequest('POST', url);
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
 
@@ -399,10 +404,6 @@ class _TForm06HouseholdState extends State<TForm06Household> {
         var file =
             await http.MultipartFile.fromPath('front[]', frontFiles[i].path);
         frontMultiFiles.add(file);
-
-        var defaultPic =
-            await http.MultipartFile.fromPath('front2[]', frontFiles[i].path);
-        frontMultiFiles.add(defaultPic);
       }
       request.files.addAll(frontMultiFiles);
 

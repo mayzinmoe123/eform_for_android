@@ -334,15 +334,18 @@ class _TForm10DcState extends State<TForm10Dc> {
     var url = Uri.parse("${apiPath}api/dc");
     try {
       var request = await http.MultipartRequest('POST', url);
+
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
+
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
       if (frontFile != null) {
         var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
         request.files.add(pic1);
-
-        var defaultPic =
-            await http.MultipartFile.fromPath('front', frontFile!.path);
-        request.files.add(defaultPic);
       }
       var response = await request.send();
 
