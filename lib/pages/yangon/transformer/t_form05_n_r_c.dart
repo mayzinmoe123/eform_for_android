@@ -41,7 +41,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
     textAlign: TextAlign.center,
   );
 
- Widget fileNoti = Container(
+  Widget fileNoti = Container(
     color: Colors.amber[700],
     padding: EdgeInsets.all(10.0),
     child: Text(
@@ -50,7 +50,6 @@ class _TForm05NRCState extends State<TForm05NRC> {
       textAlign: TextAlign.center,
     ),
   );
-  
 
   @override
   Widget build(BuildContext context) {
@@ -179,15 +178,18 @@ class _TForm05NRCState extends State<TForm05NRC> {
 
   Widget front() {
     return (frontFile == null)
-        ? uploadWidget(
-            'မှတ်ပုံတင်အရှေ့ဘက်', true, frontFileError, frontExplorer)
-        : previewWidget('မှတ်ပုံတင်အရှေ့ဘက်', true, frontFile!, frontClear);
+        ? uploadWidget('မှတ်ပုံတင်/သာသနာရေးကတ် အရှေ့ဘက်', true, frontFileError,
+            frontExplorer)
+        : previewWidget(
+            'မှတ်ပုံတင်/သာသနာရေးကတ် အရှေ့ဘက်', true, frontFile!, frontClear);
   }
 
   Widget back() {
     return (backFile == null)
-        ? uploadWidget('မှတ်ပုံတင်အနောက်ဘက်', true, backFileError, backExplorer)
-        : previewWidget('မှတ်ပုံတင်အနောက်ဘက်', true, backFile!, backClear);
+        ? uploadWidget('မှတ်ပုံတင်/သာသနာရေးကတ် အနောက်ဘက်', true, backFileError,
+            backExplorer)
+        : previewWidget(
+            'မှတ်ပုံတင်/သာသနာရေးကတ် အနောက်ဘက်', true, backFile!, backClear);
   }
 
   Widget uploadWidget(String label, bool isRequired, bool errorState,
@@ -372,7 +374,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
         'Content-type': 'application/json',
         'Accept': 'application/json',
       });
-      
+
       var pic1 = await http.MultipartFile.fromPath('front', frontFile!.path);
       request.files.add(pic1);
       var pic2 = await http.MultipartFile.fromPath('back', backFile!.path);
@@ -417,10 +419,10 @@ class _TForm05NRCState extends State<TForm05NRC> {
   }
 
   void startLoading() {
-    if(this.mounted){
+    if (this.mounted) {
       setState(() {
-      isLoading = true;
-    });
+        isLoading = true;
+      });
     }
   }
 
