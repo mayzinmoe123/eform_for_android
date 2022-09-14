@@ -589,7 +589,7 @@ class _CpOverviewState extends State<CpOverview> {
         getTableBodyDetail("အာမခံစဘော်ငွေ", "${result!['fee']['deposit_fee']}"),
         getTableBodyDetail(
             "လိုင်းကြိုး (ဆက်သွယ်ခ)", "${result!['fee']['string_fee']}"),
-        getTableBodyDetail("မီးဆက်ခ", "${result!['fee']['service_fee']}"),
+        // getTableBodyDetail("မီးဆက်ခ", "${result!['fee']['service_fee']}"),
         getTableBodyDetail("မီတာလျှောက်လွှာမှတ်ပုံတင်ကြေး",
             "${result!['fee']['registration_fee']}"),
         getTableBodyDetail("composit box", "${result!['fee']['composit_box']}"),
