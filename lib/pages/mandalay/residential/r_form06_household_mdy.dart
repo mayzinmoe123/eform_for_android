@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../utils/helper/file_noti.dart';
 
 class RForm06HouseholdMdy extends StatefulWidget {
   const RForm06HouseholdMdy({Key? key}) : super(key: key);
@@ -36,6 +37,16 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
     "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+  Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -113,6 +124,8 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),
@@ -430,15 +443,19 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

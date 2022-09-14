@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../utils/helper/file_noti.dart';
 
 class TForm09LicenseMdy extends StatefulWidget {
   const TForm09LicenseMdy({Key? key}) : super(key: key);
@@ -34,6 +35,16 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
     "လုပ်ငန်းသုံးရန် မဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည် ကိုနှိပ်ပါ။",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+  Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -110,6 +121,8 @@ class _TForm09LicenseMdyState extends State<TForm09LicenseMdy> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),

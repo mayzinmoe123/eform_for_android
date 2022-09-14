@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../utils/helper/file_noti.dart';
 
 class TForm10YCDCMdy extends StatefulWidget {
   const TForm10YCDCMdy({Key? key}) : super(key: key);
@@ -35,6 +36,16 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
     "အလင်းရောင်သုံး ထရန်ဖော်မာဖြစ်ပါက ဖြည့်သွင်းရန်မလိုအပ်ပါ။ ဆက်လက်လုပ်ဆောင်မည်ကို နှိပ်ပါ။!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+  Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -111,6 +122,8 @@ class _TForm10YCDCMdyState extends State<TForm10YCDCMdy> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidget(),
               SizedBox(height: 20),

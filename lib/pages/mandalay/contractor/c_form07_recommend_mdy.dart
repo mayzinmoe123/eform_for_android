@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../../../utils/helper/file_noti.dart';
 
 class CForm07RecommendMdy extends StatefulWidget {
   const CForm07RecommendMdy({Key? key}) : super(key: key);
@@ -38,6 +39,16 @@ class _CForm07RecommendMdyState extends State<CForm07RecommendMdy> {
     "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+  Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -114,6 +125,8 @@ class _CForm07RecommendMdyState extends State<CForm07RecommendMdy> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidget(),
               SizedBox(height: 20),

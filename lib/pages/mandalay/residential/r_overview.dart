@@ -720,15 +720,19 @@ class _ROverviewState extends State<ROverview> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   formToggleButton() {
@@ -788,6 +792,7 @@ class _ROverviewState extends State<ROverview> {
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
+                  Navigator.pop(context);
                 },
                 child: title != 'Unauthorized'
                     ? Text(

@@ -589,15 +589,19 @@ class _RForm04InfoMdyState extends State<RForm04InfoMdy> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   void showSnackBar(BuildContext context, String text) {
