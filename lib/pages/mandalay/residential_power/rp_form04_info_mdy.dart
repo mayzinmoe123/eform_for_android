@@ -18,7 +18,7 @@ class RpForm04InfoMdy extends StatefulWidget {
 class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   int? formId;
   bool isLoading = true;
-   bool edit = false;
+  bool edit = false;
   ApplicationFormModel? appForm;
 
   String? selectedJob;
@@ -140,14 +140,14 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   }
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final data = (ModalRoute.of(context)!.settings.arguments ??
         <String, dynamic>{}) as Map;
     setState(() {
       formId = data['form_id'];
     });
     print('info form_id is $formId');
-     if (data['edit'] != null && appForm == null) {
+    if (data['edit'] != null && appForm == null) {
       setState(() {
         edit = data['edit'];
         appForm = data['appForm'];
@@ -417,7 +417,7 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
       child: DropdownButtonFormField(
-        value: selectedJob,
+          value: selectedJob,
           hint: requiredText("အလုပ်အကိုင်"),
           decoration: InputDecoration(
             label: requiredText('အလုပ်အကိုင်'),
@@ -581,15 +581,19 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   void showSnackBar(BuildContext context, String text) {
@@ -650,17 +654,17 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
   }
 
   void goToNextPage() async {
-     if (edit) {
+    if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_rp_form05_n_r_c',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    stopLoading();
-    print('info-nrc-page form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'mdy_rp_form05_n_r_c',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      stopLoading();
+      print('info-nrc-page form id is $formId');
+    }
   }
 
   void goToBack() {

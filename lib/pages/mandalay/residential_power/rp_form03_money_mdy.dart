@@ -237,15 +237,19 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
@@ -298,13 +302,13 @@ class _RpForm03MoneyMdyState extends State<RpForm03MoneyMdy> {
     if (edit) {
       goToBack();
     } else {
-    final result = await Navigator.pushNamed(context, 'mdy_rp_form04_info',
-        arguments: {'form_id': formId});
-    setState(() {
-      formId = (result ?? 0) as int;
-    });
-    print('money form id is $formId');
-  }
+      final result = await Navigator.pushNamed(context, 'mdy_rp_form04_info',
+          arguments: {'form_id': formId});
+      setState(() {
+        formId = (result ?? 0) as int;
+      });
+      print('money form id is $formId');
+    }
   }
 
   void goToHomePage(BuildContext context) {

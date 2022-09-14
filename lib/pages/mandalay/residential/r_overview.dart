@@ -792,7 +792,6 @@ class _ROverviewState extends State<ROverview> {
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
-                  Navigator.pop(context);
                 },
                 child: title != 'Unauthorized'
                     ? Text(

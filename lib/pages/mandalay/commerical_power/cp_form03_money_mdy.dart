@@ -225,15 +225,19 @@ class _CpForm03MoneyMdyState extends State<CpForm03MoneyMdy> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

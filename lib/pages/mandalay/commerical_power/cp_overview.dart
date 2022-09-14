@@ -840,15 +840,19 @@ class _CpOverviewState extends State<CpOverview> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
-      isLoading = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
   }
 
   formToggleButton() {
@@ -932,7 +936,6 @@ class _CpOverviewState extends State<CpOverview> {
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
-                  Navigator.pop(context);
                 },
                 child: title != 'Unauthorized'
                     ? Text(
