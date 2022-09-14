@@ -423,17 +423,21 @@ class _C06HouseholdState extends State<C06Household> {
   }
 
   void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
-
+  
   void showAlertDialog(String title, String content, BuildContext context) {
     showDialog(
         context: context,

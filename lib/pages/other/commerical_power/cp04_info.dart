@@ -585,16 +585,20 @@ class _Cp04InfoState extends State<Cp04Info> {
     }
   }
 
-  void stopLoading() {
-    setState(() {
-      isLoading = false;
-    });
+ void stopLoading() {
+    if (this.mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void startLoading() {
-    setState(() {
+    if(this.mounted){
+      setState(() {
       isLoading = true;
     });
+    }
   }
 
   void showSnackBar(BuildContext context, String text) {
