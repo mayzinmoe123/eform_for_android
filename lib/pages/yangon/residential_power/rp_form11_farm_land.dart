@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../utils/helper/file_noti.dart';
+
 class RpForm11FarmLand extends StatefulWidget {
   const RpForm11FarmLand({Key? key}) : super(key: key);
 
@@ -34,6 +36,16 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
     "လယ်ယာပိုင်မြေမဟုတ်ပါက ဖြည့်သွင်းရန်မလိုအပ်ပါ။ လယ်ယာပိုင်မြေမဟုတ်ပါက ဆက်လက်လုပ်ဆောင်မည်ကို နှိပ်ပါ",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+  Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -111,6 +123,8 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),
@@ -382,6 +396,12 @@ class _RpForm11FarmLandState extends State<RpForm11FarmLand> {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
+
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
 
       List<http.MultipartFile> frontMultiFiles = [];
       for (int i = 0; i < frontFiles.length; i++) {

@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../utils/helper/file_noti.dart';
+
 class RpForm06Household extends StatefulWidget {
   const RpForm06Household({Key? key}) : super(key: key);
 
@@ -36,6 +38,16 @@ class _RpForm06HouseholdState extends State<RpForm06Household> {
     "* ကြယ်အမှတ်အသားပါသော နေရာများကို မဖြစ်မနေ ဖြည့်သွင်းပေးပါရန်!",
     style: TextStyle(color: Colors.red),
     textAlign: TextAlign.center,
+  );
+
+   Widget fileNoti = Container(
+    color: Colors.amber[700],
+    padding: EdgeInsets.all(10.0),
+    child: Text(
+      getfileNoti(),
+      style: TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+    ),
   );
 
   @override
@@ -106,6 +118,8 @@ class _RpForm06HouseholdState extends State<RpForm06Household> {
               subTitle,
               SizedBox(height: 10),
               noti,
+              SizedBox(height: 13),
+              fileNoti,
               SizedBox(height: 13),
               fileWidgets(),
               SizedBox(height: 20),
@@ -364,6 +378,12 @@ class _RpForm06HouseholdState extends State<RpForm06Household> {
       var request = await http.MultipartRequest('POST', url);
       request.fields["token"] = token;
       request.fields["form_id"] = formId.toString();
+
+      request.headers.addAll({
+        'Authorization': token,
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
 
       List<http.MultipartFile> frontMultiFiles = [];
       for (int i = 0; i < frontFiles.length; i++) {
