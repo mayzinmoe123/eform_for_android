@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
           Icons.person,
           size: 14.0,
         ),
-        label: Text("အီးမေးလ်လိပ်စာ"),
+        label: Text("အီးမေးလ်လိပ်စာ / ဖုန်းနံပါတ်"),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
       ),
       style: const TextStyle(
@@ -75,10 +75,11 @@ class _LoginState extends State<Login> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return "အီးမေးလ်လိပ်စာထည့်ပါ";
-        } else if (!EmailValidator.validate(value)) {
-          return "မှန်ကန်သောအီးမေးလ်လိပ်စာထည့်ပါ";
+          return "အီးမေးလ်လိပ်စာ / ဖုန်းနံပါတ် ထည့်ပါ";
         }
+        // else if (!EmailValidator.validate(value)) {
+        //   return "မှန်ကန်သောအီးမေးလ်လိပ်စာထည့်ပါ";
+        // }
         return null;
       },
     );
@@ -260,6 +261,11 @@ class _LoginState extends State<Login> {
           'Connection timeout!',
           'Error occured while Communication with Server. Check your internet connection',
           context);
+    } on Exception catch (e) {
+      print('http error $e');
+      stopLoading();
+      showAlertDialog('Connection timeout!',
+          'Error occured while Communication with Server.', context);
     }
   }
 
