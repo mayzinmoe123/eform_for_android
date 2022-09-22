@@ -53,9 +53,9 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? loading() : Scaffold(
       appBar: applicatonBar(context),
-      body: isLoading ? loading() : body(context),
+      body:  body(context),
     );
   }
 
@@ -78,15 +78,18 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။a')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 

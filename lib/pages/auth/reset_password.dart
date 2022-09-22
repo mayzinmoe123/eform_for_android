@@ -28,7 +28,7 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? loading() : Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -36,7 +36,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           style: TextStyle(fontSize: 18),
         ),
       ),
-      body: isLoading ? loading() : body(context),
+      body:  body(context),
     );
   }
 

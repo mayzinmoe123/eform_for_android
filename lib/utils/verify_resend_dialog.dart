@@ -32,9 +32,9 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
       email = email ?? widget.email;
       password = password ?? widget.password;
     });
-    return AlertDialog(
+    return isLoading ? loading() : AlertDialog(
       title: Text(title!),
-      content: isLoading ? loading() : Text(content!),
+      content: Text(content!),
       actions: <Widget>[
         !isSend && !isLoading
             ? FlatButton(
@@ -68,15 +68,17 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
   }
 
   Widget loading() {
-    return SizedBox(
-      height: 150,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(child: CircularProgressIndicator()),
-          SizedBox(height: 10),
-          Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
+        ),
       ),
     );
   }

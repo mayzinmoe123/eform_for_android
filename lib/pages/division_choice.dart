@@ -73,10 +73,10 @@ class _DivisionChoiceState extends State<DivisionChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? loading() :  Scaffold(
       key: scaffoldKey,
       appBar: applicationBar(context),
-      body: isLoading ? loading() : body(context),
+      body: body(context),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -124,13 +124,18 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(height: 10),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။a')
+          ],
+        ),
+      ),
     );
   }
 

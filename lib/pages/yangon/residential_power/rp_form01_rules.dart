@@ -69,10 +69,10 @@ class _RpForm01RulesState extends State<RpForm01Rules> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return isLoading ? loading() : WillPopScope(
       child: Scaffold(
         appBar: applicationBar(context),
-        body: isLoading ? loading() : body(),
+        body:  body(),
       ),
       onWillPop: () async {
         goToBack();
@@ -107,15 +107,18 @@ class _RpForm01RulesState extends State<RpForm01Rules> {
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 

@@ -64,10 +64,10 @@ class _TForm05NRCState extends State<TForm05NRC> {
         edit = data['edit'];
       });
     }
-    return WillPopScope(
+    return  isLoading ? loading() : WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
-        body: isLoading ? loading() : body(context),
+        body:  body(context),
       ),
       onWillPop: () async {
         goToBack();
@@ -102,16 +102,19 @@ class _TForm05NRCState extends State<TForm05NRC> {
     );
   }
 
-  Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+ Widget loading() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 

@@ -62,10 +62,10 @@ class _C06HouseholdState extends State<C06Household> {
         edit = data['edit'];
       });
     }
-    return WillPopScope(
+    return isLoading ? loading() : WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
-        body: isLoading ? loading() : body(context),
+        body: body(context),
       ),
       onWillPop: () async {
         goToBack();

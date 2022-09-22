@@ -78,9 +78,9 @@ class _COverviewState extends State<COverview> {
           formText =
               "          အထက်ပါကိစ္စနှင့်ပတ်သက်၍ ${result!['address'] ?? '-'}တွင် ကန်ထရိုက်တိုက် (${result!['c_form']['room_count'] ?? '-'} ခန်း) အတွက် အိမ်သုံးမီတာ(${result!['c_form']['meter'] ?? '-'}လုံး)၊ ";
 
-          if (result!['c_form']['pMeter10'] > 0 ||
-              result!['c_form']['pMeter10'] > 0 ||
-              result!['c_form']['pMeter10'] > 0) {
+          if ((result!['c_form']['pMeter10']??0) > 0 ||
+              (result!['c_form']['pMeter10']??0) > 0 ||
+              (result!['c_form']['pMeter10']??0) > 0) {
             formText =
                 "$formText ပါဝါမီတာ(${result!['c_form']['pMeter10'] + result!['c_form']['pMeter20'] + result!['c_form']['pMeter30']}လုံး)";
           }
@@ -115,10 +115,10 @@ class _COverviewState extends State<COverview> {
       formId = data['form_id'];
     });
     print('form_id is $formId');
-    return WillPopScope(
+    return isLoading ? loading() : WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
-        body: isLoading ? loading() : body(context),
+        body:  body(context),
       ),
       onWillPop: () async {
         goToBack();
@@ -154,15 +154,18 @@ class _COverviewState extends State<COverview> {
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 
