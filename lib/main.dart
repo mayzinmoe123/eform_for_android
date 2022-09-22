@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/auth/reset_password.dart';
 import 'package:flutter_application_1/utils/global.dart';
@@ -18,19 +19,29 @@ import 'yangon.dart';
 import 'mandalay.dart';
 import 'other.dart';
 
-void main() {
+void main()async {
   HttpOverrides.global = MyHttpOverrides();
-  runApp(const MyApp());
-}
+   WidgetsFlutterBinding.ensureInitialized();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
+      // print(token);
+     runApp(MyApp(token: token,));
+} 
+
+
+
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final String? token;
+  const MyApp({Key? key,this.token}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState(token);
 }
 
 class _MyAppState extends State<MyApp> {
+  final String? token;
+  _MyAppState(this.token);
   @override
   void initState() {
     super.initState();
@@ -39,11 +50,13 @@ class _MyAppState extends State<MyApp> {
 
   initializePrefs() async {
     String apiPath = "http://192.168.99.134/eform/public/";
+    // String apiPath = "http://192.168.99.248/eform/public/";
 
     var url =
         Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
     var response = await http.post(url, body: {});
     Map data = jsonDecode(response.body);
+    print(data);
 
     if (data['success'] == true) {
       apiPath = data['path'];
@@ -55,12 +68,20 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       prefs.setString('api_path', apiPath);
     });
+
   }
+
+
+
 
   Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
     Map<String, Widget Function(BuildContext)> allLink = {};
+
+
     Map<String, Widget Function(BuildContext)> initialLink = {
-      '/': (context) => Login(),
+      // var isLogIn = 
+      
+      '/': (context) =>  token == null ? Login() : DivisionChoice() ,
       '/login': (context) => Login(),
       '/register': (context) => Register(),
       '/reset_password': (context) => ResetPassword(),
@@ -104,4 +125,7 @@ class MyHttpOverrides extends HttpOverrides {
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
   }
+
 }
+
+

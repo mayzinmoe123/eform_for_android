@@ -134,7 +134,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           children: [
             Center(child: CircularProgressIndicator()),
             SizedBox(height: 10),
-            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။a')
           ],
         ),
       ),

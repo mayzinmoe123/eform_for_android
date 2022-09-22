@@ -28,7 +28,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading ? loading() : Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -36,18 +36,23 @@ class _RegisterState extends State<Register> {
           style: TextStyle(fontSize: 18),
         ),
       ),
-      body: isLoading ? loading() : body(context),
+      body:  body(context),
     );
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(height: 10),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
+        ),
+      ),
     );
   }
 

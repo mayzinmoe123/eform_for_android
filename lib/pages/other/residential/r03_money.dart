@@ -29,10 +29,10 @@ class _R03MoneyState extends State<R03Money> {
         edit = data['edit'];
       });
     }
-    return WillPopScope(
+    return isLoading ? loading() : WillPopScope(
       child: Scaffold(
         appBar: applicationBar(),
-        body: isLoading ? loading() : body(context),
+        body:  body(context),
       ),
       onWillPop: () async {
         goToBack();
@@ -62,16 +62,19 @@ class _R03MoneyState extends State<R03Money> {
     );
   }
 
-  Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+ Widget loading() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 
@@ -172,7 +175,7 @@ class _R03MoneyState extends State<R03Money> {
     ]);
   }
 
-  Widget _makeChooseBtn(String type) {
+   Widget _makeChooseBtn(String type) {
     return Container(
       margin: EdgeInsets.all(14),
       child: ElevatedButton(
@@ -184,10 +187,7 @@ class _R03MoneyState extends State<R03Money> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         ),
-        child: Text(
-          "ရွေးချယ်မည်",
-          style: TextStyle(fontSize: 8),
-        ),
+        child: Icon(Icons.check, color: Colors.white, size: 20),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/utils/global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
@@ -167,14 +168,19 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(height: 10),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+ Widget loading() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
+        ),
+      ),
     );
   }
 
@@ -226,8 +232,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading ? loading() : body(),
+    return isLoading ? loading() : Scaffold(
+      body:  body(),
     );
   }
 
@@ -245,6 +251,8 @@ class _LoginState extends State<Login> {
       if (data['success'] == true) {
         stopLoading();
         loginSuccess(data);
+        print(data);
+        // Global.auth.add(data['token']);
       } else {
         stopLoading();
         if (data['title'] == 'Verify Your Email!') {

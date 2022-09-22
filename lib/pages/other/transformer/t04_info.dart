@@ -164,7 +164,7 @@ class _TForm04InfoState extends State<TForm04Info> {
         divisionId = nullCheckNum(appForm!.divStateId);
       });
     }
-    return WillPopScope(
+    return  isLoading ? loading() : WillPopScope(
       onWillPop: () async {
         goToBack();
         return true;
@@ -172,7 +172,7 @@ class _TForm04InfoState extends State<TForm04Info> {
       child: WillPopScope(
         child: Scaffold(
           appBar: applicationBar(),
-          body: isLoading ? loading() : body(context),
+          body: body(context),
         ),
         onWillPop: () async {
           goToBack();
@@ -229,15 +229,18 @@ class _TForm04InfoState extends State<TForm04Info> {
   }
 
   Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(
-          height: 10,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
         ),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+      ),
     );
   }
 
