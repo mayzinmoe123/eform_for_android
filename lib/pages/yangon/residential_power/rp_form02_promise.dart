@@ -225,7 +225,7 @@ class _RpForm02PromiseState extends State<RpForm02Promise> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -242,7 +242,7 @@ class _Cp01RulesState extends State<Cp01Rules> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

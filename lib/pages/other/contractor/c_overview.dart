@@ -933,7 +933,7 @@ class _COverviewState extends State<COverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -941,7 +941,7 @@ class _COverviewState extends State<COverview> {
                     ? Text('မပြုလုပ်ပါ')
                     : logoutButton(),
               ),
-              FlatButton(
+              MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
@@ -966,7 +966,7 @@ class _COverviewState extends State<COverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

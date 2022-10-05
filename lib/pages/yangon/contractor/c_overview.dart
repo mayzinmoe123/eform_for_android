@@ -1091,7 +1091,7 @@ Widget loading() {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -1099,7 +1099,7 @@ Widget loading() {
                     ? Text('မပြုလုပ်ပါ')
                     : logoutButton(),
               ),
-              FlatButton(
+              MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
@@ -1124,7 +1124,7 @@ Widget loading() {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

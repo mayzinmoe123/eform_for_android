@@ -40,14 +40,19 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  Widget loading() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: CircularProgressIndicator()),
-        SizedBox(height: 10),
-        Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
-      ],
+   Widget loading() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
+        ),
+      ),
     );
   }
 
@@ -205,7 +210,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

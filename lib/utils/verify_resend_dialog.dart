@@ -37,7 +37,7 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
       content: Text(content!),
       actions: <Widget>[
         !isSend && !isLoading
-            ? FlatButton(
+            ? MaterialButton(
                 color: Colors.red,
                 onPressed: () {
                   if (!isSend) {
@@ -52,7 +52,7 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
               )
             : SizedBox(),
         !isLoading
-            ? FlatButton(
+            ? MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   Navigator.pop(context);

@@ -283,8 +283,8 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
     );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -421,7 +421,7 @@ class _CpForm07RecommendMdyState extends State<CpForm07RecommendMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

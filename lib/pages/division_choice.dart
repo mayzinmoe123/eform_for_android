@@ -342,7 +342,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

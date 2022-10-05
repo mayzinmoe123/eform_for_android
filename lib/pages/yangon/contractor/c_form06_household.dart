@@ -306,8 +306,8 @@ class _CForm06HouseholdState extends State<CForm06Household> {
     // );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -459,7 +459,7 @@ class _CForm06HouseholdState extends State<CForm06Household> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -242,7 +242,7 @@ class _RpForm01RulesMdyState extends State<RpForm01RulesMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

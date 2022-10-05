@@ -274,8 +274,8 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
     );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -425,7 +425,7 @@ class _CpForm05NRCState extends State<CpForm05NRC> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

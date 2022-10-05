@@ -264,8 +264,8 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
     );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -436,7 +436,7 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

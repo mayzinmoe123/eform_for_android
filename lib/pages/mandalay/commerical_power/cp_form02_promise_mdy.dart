@@ -225,7 +225,7 @@ class _CpForm02PromiseMdyState extends State<CpForm02PromiseMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -482,7 +482,7 @@ class _CForm03MeterTypeMdyState extends State<CForm03MeterTypeMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

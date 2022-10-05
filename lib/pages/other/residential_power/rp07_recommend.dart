@@ -283,8 +283,8 @@ class _Rp07RecommendState extends State<Rp07Recommend> {
     );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -421,7 +421,7 @@ class _Rp07RecommendState extends State<Rp07Recommend> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -293,7 +293,7 @@ class _CtForm01RulesState extends State<CtForm01Rules> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

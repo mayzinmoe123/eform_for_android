@@ -640,7 +640,7 @@ class _Rp04InfoState extends State<Rp04Info> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -260,7 +260,7 @@ class _RpForm03MoneyState extends State<RpForm03Money> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

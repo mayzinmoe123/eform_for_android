@@ -255,7 +255,7 @@ class _Cp03MoneyState extends State<Cp03Money> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

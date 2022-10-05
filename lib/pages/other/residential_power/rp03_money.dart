@@ -256,7 +256,7 @@ class _Rp03MoneyState extends State<Rp03Money> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

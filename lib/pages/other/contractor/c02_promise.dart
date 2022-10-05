@@ -222,7 +222,7 @@ class _C02PromiseState extends State<C02Promise> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -427,7 +427,7 @@ class _TForm03MoneyMdyState extends State<TForm03MoneyMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -292,7 +292,7 @@ class _TForm01RulesMdyState extends State<TForm01RulesMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

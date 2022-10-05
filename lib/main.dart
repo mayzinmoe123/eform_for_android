@@ -68,11 +68,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       prefs.setString('api_path', apiPath);
     });
-
   }
-
-
-
 
   Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
     Map<String, Widget Function(BuildContext)> allLink = {};

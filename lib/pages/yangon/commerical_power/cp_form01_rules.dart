@@ -245,7 +245,7 @@ class _CpForm01RulesState extends State<CpForm01Rules> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

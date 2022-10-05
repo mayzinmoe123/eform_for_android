@@ -629,7 +629,7 @@ class _RpForm04InfoMdyState extends State<RpForm04InfoMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -627,7 +627,7 @@ class _CpForm04InfoMdyState extends State<CpForm04InfoMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -488,7 +488,7 @@ class _CtForm03MoneyState extends State<CtForm03Money> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

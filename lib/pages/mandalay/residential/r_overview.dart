@@ -783,7 +783,7 @@ class _ROverviewState extends State<ROverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -791,7 +791,7 @@ class _ROverviewState extends State<ROverview> {
                     ? Text('မပြုလုပ်ပါ')
                     : logoutButton(),
               ),
-              FlatButton(
+              MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
@@ -831,7 +831,7 @@ class _ROverviewState extends State<ROverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -259,7 +259,7 @@ class _RForm03MoneyMdyState extends State<RForm03MoneyMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

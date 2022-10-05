@@ -486,7 +486,7 @@ class _C03MeterTypeState extends State<C03MeterType> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

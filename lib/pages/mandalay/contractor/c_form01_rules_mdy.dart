@@ -241,7 +241,7 @@ class _CForm01RulesMdyState extends State<CForm01RulesMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

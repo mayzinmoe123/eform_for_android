@@ -839,7 +839,7 @@ class _RpOverviewState extends State<RpOverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -847,7 +847,7 @@ class _RpOverviewState extends State<RpOverview> {
                     ? Text('မပြုလုပ်ပါ')
                     : logoutButton(),
               ),
-              FlatButton(
+              MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
@@ -887,7 +887,7 @@ class _RpOverviewState extends State<RpOverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

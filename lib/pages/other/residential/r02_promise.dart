@@ -224,7 +224,7 @@ class _R02PromiseState extends State<R02Promise> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

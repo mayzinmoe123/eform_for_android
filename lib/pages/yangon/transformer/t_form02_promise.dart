@@ -230,7 +230,7 @@ class _TForm02PromiseState extends State<TForm02Promise> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

@@ -252,7 +252,7 @@ class _CpForm03MoneyState extends State<CpForm03Money> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

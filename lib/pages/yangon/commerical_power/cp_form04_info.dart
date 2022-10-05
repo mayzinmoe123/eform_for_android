@@ -627,7 +627,7 @@ class _CpForm04InfoState extends State<CpForm04Info> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

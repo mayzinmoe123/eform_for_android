@@ -582,7 +582,7 @@ class _CForm04InfoState extends State<CForm04Info> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

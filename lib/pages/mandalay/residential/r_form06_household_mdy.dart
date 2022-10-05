@@ -314,8 +314,8 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
     // );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -468,7 +468,7 @@ class _RForm06HouseholdMdyState extends State<RForm06HouseholdMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

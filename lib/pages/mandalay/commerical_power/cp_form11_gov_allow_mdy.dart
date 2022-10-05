@@ -295,8 +295,8 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
     // );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -435,7 +435,7 @@ class _CpForm11GovAllowMdyState extends State<CpForm11GovAllowMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

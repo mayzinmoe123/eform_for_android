@@ -34,13 +34,13 @@ class _LogOutState extends State<LogOut> {
           ),
           content: const Text('Are you sure to logout?'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: const Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(ConfirmAction.CANCEL);
               },
             ),
-            FlatButton(
+            TextButton(
               child: const Text(
                 'LOGOUT',
                 style: TextStyle(color: Colors.red),

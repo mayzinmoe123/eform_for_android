@@ -302,8 +302,8 @@ class _CpForm08OwnershipMdyState extends State<CpForm08OwnershipMdy> {
     // );
   }
 
-  FlatButton imageClear(VoidCallback onPressedFun) {
-    return FlatButton(
+  TextButton imageClear(VoidCallback onPressedFun) {
+    return TextButton(
       onPressed: onPressedFun,
       child: Text(
         'ပုံပယ်ဖျက်မည်',
@@ -442,7 +442,7 @@ class _CpForm08OwnershipMdyState extends State<CpForm08OwnershipMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

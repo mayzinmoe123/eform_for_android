@@ -227,7 +227,7 @@ class _TForm02PromiseMdyState extends State<TForm02PromiseMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

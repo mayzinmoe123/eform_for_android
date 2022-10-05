@@ -226,7 +226,7 @@ class _RForm02PromiseMdyState extends State<RForm02PromiseMdy> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },

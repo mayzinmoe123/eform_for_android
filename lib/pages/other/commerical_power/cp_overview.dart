@@ -847,7 +847,7 @@ class _CpOverviewState extends State<CpOverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -855,7 +855,7 @@ class _CpOverviewState extends State<CpOverview> {
                     ? Text('မပြုလုပ်ပါ')
                     : logoutButton(),
               ),
-              FlatButton(
+              MaterialButton(
                 color: Colors.blue,
                 onPressed: () {
                   sendFile();
@@ -880,7 +880,7 @@ class _CpOverviewState extends State<CpOverview> {
             title: Text(title),
             content: Text(content),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
