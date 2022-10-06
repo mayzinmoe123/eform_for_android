@@ -237,7 +237,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  login(BuildContext context, String email, String password) async {
+  void login(BuildContext context, String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var apiPath = prefs.getString("api_path");
     try {
