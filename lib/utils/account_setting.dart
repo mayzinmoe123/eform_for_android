@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/account_header.dart';
 import 'package:flutter_application_1/utils/account_link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({Key? key}) : super(key: key);
@@ -41,6 +43,8 @@ class _AccountSettingState extends State<AccountSetting> {
               //     Icons.key_outlined, 'စကားဝှက်ပြောင်းလဲရန်', goToAccountInfo),
               AccountLink(
                   Icons.exit_to_app_outlined, 'အကောင့်မှထွက်မည်', loginClick),
+              AccountLink(
+                  Icons.delete_forever, 'အကောင့်ဖျက်သိမ်းမည်', accDelClick),
             ]),
           )
         ],
@@ -51,6 +55,14 @@ class _AccountSettingState extends State<AccountSetting> {
   void loginClick() {
     showAlertDialog('အကောင့်ထွက်မည်လား',
         'အကောင့်ထွက်ရန်သေချာပါက LOG OUT ကိုနှိပ်ပါ။', context);
+  }
+
+  void accDelClick() async{
+    var url = 'http://eformexample.moee.gov.mm/accountDeletion';
+    if (await canLaunch(url))
+      await launch(url);
+    else
+      throw "Could not launch $url";
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
