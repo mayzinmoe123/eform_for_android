@@ -51,20 +51,20 @@ class _MyAppState extends State<MyApp> {
   initializePrefs() async {
     // String apiPath = "http://192.168.99.134/eform/public/";
     // String apiPath = "http://192.168.99.248/eform/public/";
-    String apiPath = "http://192.168.99.176/eform/public/";
+    String apiPath = "http://192.168.99.220/eform/public/";
 
+    // for production
+    // var url =
+    //     Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
+    // var response = await http.post(url, body: {});
+    // Map data = jsonDecode(response.body);
+    // print(data);
 
-    var url =
-        Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
-    var response = await http.post(url, body: {});
-    Map data = jsonDecode(response.body);
-    print(data);
-
-    if (data['success'] == true) {
-      apiPath = data['path'];
-    } else {
-      apiPath = 'https://eform.moee.gov.mm/';
-    }
+    // if (data['success'] == true) {
+    //   apiPath = data['path'];
+    // } else {
+    //   apiPath = 'https://eform.moee.gov.mm/';
+    // }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
