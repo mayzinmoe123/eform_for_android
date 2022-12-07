@@ -404,6 +404,8 @@ class _R05NrcState extends State<R05Nrc> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -455,7 +457,7 @@ class _R05NrcState extends State<R05Nrc> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

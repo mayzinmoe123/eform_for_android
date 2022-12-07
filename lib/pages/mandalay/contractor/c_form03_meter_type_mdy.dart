@@ -443,6 +443,8 @@ class _CForm03MeterTypeMdyState extends State<CForm03MeterTypeMdy> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -506,7 +508,7 @@ class _CForm03MeterTypeMdyState extends State<CForm03MeterTypeMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void goToBack() {

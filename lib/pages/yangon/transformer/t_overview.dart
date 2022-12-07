@@ -85,6 +85,8 @@ class _TOverviewState extends State<TOverview> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -1056,6 +1058,8 @@ class _TOverviewState extends State<TOverview> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -1087,7 +1091,7 @@ class _TOverviewState extends State<TOverview> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

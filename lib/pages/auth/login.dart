@@ -138,6 +138,7 @@ class _LoginState extends State<Login> {
           setState(() {
             isLoading = true;
           });
+          initializePrefs();
           login(context, emailController.text, passwordController.text);
         }
       },
@@ -235,6 +236,34 @@ class _LoginState extends State<Login> {
     return isLoading ? loading() : Scaffold(
       body:  body(),
     );
+  }
+
+  initializePrefs() async {
+    try{
+      // for production
+      var url = Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
+      var response = await http.post(url, body: {});
+      Map data = jsonDecode(response.body);
+      print('data $data');
+
+      if (data['success'] == true) {
+        String apiPath = data['path'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('api_path', apiPath);
+        setState(() {
+          prefs.setString('api_path', apiPath);
+        });
+        print('main apiPath $apiPath');
+      }
+    }catch(e){
+      print('exception for moep $e');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      setState(() {
+        prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      });
+      print('main apiPath https://eform.moee.gov.mm/');
+    }
   }
 
   void login(BuildContext context, String email, String password) async {
@@ -357,6 +386,6 @@ class _LoginState extends State<Login> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 }

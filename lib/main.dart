@@ -21,15 +21,12 @@ import 'other.dart';
 
 void main()async {
   HttpOverrides.global = MyHttpOverrides();
-   WidgetsFlutterBinding.ensureInitialized();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString('token');
-      // print(token);
-     runApp(MyApp(token: token,));
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+  // print(token);
+  runApp(MyApp(token: token,));
 } 
-
-
-
 
 class MyApp extends StatefulWidget {
   final String? token;
@@ -40,36 +37,44 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final String? token;
+  String? token;
+
   _MyAppState(this.token);
+
   @override
   void initState() {
     super.initState();
     initializePrefs();
   }
 
+  // upload_img_bk_22_11_21
+
   initializePrefs() async {
-    // String apiPath = "http://192.168.99.134/eform/public/";
-    // String apiPath = "http://192.168.99.248/eform/public/";
-    String apiPath = "http://192.168.99.220/eform/public/";
+    try{
+      // for production
+      var url = Uri.parse('https://moep.gov.mm/api/MoepAppController/eform_path');
+      var response = await http.post(url, body: {});
+      Map data = jsonDecode(response.body);
+      print('data $data');
 
-    // for production
-    // var url =
-    //     Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
-    // var response = await http.post(url, body: {});
-    // Map data = jsonDecode(response.body);
-    // print(data);
-
-    // if (data['success'] == true) {
-    //   apiPath = data['path'];
-    // } else {
-    //   apiPath = 'https://eform.moee.gov.mm/';
-    // }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setString('api_path', apiPath);
-    });
+      if (data['success'] == true) {
+        String apiPath = data['path'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('api_path', apiPath);
+        setState(() {
+          prefs.setString('api_path', apiPath);
+        });
+        print('main apiPath $apiPath');
+      }
+    }catch(e){
+      print('exception for moep $e');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      setState(() {
+        prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      });
+      print('main apiPath https://eform.moee.gov.mm/');
+    }
   }
 
   Map<String, Widget Function(BuildContext)> getAllLinks(BuildContext context) {
@@ -77,8 +82,6 @@ class _MyAppState extends State<MyApp> {
 
 
     Map<String, Widget Function(BuildContext)> initialLink = {
-      // var isLogIn = 
-      
       '/': (context) =>  token == null ? Login() : DivisionChoice() ,
       '/login': (context) => Login(),
       '/register': (context) => Register(),
@@ -103,6 +106,24 @@ class _MyAppState extends State<MyApp> {
 
     return allLink;
   }
+
+  // loading widget ----- start
+  Widget loading() {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CircularProgressIndicator()),
+            SizedBox(height: 10),
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
+          ],
+        ),
+      ),
+    );
+  }
+  // loading widget ----- end
 
   @override
   Widget build(BuildContext context) {

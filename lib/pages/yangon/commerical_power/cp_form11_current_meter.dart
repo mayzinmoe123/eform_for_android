@@ -409,6 +409,8 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -460,7 +462,7 @@ class _CpForm11CurrenMeterState extends State<CpForm11CurrenMeter> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

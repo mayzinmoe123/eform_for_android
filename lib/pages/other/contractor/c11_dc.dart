@@ -367,6 +367,8 @@ class _C11DcState extends State<C11Dc> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -418,7 +420,7 @@ class _C11DcState extends State<C11Dc> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

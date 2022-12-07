@@ -41,6 +41,8 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
           'Connection timeout!',
           'Error occured while Communication with Server. Check your internet connection',
           context);
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -186,9 +188,9 @@ class _MeterApplyChoiceState extends State<MeterApplyChoice> {
 
   void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('token');
+    await prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void goToHomePage(BuildContext context) {

@@ -70,6 +70,6 @@ class _LogOutState extends State<LogOut> {
       pref.commit();
     });
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 }

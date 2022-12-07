@@ -4,6 +4,7 @@ import 'package:flutter_application_1/utils/account_link.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
+import 'dart:io';
 
 class AccountSetting extends StatefulWidget {
   const AccountSetting({Key? key}) : super(key: key);
@@ -58,11 +59,24 @@ class _AccountSettingState extends State<AccountSetting> {
   }
 
   void accDelClick() async{
-    var url = 'http://eformexample.moee.gov.mm/accountDeletion';
-    if (await canLaunch(url))
-      await launch(url);
-    else
-      throw "Could not launch $url";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token').toString();
+    String apiPath = prefs.getString('api_path').toString();
+    try{
+      var url = '${apiPath}accountDeletion';
+      if (await canLaunch(url))
+        await launch(url);
+      else
+        throw "Could not launch $url";
+    } on SocketException catch (e) {
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
+    }on Exception catch (e) {
+      logout();
+    }
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {
@@ -103,6 +117,6 @@ class _AccountSettingState extends State<AccountSetting> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 }

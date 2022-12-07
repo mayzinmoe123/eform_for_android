@@ -26,6 +26,39 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   @override
   void initState() {
     super.initState();
+    // checkToken();
+    print('div page');
+  }
+
+  void checkToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var apiPath = prefs.getString('api_path');
+    var url = Uri.parse('${apiPath}api/check_token');
+    if(token != null && apiPath != null){
+      try {
+        var response = await http.post(url, body: {'token': token});
+        Map data = jsonDecode(response.body);
+        if (data['success']) {
+          stopLoading();
+          refreshToken(data['token']);
+        } else {
+          stopLoading();
+          showAlertDialog(data['title'], data['message'], context);
+        }
+      } on SocketException catch (e) {
+        stopLoading();
+        showAlertDialog(
+            'Connection timeout!',
+            'Error occured while Communication with Server. Check your internet connection',
+            context);
+        print('check token error $e');
+      }  on Exception catch (e) {
+        logout();
+      }
+    }else{
+      logout();
+    }
   }
 
   void getForms() async {
@@ -61,6 +94,8 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           'Connection timeout!',
           'Error occured while Communication with Server. Check your internet connection',
           context);
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -134,7 +169,7 @@ class _DivisionChoiceState extends State<DivisionChoice> {
           children: [
             Center(child: CircularProgressIndicator()),
             SizedBox(height: 10),
-            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။a')
+            Text('လုပ်ဆောင်နေပါသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ။')
           ],
         ),
       ),
@@ -365,8 +400,9 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
+    // await prefs.setString('token', 'invalid');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void goToDetailPage(BuildContext context, Map form) async {

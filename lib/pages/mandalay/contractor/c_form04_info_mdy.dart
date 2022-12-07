@@ -103,6 +103,7 @@ class _CForm04InfoMdyState extends State<CForm04InfoMdy> {
           }
         }
       } else {
+        stopLoading();
         showAlertDialog(
             'Connection Failed!',
             'There is a problem while retrieving the townships list. Please try later or connect to developer team',
@@ -110,6 +111,13 @@ class _CForm04InfoMdyState extends State<CForm04InfoMdy> {
         print('check token error');
       }
       stopLoading();
+    } on SocketException catch (e) {
+      stopLoading();
+      showAlertDialog(
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
+      print('check token error $e');
     } catch (e) {
       stopLoading();
       showAlertDialog(
@@ -517,6 +525,8 @@ class _CForm04InfoMdyState extends State<CForm04InfoMdy> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    }  on Exception catch (e) {
+      logout();
     }
   }
 
@@ -579,7 +589,7 @@ class _CForm04InfoMdyState extends State<CForm04InfoMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

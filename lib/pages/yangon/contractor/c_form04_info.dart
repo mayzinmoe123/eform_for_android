@@ -113,11 +113,15 @@ class _CForm04InfoState extends State<CForm04Info> {
         print('check token error');
       }
       stopLoading();
-    } catch (e) {
+    }  on SocketException catch (e) {
       stopLoading();
       showAlertDialog(
-          'Connection Failed!', 'Check your internet connection', context);
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
       print('check token error $e');
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -540,6 +544,8 @@ class _CForm04InfoState extends State<CForm04Info> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -606,7 +612,7 @@ class _CForm04InfoState extends State<CForm04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

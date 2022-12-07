@@ -119,11 +119,15 @@ class _TForm04InfoState extends State<TForm04Info> {
         print('check token error');
       }
       stopLoading();
-    } catch (e) {
+    } on SocketException catch (e) {
       stopLoading();
       showAlertDialog(
-          'Connection Failed!', 'Check your internet connection', context);
+          'Connection timeout!',
+          'Error occured while Communication with Server. Check your internet connection',
+          context);
       print('check token error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -624,6 +628,8 @@ class _TForm04InfoState extends State<TForm04Info> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -697,7 +703,7 @@ class _TForm04InfoState extends State<TForm04Info> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void goToNextPage() async {

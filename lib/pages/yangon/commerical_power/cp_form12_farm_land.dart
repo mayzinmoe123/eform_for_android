@@ -436,6 +436,8 @@ class _CpForm12FarmLandState extends State<CpForm12FarmLand> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -487,7 +489,7 @@ class _CpForm12FarmLandState extends State<CpForm12FarmLand> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

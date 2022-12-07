@@ -410,6 +410,8 @@ class _TForm05NRCState extends State<TForm05NRC> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -461,7 +463,7 @@ class _TForm05NRCState extends State<TForm05NRC> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

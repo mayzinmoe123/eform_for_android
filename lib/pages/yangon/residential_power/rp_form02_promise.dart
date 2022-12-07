@@ -49,6 +49,8 @@ class _RpForm02PromiseState extends State<RpForm02Promise> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -249,7 +251,7 @@ class _RpForm02PromiseState extends State<RpForm02Promise> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void stopLoading() {

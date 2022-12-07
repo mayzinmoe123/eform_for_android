@@ -293,7 +293,7 @@ class _RegisterState extends State<Register> {
           'Connection timeout!',
           'Error occured while Communication with Server. Check your internet connection',
           context);
-    }
+    } 
   }
 
   void inputClear() {
@@ -372,6 +372,6 @@ class _RegisterState extends State<Register> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 }

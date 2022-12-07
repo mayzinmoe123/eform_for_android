@@ -116,6 +116,8 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
         content =
             'Error occured while Communication with Server. Check your internet connection';
       });
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -129,5 +131,13 @@ class _VerifyResendDialogState extends State<VerifyResendDialog> {
     setState(() {
       isLoading = true;
     });
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    // await prefs.setString('token', 'invalid');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/login', (Route<dynamic> route) => false);
   }
 }

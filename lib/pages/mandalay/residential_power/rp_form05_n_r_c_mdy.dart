@@ -393,6 +393,8 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
       showAlertDialog('Connection timeout!',
           'Error occured while Communication with Server', context);
       print('connection error $e');
+    } on Exception catch (e) {
+      logout();
     }
   }
 
@@ -444,7 +446,7 @@ class _RpForm05NRCMdyState extends State<RpForm05NRCMdy> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void refreshToken(String token) async {

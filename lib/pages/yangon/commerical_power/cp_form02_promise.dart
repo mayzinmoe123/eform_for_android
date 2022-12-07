@@ -49,6 +49,15 @@ class _CpForm02PromiseState extends State<CpForm02Promise> {
           'Error occured while Communication with Server. Check your internet connection',
           context);
       print('check token error $e');
+    }on Exception catch(e){
+      print('excccccc $e');
+      stopLoading();
+      showAlertDialog(
+          'Unauthorized',
+          'Error occured while Communication with Server. Please Login Again!',
+          context);
+    }on Exception catch (e) {
+      logout();
     }
   }
 
@@ -249,7 +258,7 @@ class _CpForm02PromiseState extends State<CpForm02Promise> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     Navigator.pushNamedAndRemoveUntil(
-        context, '/', (Route<dynamic> route) => false);
+        context, '/login', (Route<dynamic> route) => false);
   }
 
   void stopLoading() {
