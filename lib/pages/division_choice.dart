@@ -119,14 +119,18 @@ class _DivisionChoiceState extends State<DivisionChoice> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.dataset), label: 'လျှောက်လွှာပုံစံများ'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.sort), label: 'လုပ်ငန်းစဉ်အားလုံး'),
+                    icon: Icon(Icons.notifications), label: 'အသိပေးချက်'),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.incomplete_circle), label: 'လုပ်ဆောင်ဆဲလုပ်ငန်းစဉ်အားလုံး'),
+                    BottomNavigationBarItem(
+                  icon: Icon(Icons.sort), label: 'လုပ်ဆောင်ပြီးလုပ်ငန်းစဉ်အားလုံး'),
               ],
               currentIndex: selectedBottom,
               onTap: (value) {
                 setState(() {
                   selectedBottom = value;
                 });
-                if (selectedBottom == 1) {
+                if (selectedBottom == 2 || selectedBottom == 3) {
                   startLoading();
                   getForms();
                 } else {
@@ -179,7 +183,25 @@ class _DivisionChoiceState extends State<DivisionChoice> {
   Widget body(BuildContext context) {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-        child: selectedBottom == 0 ? divisionWidget() : processWidget());
+        // child: selectedBottom == 0 ? divisionWidget() : notiWidget(context));
+        child: Column(
+         children: [
+        if (selectedBottom == 0) ...[
+          divisionWidget(),
+        ] else if(selectedBottom == 1)...[
+          notiWidget(context),
+        ] else if(selectedBottom == 2)...[
+          processWidget(),
+        ]
+        else if(selectedBottom == 3)...[
+          processFinishWidget(),
+        ]
+        // else ...[
+        //   processWidget(),
+        // ],
+    ],
+      )
+    );
   }
 
   Widget divisionWidget() {
@@ -245,6 +267,99 @@ class _DivisionChoiceState extends State<DivisionChoice> {
             ),
     );
   }
+
+  Widget processFinishWidget() {
+    return Container(
+      child: forms.length > 0
+          ? ListView.builder(
+              itemCount: forms.length,
+              itemBuilder: (context, index) {
+                return swipListItem(context, forms[index]);
+              },
+            )
+          : Container(
+              color: Colors.orange,
+              padding: EdgeInsets.all(30),
+              child: Text(
+                'သင်မီတာလျှောက်လွှာများ မလျှောက်ထားရသေးပါ။ လျှောက်လွှာပုံစံများတွင် တိုင်းဒေသကြီးရွေး၍ လျှောက်ထားနိုင်ပါသည်။',
+                style: TextStyle(fontSize: 14.0, color: Colors.white),
+              ),
+            ),
+    );
+  }
+
+   Widget notiWidget(context){
+   var msize = MediaQuery.of(context).size;
+   return Column(
+     children: [
+       Container(
+          width: msize.width,
+          height: 65,
+          child: Card(
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2.0),
+            ),
+            child: Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Icon(Icons.message,color: Colors.black54,),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(
+                        "ငွေသွင်းရန် အကြောင်းကြားစာ", textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,),
+                      ),
+                       Text(
+                        "20-7-2022", textAlign: TextAlign.left,style: TextStyle(fontSize: 12,fontWeight: FontWeight.normal,),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: msize.width,
+          height: 65,
+          child: Card(
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(2.0),
+            ),
+            child: Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Icon(Icons.message,color: Colors.black54,),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(
+                        "ငွေသွင်းရန် အကြောင်းကြားစာ", textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,),
+                      ),
+                       Text(
+                        "20-7-2022", textAlign: TextAlign.left,style: TextStyle(fontSize: 12,fontWeight: FontWeight.normal,),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+     ],
+   );
+  }
+
 
   String getMeterType(value) {
     if (value == 1) {

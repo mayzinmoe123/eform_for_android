@@ -19,6 +19,12 @@ import 'yangon.dart';
 import 'mandalay.dart';
 import 'other.dart';
 
+import 'package:flutter_application_1/utils/password_change.dart';
+import 'package:flutter_application_1/utils/password_confirm.dart';
+import 'package:flutter_application_1/utils/phone_change.dart';
+import 'package:flutter_application_1/utils/user_setting.dart';
+import 'package:flutter_application_1/utils/email_change.dart';
+
 void main()async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   initializePrefs() async {
     try{
       // for production
-      var url = Uri.parse('https://moep.gov.mm/api/MoepAppController/eform_path');
+      var url = Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
       var response = await http.post(url, body: {});
       Map data = jsonDecode(response.body);
       print('data $data');
@@ -87,6 +93,11 @@ class _MyAppState extends State<MyApp> {
       '/register': (context) => Register(),
       '/reset_password': (context) => ResetPassword(),
       '/division_choice': (context) => DivisionChoice(),
+      '/user_setting' :(context) => UserSetting(),
+      '/email_change': (context) => EmailChange(),
+      '/phone_change' : (contxt) => PhoneChange(),
+      '/password_change' :(context) => PasswordChange(),
+      '/password_confirm' :(context) => PasswordConfirm(),
     };
     allLink.addAll(initialLink);
 

@@ -46,6 +46,8 @@ class _AccountSettingState extends State<AccountSetting> {
                   Icons.exit_to_app_outlined, 'အကောင့်မှထွက်မည်', loginClick),
               AccountLink(
                   Icons.delete_forever, 'အကောင့်ဖျက်သိမ်းမည်', accDelClick),
+                AccountLink(
+                  Icons.settings, 'ပြင်ဆင်ရန်', userSetting),
             ]),
           )
         ],
@@ -77,6 +79,11 @@ class _AccountSettingState extends State<AccountSetting> {
     }on Exception catch (e) {
       logout();
     }
+  }
+
+  void userSetting(){
+     Navigator.pushNamedAndRemoveUntil(
+        context, '/user_setting', (route) => false);
   }
 
   void showAlertDialog(String title, String content, BuildContext context) {

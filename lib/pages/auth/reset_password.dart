@@ -26,6 +26,34 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   String? nameError, emailError, phoneError, passwordError;
 
+  initializePrefs() async {
+    try{
+      // for production
+      var url = Uri.parse('https://eform.moee.gov.mm/api/api_path_xOmfnoG1N7Nxgv');
+      var response = await http.post(url, body: {});
+      Map data = jsonDecode(response.body);
+      print('data $data');
+
+      if (data['success'] == true) {
+        String apiPath = data['path'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('api_path', apiPath);
+        setState(() {
+          prefs.setString('api_path', apiPath);
+        });
+        print('main apiPath $apiPath');
+      }
+    }catch(e){
+      print('exception for moep $e');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      setState(() {
+        prefs.setString('api_path', 'https://eform.moee.gov.mm/');
+      });
+      print('main apiPath https://eform.moee.gov.mm/');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading ? loading() : Scaffold(
@@ -95,6 +123,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     setState(() {
                       isLoading = true;
                     });
+                    initializePrefs();
                     reset(context);
                   }
                 },
